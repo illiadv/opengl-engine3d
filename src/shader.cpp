@@ -34,6 +34,13 @@ void SetVec3(unsigned int shader, const char* uniform, float x, float y, float z
     glUniform3f(location, x, y, z);
 }
 
+void SetVec4(unsigned int shader, const char* uniform, const float* vec4) {
+    int location = glGetUniformLocation(shader, uniform);
+    if (location == -1)
+        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    glUniform4fv(location, 1, vec4);
+}
+
 void SetFloat(unsigned int shader, const char* uniform, float f)
 {
     int location = glGetUniformLocation(shader, uniform);

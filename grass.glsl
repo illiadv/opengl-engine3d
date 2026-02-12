@@ -7,6 +7,21 @@ struct Material {
     float shininess;
 };
 
+struct Light {
+    // direction for dirlights
+    vec4 position; // w is type (0 = DirLight, 1 = PointLight)
+    vec4 ambient;
+    vec4 diffuse;
+    vec4 specular;
+};
+
+#define MAX_LIGHTS 100
+
+uniform int numActiveLights;
+
+layout (std140) uniform Lights {
+    uniform Light lights[MAX_LIGHTS];
+};
 
 in vec2 texCoord;
 in vec3 normal;

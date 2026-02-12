@@ -47,7 +47,7 @@ float lastFrame = 0.0f; // Time of last frame
 
 Camera camera;
 
-bool guiActive = true;
+bool guiActive = false;
 
 void processInput(GLFWwindow *window)
 {
@@ -199,11 +199,12 @@ int main()
 	grass->SetMaterial(&materialGrass);
     }
 
-    DirLight dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.5f), glm::vec3(1.0f), glm::vec3(1.0f));
-    engine.SetLight(&dirLight);
+    Light dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.5f));
+    engine.AddLight(dirLight);
+    Light pointLight(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(0.2f), glm::vec3(1.0f, 0.8f, 0.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f);
+    engine.AddLight(pointLight);
     engine.SetDefaultMaterial(&materialDefault);
     engine.SetActiveCamera(&camera);
-
     
 
     glm::vec3 pos(0.0f);
@@ -211,38 +212,55 @@ int main()
     glm::vec3 sc(0);
     
     int objSelected = 0;
+    int lightSelected = 0;
+    
+    int counter=0;
 
     while(!glfwWindowShouldClose(engine.GetWindow()))
+    // while(!glfwWindowShouldClose(engine.GetWindow()) && counter < 10)
     {
+	counter++;
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	// ImGui::ShowDemoWindow();
 
 	ImGui::SetWindowSize({200, 100});
-	ImGui::Begin("Do stuff", &guiActive);
-	// Edit a color stored as 4 floats
+
+	// Begin window
+	ImGui::Begin("Menu", &guiActive);
 	
+	// Camera info
 	ImGui::Text("Camera");
 	ImGui::Text("Position: %.3f, %.3f, %.3f", camera.position.x, camera.position.y, camera.position.z);
 	ImGui::Text("FOV: %.3f", (camera.fov));
 	ImGui::Separator();
 
+	// Object list
 	ImGui::Text("%zu objects", engine.GetObjectCount());
+
+	if (ImGui::BeginListBox("Object list")) {
+	    for (int i = 0; i < engine.GetObjectCount(); i++)
+	    {
+		std::string name = std::to_string(i) + ".  "
+		    + engine.GetObject(i)->GetModel()->GetDirectory();
+		if (ImGui::Selectable(name.c_str()))
+		{
+		    objSelected = i;
+		}
+	    }
+	    ImGui::EndListBox();
+	}
+
 	Object* obj = engine.GetObject(objSelected);
 	ImGui::Text("%d. %s", objSelected, obj->GetModel()->GetDirectory());
 
-	if (ImGui::DragInt("Object #", &objSelected, 1.0f, 0, engine.GetObjectCount() - 1)) {
-	    glm::mat4 m = glm::mat4_cast(obj->GetRotation());
-	    float y, p, r;
-	    glm::extractEulerAngleXYZ(m, y, p, r);
-	    rot = glm::vec3{y, p, r};
-	    // rot.x = glm::degrees(rot.x);
-	    // rot.y = glm::degrees(rot.y);
-	    // rot.z = glm::degrees(rot.z);
-	}
 
-	if (ImGui::InputFloat3("Position", glm::value_ptr(pos)))
+	glm::mat4 m = glm::mat4_cast(obj->GetRotation());
+	float y, p, r;
+	glm::extractEulerAngleXYZ(m, y, p, r);
+	rot = glm::vec3{y, p, r};
+
+	if (ImGui::DragFloat3("Position", glm::value_ptr(pos)), 0.1f)
 	    obj->SetPosition(pos);
 
 	if (ImGui::DragFloat("Rotation X", &rot.x, 0.001f, -360, 360))
@@ -259,6 +277,42 @@ int main()
 	}
 	
 	ImGui::End();
+
+	ImGui::Begin("Lights", &guiActive);
+	ImGui::Text("%zu ligths", engine.GetLightCount());
+
+	if (ImGui::BeginListBox("Light list")) {
+	    for (int i = 0; i < engine.GetLightCount(); i++)
+	    {
+		std::string name = "Light " + std::to_string(i);
+		if (ImGui::Selectable(name.c_str()))
+		{
+		    lightSelected = i;
+		}
+	    }
+	    ImGui::EndListBox();
+	}
+
+	Light *light = engine.GetLight(lightSelected);
+
+	ImGui::DragFloat3("Position", glm::value_ptr(light->position), 0.1f);
+	ImGui::ColorEdit3("Ambient", glm::value_ptr(light->ambient),ImGuiColorEditFlags_Float);
+	ImGui::ColorEdit3("Diffuse", glm::value_ptr(light->diffuse),ImGuiColorEditFlags_Float);
+	ImGui::ColorEdit3("Specular", glm::value_ptr(light->specular),ImGuiColorEditFlags_Float);
+	ImGui::DragFloat("Type", &light->type, 0.01f);
+	ImGui::DragFloat("Constant", &light->constant, 0.01f);
+	ImGui::DragFloat("Linear", &light->linear, 0.01f);
+	ImGui::DragFloat("Quadratic", &light->quadratic, 0.01f);
+
+	if (ImGui::Button("Add new light"))
+	{
+	    Light l(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(0.2f), glm::vec3(1.0f), glm::vec3(1.0f), 1.0f, 0.09f, 0.032f);
+	    engine.AddLight(l);
+	}
+
+	ImGui::End();
+
+	
 
 	processInput(engine.GetWindow());
 

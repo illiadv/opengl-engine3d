@@ -37,20 +37,25 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight)
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
     glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatricies, 0, 2*sizeof(glm::mat4));
 
+    glGenBuffers(1, &uboLights);
+    glCheckError();
+
     glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
-    glBufferData(GL_UNIFORM_BUFFER, 2*sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+    glCheckError();
+    glBufferData(GL_UNIFORM_BUFFER, uboLightsSize, NULL, GL_STATIC_DRAW);
+    glCheckError();
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatricies, 0, 2*sizeof(glm::mat4));
-
-
-
-    // glEnable(GL_STENCIL_TEST);
+    glCheckError();
+    glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboLights, 0, uboLightsSize);
+    glCheckError();
 }
 
 GfxEngine::~GfxEngine()
 {
     for (auto o : objects)
 	delete o;
+    for (auto l : lights)
+	delete l;
 }
 
 void GfxEngine::SetDefaultMaterial(Material* material)
@@ -63,13 +68,15 @@ void GfxEngine::SetActiveCamera(Camera *camera)
     activeCamera = camera;
 }
 
-void GfxEngine::SetLight(Light *light)
+void GfxEngine::AddLight(Light light)
 {
-    this->light = light;
+    Light *newLight = new Light(light);
+
+    if (lights.size() < maxLights)
+	lights.push_back(newLight);
 }
 
 void GfxEngine::Draw() {
-
 
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
@@ -81,9 +88,46 @@ void GfxEngine::Draw() {
 	    (float)viewportWidth / (float)viewportHeight, 0.1f, 100.0f);
 
     glBindBuffer(GL_UNIFORM_BUFFER, uboMatricies);
+    glCheckError();
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view));
+    glCheckError();
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection));
+    glCheckError();
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glCheckError();
+
+    glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
+    glCheckError();
+
+    struct LightGPU {
+	glm::vec4 position; // w is type (0 = DirLight, 1 = PointLight)
+    	glm::vec4 ambient;
+    	glm::vec4 diffuse;
+    	glm::vec4 specular;
+    };
+
+    LightGPU ligtsGPU[maxLights]{};
+
+    for (size_t i = 0; i < lights.size(); i++)
+    {
+	Light *light = lights[i];
+	LightGPU lightGPU;
+	lightGPU.position = glm::vec4(light->position.x, light->position.y, light->position.z, light->type);
+	lightGPU.ambient = glm::vec4(light->ambient.x, light->ambient.y, light->ambient.z, light->constant);
+	lightGPU.diffuse = glm::vec4(light->diffuse.x, light->diffuse.y, light->diffuse.z, light->linear);
+	lightGPU.specular = glm::vec4(light->specular.x, light->specular.y, light->specular.z, light->quadratic);
+
+	ligtsGPU[i] = lightGPU;
+    }
+
+    glBindBuffer(GL_UNIFORM_BUFFER, uboLights);
+    glCheckError();
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, uboLightsSize, ligtsGPU);
+    glCheckError();
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    glCheckError();
+
 
     for (Object *object : objects)
     {
@@ -99,8 +143,11 @@ void GfxEngine::Draw() {
 
 	// TODO: Do smth about this
 	glUseProgram(thisMaterial->shader);
-	light->UpdateUniforms(thisMaterial->shader);
+	// light->UpdateUniforms(thisMaterial->shader);
 
+	glCheckError();
+
+	glUniform1i(glGetUniformLocation(thisMaterial->shader, "numActiveLights"), lights.size());
 	glCheckError();
 
 	glUniform3f(glGetUniformLocation(thisMaterial->shader, "viewPos"),
@@ -131,6 +178,19 @@ Object *GfxEngine::AddObject(Model* model)
 size_t GfxEngine::GetObjectCount()
 {
     return objects.size();
+}
+
+size_t GfxEngine::GetLightCount()
+{
+    return lights.size();
+}
+
+Light* GfxEngine::GetLight(size_t index)
+{
+    if (index < lights.size())
+	return lights[index];
+    else
+	throw std::exception();
 }
 
 Object* GfxEngine::GetObject(size_t index)

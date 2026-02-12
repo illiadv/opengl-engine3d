@@ -46,6 +46,7 @@ set(SOURCES
     src/object.cpp
     src/shader.cpp
     src/texture.cpp
+    src/util.cpp
     src/imgui/imgui.cpp
     src/imgui/imgui_demo.cpp
     src/imgui/imgui_draw.cpp

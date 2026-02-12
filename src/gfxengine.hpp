@@ -20,7 +20,7 @@ public:
     ~GfxEngine();
     void SetDefaultMaterial(Material* material);
     void SetActiveCamera(Camera *camera);
-    void SetLight(Light *light);
+    void AddLight(Light);
     void Draw();
     GLFWwindow *GetWindow();
     // template<class... Args> Object *AddObject(Args&&... args);
@@ -29,16 +29,20 @@ public:
 
     size_t GetObjectCount();
     Object* GetObject(size_t index);
+
+    size_t GetLightCount();
+    Light* GetLight(size_t index);
     // unsigned int AddShader(const char* vertex, const char* fragment);
 
 private:
     GLFWwindow *window;
     std::vector<Object*> objects;
     std::vector<Light*> lights;
+    static constexpr int maxLights = 100;
+    static constexpr size_t uboLightsSize = maxLights * 4*sizeof(glm::vec4);
 
     Material* defaultMaterial;
     Camera *activeCamera = nullptr;
-    Light *light = nullptr;
 
     unsigned int uboMatricies;
     unsigned int uboLights;

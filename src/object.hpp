@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "model.hpp"
+#include "util.hpp"
 
 class Material
 {
@@ -18,6 +19,11 @@ public:
 
 	unsigned int blockIndex = glGetUniformBlockIndex(shader, "Matricies");
 	glUniformBlockBinding(shader, blockIndex, 0);
+
+	blockIndex = glGetUniformBlockIndex(shader, "Lights");
+	glCheckError();
+	glUniformBlockBinding(shader, blockIndex, 1);
+	glCheckError();
     }
 
     unsigned int shader = 0;
