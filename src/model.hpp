@@ -3,13 +3,13 @@
 
 #include <stdio.h>
 #include "assimp/material.h"
-#include "texture.hpp"
+#include "basemodel.hpp"
 #include "mesh.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-class Model
+class Model : public BaseModel
 {
     public:
 	Model(const char *path, bool flipUVs = false)

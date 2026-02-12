@@ -28,7 +28,7 @@ void Object::SetNormalMat(glm::mat4 modelMat, unsigned int shader)
     SetMat3(shader, "normalMat", glm::value_ptr(normalMat));
 }
 
-Model* Object::GetModel()
+BaseModel* Object::GetModel()
 {
     return model;
 }

@@ -40,7 +40,7 @@ class Object
 
     void SetNormalMat(glm::mat4 model, unsigned int shader) ;
 
-    Model *model;
+    BaseModel *model;
 
     public:
     Material *material;
@@ -55,7 +55,7 @@ class Object
 	glm::vec3 rotAxis = glm::vec3(1.0f)
 	);
 
-    Model* GetModel();
+    BaseModel* GetModel();
     void SetMaterial(Material* material);
     void SetModel(glm::mat4 modelMat);
     glm::vec3 GetPosition();

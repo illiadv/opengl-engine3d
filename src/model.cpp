@@ -1,4 +1,5 @@
 #include "model.hpp"
+#include "texture.hpp"
 
 void Model::Draw(unsigned int shader)
 {
