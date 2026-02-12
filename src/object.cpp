@@ -21,10 +21,10 @@ Object::Object(Model* model,
     SetScale(scale);
 }
 
-void Object::SetNormalMat(glm::mat4 model, unsigned int shader)
+void Object::SetNormalMat(glm::mat4 modelMat, unsigned int shader)
 {
     glm::mat3 normalMat;
-    normalMat = glm::transpose(glm::inverse(/* view * */ model));
+    normalMat = glm::transpose(glm::inverse(/* view * */ modelMat));
     SetMat3(shader, "normalMat", glm::value_ptr(normalMat));
 }
 

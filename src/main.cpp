@@ -1,16 +1,5 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stdio.h>
-#include <math.h>
-
-#include "glm/detail/type_vec.hpp"
-#include "shader.hpp"
-#include "light.hpp"
-#include "model.hpp"
-
-#include "camera.hpp"
-
-#include "stb_image.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,7 +7,6 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include "gfxengine.hpp"
-
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
@@ -94,7 +82,6 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
     if (ImGui::GetIO().WantCaptureMouse)
 	return;
-
 
     (void)window;
 
