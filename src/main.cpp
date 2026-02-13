@@ -8,6 +8,8 @@
 
 #include "gfxengine.hpp"
 
+#include "voxelmodel.hpp"
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
@@ -150,16 +152,24 @@ int main()
 
     Model cylinderModel("assets/cylinder/cylinder.obj");
 
+    VoxelModel voxelmodel("vmodel.txt");
+
     // Object* backpack = engine.AddObject(&backpackModel);
     //
     // backpack->SetPosition(glm::vec3(2.0, 1.0, 1.0f));
     // backpack->SetScale(glm::vec3(0.3f));
+
+
 
     Object *crate = engine.AddObject(&crateModel);
     // crate->SetScale(glm::vec3(0.1f, 0.1f, 1.0f));
     crate->SetPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
     Object *cat = engine.AddObject(&catModel);
     // cat->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    
+    Object *voxels = engine.AddObject(&voxelmodel);
+    voxels->SetPosition(glm::vec3(0.0f, 6.0f, 0.0f));
+    // voxels->SetMaterial(&materialSingleColor);
 
     Object *ground = engine.AddObject(&groundModel);
     ground->SetPosition(glm::vec3(0.0f, -1.0f, 0.0f));
@@ -192,6 +202,7 @@ int main()
     engine.AddLight(pointLight);
     engine.SetDefaultMaterial(&materialDefault);
     engine.SetActiveCamera(&camera);
+    engine.SetDebugShader(shaderProgramSingleColor);
     
 
     glm::vec3 pos(0.0f);

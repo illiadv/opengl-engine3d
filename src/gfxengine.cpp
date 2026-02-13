@@ -63,6 +63,11 @@ void GfxEngine::SetDefaultMaterial(Material* material)
     defaultMaterial = material;
 }
 
+void GfxEngine::SetDebugShader(unsigned int shader)
+{
+    debugShader = shader;
+}
+
 void GfxEngine::SetActiveCamera(Camera *camera)
 {
     activeCamera = camera;
@@ -159,6 +164,14 @@ void GfxEngine::Draw() {
 
 	object->Draw(thisMaterial->shader);
 	glCheckError();
+	
+	// Debug draw
+	glUseProgram(debugShader);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	object->Draw(debugShader);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glCheckError();
     }
 }
 
@@ -168,7 +181,7 @@ GLFWwindow *GfxEngine::GetWindow()
 }
 
 
-Object *GfxEngine::AddObject(Model* model)
+Object *GfxEngine::AddObject(BaseModel* model)
 {
     Object* object = new Object(model);
     objects.push_back(object);

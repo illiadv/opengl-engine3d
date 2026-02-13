@@ -6,7 +6,7 @@
 //     this->model = model;
 // }
 
-Object::Object(Model* model,
+Object::Object(BaseModel* model,
 	Material* material,
 	glm::vec3 trans,
 	glm::vec3 scale,

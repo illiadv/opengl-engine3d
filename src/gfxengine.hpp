@@ -19,12 +19,13 @@ public:
     GfxEngine(int screenWidth, int screenHeight);
     ~GfxEngine();
     void SetDefaultMaterial(Material* material);
+    void SetDebugShader(unsigned int shader);
     void SetActiveCamera(Camera *camera);
     void AddLight(Light);
     void Draw();
     GLFWwindow *GetWindow();
     // template<class... Args> Object *AddObject(Args&&... args);
-    Object *AddObject(Model* model);
+    Object *AddObject(BaseModel* model);
     void RemoveObject(Object *object);
 
     size_t GetObjectCount();
@@ -43,6 +44,8 @@ private:
 
     Material* defaultMaterial;
     Camera *activeCamera = nullptr;
+
+    unsigned int debugShader;
 
     unsigned int uboMatricies;
     unsigned int uboLights;

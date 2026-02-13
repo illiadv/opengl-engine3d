@@ -47,7 +47,7 @@ class Object
 
     // Object(Model* model);
 
-    Object(Model* model,
+    Object(BaseModel* model,
 	Material* material = nullptr,
 	glm::vec3 trans = glm::vec3(0.0f, 0.0f, 0.0f),
 	glm::vec3 scale = glm::vec3(1.0f),
