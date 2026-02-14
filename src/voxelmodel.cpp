@@ -4,13 +4,6 @@
 #include "mesh.hpp"
 #include "texture.hpp"
 
-struct VoxelArray
-{
-    int width;
-    int height;
-    int depth;
-    std::vector<char> data;
-};
 
 int Get(int x, int y, int z, VoxelArray* va)
 {
@@ -21,12 +14,31 @@ int Get(int x, int y, int z, VoxelArray* va)
     return va->data[y * va->width * va->depth + z * va->width + x];
 }
 
+void Set(int x, int y, int z, VoxelArray* va, unsigned char value)
+{
+    if (x >= va->width || y >= va->height || z >= va->depth ||
+	    x < 0 || y < 0 || z < 0)
+    {
+	printf ("Oh no!!\n\n\n");
+    }
+    va->data[y * va->width * va->depth + z * va->width + x] = value;
+}
+
+
 VoxelModel::VoxelModel(const char* path)
 {
+    LoadModel(path);
+}
+
+void VoxelModel::LoadModel(const char* path)
+{
+    meshes.clear();
     directory = path;
     VoxelArray array;
     LoadVoxels(path, array);
-    meshes.push_back(Mesher(array));
+    // meshes.push_back(Mesher(array));
+    GreedyMesher mesher(array);
+    meshes.push_back(mesher.CreateMesh());
 }
 
 void MarchingCubes(VoxelArray& array, std::vector<glm::vec3>& verts)
@@ -55,6 +67,177 @@ void MarchingCubes(VoxelArray& array, std::vector<glm::vec3>& verts)
 	    }
 	}
     }
+}
+
+
+bool GreedyMesher::FaceExistsBottom(int x, int y, int z)
+{
+    return !Get(x, y, z, &visitedTop) 
+	&&  Get(x, y, z, &array) 
+	&& !Get(x, y-1, z, &array);
+}
+
+bool GreedyMesher::FaceExistsTop(int x, int y, int z)
+{
+    return !Get(x, y, z, &visitedBottom) 
+	&&  Get(x, y, z, &array) 
+	&& !Get(x, y+1, z, &array);
+}
+
+bool GreedyMesher::RowFullBottomX(int x1, int x2, int y, int z)
+{
+    for (int i = x1; i <= x2; i++)
+    {
+	if (!FaceExistsBottom(i, y, z)) {
+	    return false;
+	}
+    }
+    for (int i = x1; i <= x2; i++)
+    {
+	// Put into visited
+	Set(i, y, z, &visitedTop, 1);
+    }
+    return true;
+}
+
+bool GreedyMesher::RowFullTopX(int x1, int x2, int y, int z)
+{
+    for (int i = x1; i <= x2; i++)
+    {
+	if (!FaceExistsTop(i, y, z)) {
+	    return false;
+	}
+    }
+    for (int i = x1; i <= x2; i++)
+    {
+	// Put into visited
+	Set(i, y, z, &visitedBottom, 1);
+    }
+    return true;
+}
+
+void GreedyMesher::CreateFaceBottom(int x, int y, int z)
+{
+    if (!FaceExistsBottom(x, y, z)) {
+	return;
+    }
+
+    // Put into visited
+    Set(x, y, z, &visitedTop, 1);
+
+    // Check X direction:
+    int xi = x;
+    while (1) {
+	xi++;
+	if (!FaceExistsBottom(xi, y, z)) {
+	    break;
+	}
+
+	// Put into visited
+	Set(xi, y, z, &visitedTop, 1);
+    }
+
+    int xf = xi-1;
+
+    // Check Z direction
+    int zi = z;
+
+    while (1) {
+	zi++;
+	if (!RowFullBottomX(x, xf, y, zi))
+	{
+	    break;
+	}
+    }
+
+    int zf = zi-1;
+
+
+    vertices.push_back(Vertex{{x, y, zf+1}, {0, -1, 0}, {zf-z+1, 0}});
+    vertices.push_back(Vertex{{x, y, z}, {0, -1, 0}, {0, 0}});
+    vertices.push_back(Vertex{{xf+1, y, z}, {0, -1, 0}, {0, xf-x+1}});
+
+    vertices.push_back(Vertex{{xf+1, y, z}, {0, -1, 0}, {0, xf-x+1}});
+    vertices.push_back(Vertex{{xf+1, y, zf+1}, {0, -1, 0}, {zf-z+1, xf-x+1}});
+    vertices.push_back(Vertex{{x, y, zf+1}, {0, -1, 0}, {zf-z+1, 0}});
+}
+
+void GreedyMesher::CreateFaceTop(int x, int y, int z)
+{
+    if (!FaceExistsTop(x, y, z)) {
+	return;
+    }
+
+    // Put into visited
+    Set(x, y, z, &visitedBottom, 1);
+
+    // Check X direction:
+    int xi = x;
+    while (1) {
+	xi++;
+	if (!FaceExistsTop(xi, y, z)) {
+	    break;
+	}
+
+	// Put into visited
+	Set(xi, y, z, &visitedBottom, 1);
+    }
+
+    int xf = xi-1;
+
+    // Check Z direction
+    int zi = z;
+
+    while (1) {
+	zi++;
+	if (!RowFullTopX(x, xf, y, zi))
+	{
+	    break;
+	}
+    }
+
+    int zf = zi-1;
+
+
+    vertices.push_back(Vertex{{x, y+1, zf+1}, {0, 1, 0}, {zf-z+1, 0}});
+    vertices.push_back(Vertex{{x, y+1, z}, {0, 1, 0}, {0, 0}});
+    vertices.push_back(Vertex{{xf+1, y+1, z}, {0, 1, 0}, {0, xf-x+1}});
+
+    vertices.push_back(Vertex{{xf+1, y+1, z}, {0, 1, 0}, {0, xf-x+1}});
+    vertices.push_back(Vertex{{xf+1, y+1, zf+1}, {0, 1, 0}, {zf-z+1, xf-x+1}});
+    vertices.push_back(Vertex{{x, y+1, zf+1}, {0, 1, 0}, {zf-z+1, 0}});
+}
+
+Mesh GreedyMesher::CreateMesh()
+{
+
+    for (int y = 0; y < (array.height); y++)
+    {
+	for (int z = 0; z < (array.depth); z++)
+	{
+	    for (int x = 0; x < (array.width); x++)
+	    {
+		CreateFaceBottom(x, y, z);
+		CreateFaceTop(x, y, z);
+
+	    }
+	}
+    }
+
+    indices.resize(vertices.size());
+    for (size_t i = 0; i < vertices.size(); i++)
+	indices[i] = i;
+
+    std::vector<Texture> textures{};
+    Texture tex;
+    tex.id = CreateTexture("./assets/crate/container2.png");
+    tex.type = TextureType::diffuse;
+    textures.push_back(tex);
+
+    printf("Mesher finished; %zu verts, %zu tris\n", vertices.size(), indices.size() / 3);
+
+    Mesh mesh(vertices, indices, textures);
+    return mesh;
 }
 
 Mesh VoxelModel::Mesher(VoxelArray& array)
@@ -175,7 +358,8 @@ void VoxelModel::LoadVoxels(const char* path, VoxelArray& array)
     f >> array.height;
     f >> array.depth;
 
-    array.data = std::vector<char>(array.width * array.height * array.depth);
+    // array.data = std::vector<char>(array.width * array.height * array.depth);
+    array = VoxelArray(array.width, array.height, array.depth);
 
     for (size_t i = 0; i < array.data.size(); i++)
     {
@@ -190,66 +374,6 @@ void VoxelModel::LoadVoxels(const char* path, VoxelArray& array)
 
 void VoxelModel::Draw(unsigned int shader)
 {
-    for (auto v : verts) {
-	std::vector<Vertex> vertices = {
-		// positions          // normals           // texture coords
-	    Vertex{{-0.05f, -0.05f, -0.05f},  {0.0f,  0.0f, -1.0f},  {0.0f,  0.0f}},
-	    Vertex{   { 0.05f, -0.05f, -0.05f},  {0.0f,  0.0f, -1.0f},  {1.0f,  0.0f}},
-	    Vertex{   { 0.05f,  0.05f, -0.05f},  {0.0f,  0.0f, -1.0f},  {1.0f,  1.0f}},
-	    Vertex{   { 0.05f,  0.05f, -0.05f},  {0.0f,  0.0f, -1.0f},  {1.0f,  1.0f}},
-	    Vertex{   {-0.05f,  0.05f, -0.05f},  {0.0f,  0.0f, -1.0f},  {0.0f,  1.0f}},
-	    Vertex{   {-0.05f, -0.05f, -0.05f},  {0.0f,  0.0f, -1.0f},  {0.0f,  0.0f}},
-				   
-	     Vertex{  {-0.05f, -0.05f,  0.05f},  {0.0f,  0.0f,  1.0f},  {0.0f,  0.0f}},
-	     Vertex{  { 0.05f, -0.05f,  0.05f},  {0.0f,  0.0f,  1.0f},  {1.0f,  0.0f}},
-	     Vertex{  { 0.05f,  0.05f,  0.05f},  {0.0f,  0.0f,  1.0f},  {1.0f,  1.0f}},
-	     Vertex{  { 0.05f,  0.05f,  0.05f},  {0.0f,  0.0f,  1.0f},  {1.0f,  1.0f}},
-	     Vertex{  {-0.05f,  0.05f,  0.05f},  {0.0f,  0.0f,  1.0f},  {0.0f,  1.0f}},
-	     Vertex{  {-0.05f, -0.05f,  0.05f},  {0.0f,  0.0f,  1.0f},  {0.0f,  0.0f}},
-				   
-	     Vertex { {-0.05f,  0.05f,  0.05f}, {-1.0f,  0.0f,  0.0f},  {1.0f,  0.0f}},
-	     Vertex { {-0.05f,  0.05f, -0.05f}, {-1.0f,  0.0f,  0.0f},  {1.0f,  1.0f}},
-	     Vertex { {-0.05f, -0.05f, -0.05f}, {-1.0f,  0.0f,  0.0f},  {0.0f,  1.0f}},
-	     Vertex { {-0.05f, -0.05f, -0.05f}, {-1.0f,  0.0f,  0.0f},  {0.0f,  1.0f}},
-	     Vertex { {-0.05f, -0.05f,  0.05f}, {-1.0f,  0.0f,  0.0f},  {0.0f,  0.0f}},
-	     Vertex { {-0.05f,  0.05f,  0.05f}, {-1.0f,  0.0f,  0.0f},  {1.0f,  0.0f}},
-				   
-	     Vertex  {{ 0.05f,  0.05f,  0.05f},  {1.0f,  0.0f,  0.0f},  {1.0f,  0.0f}},
-	     Vertex  {{ 0.05f,  0.05f, -0.05f},  {1.0f,  0.0f,  0.0f},  {1.0f,  1.0f}},
-	     Vertex  {{ 0.05f, -0.05f, -0.05f},  {1.0f,  0.0f,  0.0f},  {0.0f,  1.0f}},
-	     Vertex  {{ 0.05f, -0.05f, -0.05f},  {1.0f,  0.0f,  0.0f},  {0.0f,  1.0f}},
-	     Vertex  {{ 0.05f, -0.05f,  0.05f},  {1.0f,  0.0f,  0.0f},  {0.0f,  0.0f}},
-	     Vertex  {{ 0.05f,  0.05f,  0.05f},  {1.0f,  0.0f,  0.0f},  {1.0f,  0.0f}},
-				   
-	     Vertex  {{-0.05f, -0.05f, -0.05f},  {0.0f, -1.0f,  0.0f},  {0.0f,  1.0f}},
-	     Vertex  {{ 0.05f, -0.05f, -0.05f},  {0.0f, -1.0f,  0.0f},  {1.0f,  1.0f}},
-	     Vertex  {{ 0.05f, -0.05f,  0.05f},  {0.0f, -1.0f,  0.0f},  {1.0f,  0.0f}},
-	     Vertex  {{ 0.05f, -0.05f,  0.05f},  {0.0f, -1.0f,  0.0f},  {1.0f,  0.0f}},
-	     Vertex  {{-0.05f, -0.05f,  0.05f},  {0.0f, -1.0f,  0.0f},  {0.0f,  0.0f}},
-	     Vertex  {{-0.05f, -0.05f, -0.05f},  {0.0f, -1.0f,  0.0f},  {0.0f,  1.0f}},
-				   
-	     Vertex  {{-0.05f,  0.05f, -0.05f},  {0.0f,  1.0f,  0.0f},  {0.0f,  1.0f}},
-	     Vertex  {{ 0.05f,  0.05f, -0.05f},  {0.0f,  1.0f,  0.0f},  {1.0f,  1.0f}},
-	     Vertex  {{ 0.05f,  0.05f,  0.05f},  {0.0f,  1.0f,  0.0f},  {1.0f,  0.0f}},
-	     Vertex  {{ 0.05f,  0.05f,  0.05f},  {0.0f,  1.0f,  0.0f},  {1.0f,  0.0f}},
-	     Vertex  {{-0.05f,  0.05f,  0.05f},  {0.0f,  1.0f,  0.0f},  {0.0f,  0.0f}},
-	     Vertex  {{-0.05f,  0.05f, -0.05f},  {0.0f,  1.0f,  0.0f},  {0.0f,  1.0f}}
-	    };
-
-	std::vector<unsigned int> indices(36);
-	for (int i = 0; i < 36; i++) {
-	    indices[i] = i;
-	    vertices[i].position.x += v.x;
-	    vertices[i].position.y += v.y;
-	    vertices[i].position.z += v.z;
-	}
-	std::vector<Texture> textures{};
-
-	Mesh mesh(vertices, indices, textures);
-
-	mesh.Draw(shader);
-    }
-
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     for (auto m : meshes)
     {
