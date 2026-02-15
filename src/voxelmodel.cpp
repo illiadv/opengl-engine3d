@@ -72,14 +72,14 @@ void MarchingCubes(VoxelArray& array, std::vector<glm::vec3>& verts)
 
 bool GreedyMesher::FaceExistsBottom(int x, int y, int z)
 {
-    return !Get(x, y, z, &visitedTop) 
+    return !Get(x, y, z, &visitedBottom) 
 	&&  Get(x, y, z, &array) 
 	&& !Get(x, y-1, z, &array);
 }
 
 bool GreedyMesher::FaceExistsTop(int x, int y, int z)
 {
-    return !Get(x, y, z, &visitedBottom) 
+    return !Get(x, y, z, &visitedTop) 
 	&&  Get(x, y, z, &array) 
 	&& !Get(x, y+1, z, &array);
 }
@@ -98,6 +98,20 @@ bool GreedyMesher::FaceExistsRight(int x, int y, int z)
 	&& !Get(x+1, y, z, &array);
 }
 
+bool GreedyMesher::FaceExistsBack(int x, int y, int z)
+{
+    return !Get(x, y, z, &visitedBack) 
+	&&  Get(x, y, z, &array) 
+	&& !Get(x, y, z-1, &array);
+}
+
+bool GreedyMesher::FaceExistsFront(int x, int y, int z)
+{
+    return !Get(x, y, z, &visitedFront) 
+	&&  Get(x, y, z, &array) 
+	&& !Get(x, y, z+1, &array);
+}
+
 bool GreedyMesher::RowFullBottomX(int x1, int x2, int y, int z)
 {
     for (int i = x1; i <= x2; i++)
@@ -109,7 +123,7 @@ bool GreedyMesher::RowFullBottomX(int x1, int x2, int y, int z)
     for (int i = x1; i <= x2; i++)
     {
 	// Put into visited
-	Set(i, y, z, &visitedTop, 1);
+	Set(i, y, z, &visitedBottom, 1);
     }
     return true;
 }
@@ -125,7 +139,7 @@ bool GreedyMesher::RowFullTopX(int x1, int x2, int y, int z)
     for (int i = x1; i <= x2; i++)
     {
 	// Put into visited
-	Set(i, y, z, &visitedBottom, 1);
+	Set(i, y, z, &visitedTop, 1);
     }
     return true;
 }
@@ -162,6 +176,38 @@ bool GreedyMesher::RowFullRightY(int x, int y1, int y2, int z)
     return true;
 }
 
+bool GreedyMesher::RowFullBackY(int x, int y1, int y2, int z)
+{
+    for (int i = y1; i <= y2; i++)
+    {
+	if (!FaceExistsBack(x, i, z)) {
+	    return false;
+	}
+    }
+    for (int i = y1; i <= y2; i++)
+    {
+	// Put into visited
+	Set(x, i, z, &visitedBack, 1);
+    }
+    return true;
+}
+
+bool GreedyMesher::RowFullFrontY(int x, int y1, int y2, int z)
+{
+    for (int i = y1; i <= y2; i++)
+    {
+	if (!FaceExistsFront(x, i, z)) {
+	    return false;
+	}
+    }
+    for (int i = y1; i <= y2; i++)
+    {
+	// Put into visited
+	Set(x, i, z, &visitedFront, 1);
+    }
+    return true;
+}
+
 void GreedyMesher::CreateFaceBottom(int x, int y, int z)
 {
     if (!FaceExistsBottom(x, y, z)) {
@@ -169,7 +215,7 @@ void GreedyMesher::CreateFaceBottom(int x, int y, int z)
     }
 
     // Put into visited
-    Set(x, y, z, &visitedTop, 1);
+    Set(x, y, z, &visitedBottom, 1);
 
     // Check X direction:
     int xi = x;
@@ -180,7 +226,7 @@ void GreedyMesher::CreateFaceBottom(int x, int y, int z)
 	}
 
 	// Put into visited
-	Set(xi, y, z, &visitedTop, 1);
+	Set(xi, y, z, &visitedBottom, 1);
     }
 
     int xf = xi-1;
@@ -215,7 +261,7 @@ void GreedyMesher::CreateFaceTop(int x, int y, int z)
     }
 
     // Put into visited
-    Set(x, y, z, &visitedBottom, 1);
+    Set(x, y, z, &visitedTop, 1);
 
     // Check X direction:
     int xi = x;
@@ -226,7 +272,7 @@ void GreedyMesher::CreateFaceTop(int x, int y, int z)
 	}
 
 	// Put into visited
-	Set(xi, y, z, &visitedBottom, 1);
+	Set(xi, y, z, &visitedTop, 1);
     }
 
     int xf = xi-1;
@@ -290,13 +336,16 @@ void GreedyMesher::CreateFaceLeft(int x, int y, int z)
 
     int zf = zi-1;
 
-    vertices.push_back(Vertex{{x, yf+1, z}, {-1, 0, 0}, {zf-z+1, 0}});
-    vertices.push_back(Vertex{{x, y, z}, {-1, 0, 0}, {0, 0}});
-    vertices.push_back(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, yf-y+1}});
+    int u = yf-y+1;
+    int v = zf-z+1;
 
-    vertices.push_back(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, yf-y+1}});
-    vertices.push_back(Vertex{{x, yf+1, zf+1}, {-1, 0, 0}, {zf-z+1, yf-y+1}});
-    vertices.push_back(Vertex{{x, yf+1, z}, {-1, 0, 0}, {zf-z+1, 0}});
+    vertices.push_back(Vertex{{x, yf+1, z}, {-1, 0, 0}, {u, 0}});
+    vertices.push_back(Vertex{{x, y, z}, {-1, 0, 0}, {0, 0}});
+    vertices.push_back(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, v}});
+
+    vertices.push_back(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, v}});
+    vertices.push_back(Vertex{{x, yf+1, zf+1}, {-1, 0, 0}, {u, v}});
+    vertices.push_back(Vertex{{x, yf+1, z}, {-1, 0, 0}, {u, 0}});
 }
 
 void GreedyMesher::CreateFaceRight(int x, int y, int z)
@@ -335,13 +384,115 @@ void GreedyMesher::CreateFaceRight(int x, int y, int z)
 
     int zf = zi-1;
 
-    vertices.push_back(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {zf-z+2, 0}});
-    vertices.push_back(Vertex{{x+1, y, z}, {1, 0, 0}, {0, 0}});
-    vertices.push_back(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, yf-y+1}});
 
-    vertices.push_back(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, yf-y+1}});
-    vertices.push_back(Vertex{{x+1, yf+1, zf+1}, {1, 0, 0}, {zf-z+2, yf-y+1}});
-    vertices.push_back(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {zf-z+2, 0}});
+    int v = zf - z + 1;
+    int u = yf - y + 1;
+
+    vertices.push_back(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {u, 0}});
+    vertices.push_back(Vertex{{x+1, y, z}, {1, 0, 0}, {0, 0}});
+    vertices.push_back(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, v}});
+
+    vertices.push_back(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, v}});
+    vertices.push_back(Vertex{{x+1, yf+1, zf+1}, {1, 0, 0}, {u, v}});
+    vertices.push_back(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {u, 0}});
+}
+
+void GreedyMesher::CreateFaceBack(int x, int y, int z)
+{
+    if (!FaceExistsBack(x, y, z)) {
+	return;
+    }
+
+    // Put into visited
+    Set(x, y, z, &visitedBack, 1);
+
+    // Check Y direction:
+    int yi = y;
+    while (1) {
+	yi++;
+	if (!FaceExistsBack(x, yi, z)) {
+	    break;
+	}
+
+	// Put into visited
+	Set(x, yi, z, &visitedBack, 1);
+    }
+
+    int yf = yi-1;
+
+    // Check X direction
+    int xi = x;
+
+    while (1) {
+	xi++;
+	if (!RowFullBackY(xi, y, yf, z))
+	{
+	    break;
+	}
+    }
+
+    int xf = xi-1;
+
+
+    int v = xf - x + 1;
+    int u = yf - y + 1;
+
+    vertices.push_back(Vertex{{x, yf+1, z}, {1, 0, 0}, {u, 0}});
+    vertices.push_back(Vertex{{x, y, z}, {1, 0, 0}, {0, 0}});
+    vertices.push_back(Vertex{{xf+1, y, z}, {1, 0, 0}, {0, v}});
+
+    vertices.push_back(Vertex{{xf+1, y, z}, {1, 0, 0}, {0, v}});
+    vertices.push_back(Vertex{{xf+1, yf+1, z}, {1, 0, 0}, {u, v}});
+    vertices.push_back(Vertex{{x, yf+1, z}, {1, 0, 0}, {u, 0}});
+}
+
+void GreedyMesher::CreateFaceFront(int x, int y, int z)
+{
+    if (!FaceExistsFront(x, y, z)) {
+	return;
+    }
+
+    // Put into visited
+    Set(x, y, z, &visitedFront, 1);
+
+    // Check Y direction:
+    int yi = y;
+    while (1) {
+	yi++;
+	if (!FaceExistsFront(x, yi, z)) {
+	    break;
+	}
+
+	// Put into visited
+	Set(x, yi, z, &visitedFront, 1);
+    }
+
+    int yf = yi-1;
+
+    // Check X direction
+    int xi = x;
+
+    while (1) {
+	xi++;
+	if (!RowFullFrontY(xi, y, yf, z))
+	{
+	    break;
+	}
+    }
+
+    int xf = xi-1;
+
+
+    int v = xf - x + 1;
+    int u = yf - y + 1;
+
+    vertices.push_back(Vertex{{x, yf+1, z+1}, {1, 0, 0}, {u, 0}});
+    vertices.push_back(Vertex{{x, y, z+1}, {1, 0, 0}, {0, 0}});
+    vertices.push_back(Vertex{{xf+1, y, z+1}, {1, 0, 0}, {0, v}});
+
+    vertices.push_back(Vertex{{xf+1, y, z+1}, {1, 0, 0}, {0, v}});
+    vertices.push_back(Vertex{{xf+1, yf+1, z+1}, {1, 0, 0}, {u, v}});
+    vertices.push_back(Vertex{{x, yf+1, z+1}, {1, 0, 0}, {u, 0}});
 }
 
 Mesh GreedyMesher::CreateMesh()
@@ -357,6 +508,8 @@ Mesh GreedyMesher::CreateMesh()
 		CreateFaceTop(x, y, z);
 		CreateFaceLeft(x, y, z);
 		CreateFaceRight(x, y, z);
+		CreateFaceBack(x, y, z);
+		CreateFaceFront(x, y, z);
 
 	    }
 	}

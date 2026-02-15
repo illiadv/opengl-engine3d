@@ -30,6 +30,8 @@ private:
     VoxelArray visitedBottom;
     VoxelArray visitedLeft;
     VoxelArray visitedRight;
+    VoxelArray visitedBack;
+    VoxelArray visitedFront;
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
@@ -41,6 +43,8 @@ public:
 	visitedBottom = VoxelArray(array.width, array.height, array.depth);
 	visitedLeft = VoxelArray(array.width, array.height, array.depth);
 	visitedRight = VoxelArray(array.width, array.height, array.depth);
+	visitedBack = VoxelArray(array.width, array.height, array.depth);
+	visitedFront = VoxelArray(array.width, array.height, array.depth);
     }
     // void SetVisitedTop(int x, int y, int z);
     bool FaceExistsBottom(int x, int y, int z);
@@ -58,6 +62,14 @@ public:
     bool FaceExistsRight(int x, int y, int z);
     bool RowFullRightY(int x, int y1, int y2, int z);
     void CreateFaceRight(int x, int y, int z);
+
+    bool FaceExistsBack(int x, int y, int z);
+    bool RowFullBackY(int x, int y1, int y2, int z);
+    void CreateFaceBack(int x, int y, int z);
+
+    bool FaceExistsFront(int x, int y, int z);
+    bool RowFullFrontY(int x, int y1, int y2, int z);
+    void CreateFaceFront(int x, int y, int z);
 
     Mesh CreateMesh();
 

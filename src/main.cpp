@@ -233,7 +233,7 @@
 	    ImGui::Text("FOV: %.3f", (camera.fov));
 	    ImGui::Separator();
 
-	    std::vector<std::string> vmodels = {"vmodel.txt", "vcube.txt", "vstair.txt"};
+	    std::vector<std::string> vmodels = {"vmodel.txt", "vcube.txt", "vstair.txt", "vwalls.txt"};
 
 	    if (ImGui::BeginListBox("Voxel models")) {
 		for (int i = 0; i < vmodels.size(); i++)
