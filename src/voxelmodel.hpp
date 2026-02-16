@@ -2,8 +2,10 @@
 #define VOXELMODEL_HPP
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include <glm/glm.hpp>
+#include <glm/gtx/hash.hpp>
 
 #include "basemodel.hpp"
 #include "mesh.hpp"
@@ -35,6 +37,8 @@ private:
 
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
+    std::unordered_map<glm::vec3, unsigned int> vertexMap;
+    unsigned int currentIndex = 0;
 public:
     GreedyMesher(VoxelArray a)
     {
@@ -46,7 +50,8 @@ public:
 	visitedBack = VoxelArray(array.width, array.height, array.depth);
 	visitedFront = VoxelArray(array.width, array.height, array.depth);
     }
-    // void SetVisitedTop(int x, int y, int z);
+    void AddVertex(Vertex vertex);
+
     bool FaceExistsBottom(int x, int y, int z);
     bool RowFullBottomX(int x1, int x2, int y, int z);
     void CreateFaceBottom(int x, int y, int z);

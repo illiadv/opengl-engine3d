@@ -69,6 +69,26 @@ void MarchingCubes(VoxelArray& array, std::vector<glm::vec3>& verts)
     }
 }
 
+void GreedyMesher::AddVertex(Vertex vertex)
+{
+#if 0
+    vertices.push_back(vertex);
+    indices.push_back(currentIndex);
+    currentIndex++;
+#else
+    auto it = vertexMap.find(vertex.position);
+    if (it == vertexMap.end()) {
+	vertices.push_back(vertex);
+	vertexMap[vertex.position] = currentIndex;
+	indices.push_back(currentIndex);
+	currentIndex++;
+    }
+    else {
+	indices.push_back(it->second);
+    }
+#endif
+}
+
 
 bool GreedyMesher::FaceExistsBottom(int x, int y, int z)
 {
@@ -245,13 +265,13 @@ void GreedyMesher::CreateFaceBottom(int x, int y, int z)
     int zf = zi-1;
 
 
-    vertices.push_back(Vertex{{x, y, zf+1}, {0, -1, 0}, {zf-z+1, 0}});
-    vertices.push_back(Vertex{{x, y, z}, {0, -1, 0}, {0, 0}});
-    vertices.push_back(Vertex{{xf+1, y, z}, {0, -1, 0}, {0, xf-x+1}});
+    AddVertex(Vertex{{x, y, zf+1}, {0, -1, 0}, {zf-z+1, 0}});
+    AddVertex(Vertex{{x, y, z}, {0, -1, 0}, {0, 0}});
+    AddVertex(Vertex{{xf+1, y, z}, {0, -1, 0}, {0, xf-x+1}});
 
-    vertices.push_back(Vertex{{xf+1, y, z}, {0, -1, 0}, {0, xf-x+1}});
-    vertices.push_back(Vertex{{xf+1, y, zf+1}, {0, -1, 0}, {zf-z+1, xf-x+1}});
-    vertices.push_back(Vertex{{x, y, zf+1}, {0, -1, 0}, {zf-z+1, 0}});
+    AddVertex(Vertex{{xf+1, y, z}, {0, -1, 0}, {0, xf-x+1}});
+    AddVertex(Vertex{{xf+1, y, zf+1}, {0, -1, 0}, {zf-z+1, xf-x+1}});
+    AddVertex(Vertex{{x, y, zf+1}, {0, -1, 0}, {zf-z+1, 0}});
 }
 
 void GreedyMesher::CreateFaceTop(int x, int y, int z)
@@ -291,13 +311,13 @@ void GreedyMesher::CreateFaceTop(int x, int y, int z)
     int zf = zi-1;
 
 
-    vertices.push_back(Vertex{{x, y+1, zf+1}, {0, 1, 0}, {zf-z+1, 0}});
-    vertices.push_back(Vertex{{x, y+1, z}, {0, 1, 0}, {0, 0}});
-    vertices.push_back(Vertex{{xf+1, y+1, z}, {0, 1, 0}, {0, xf-x+1}});
+    AddVertex(Vertex{{x, y+1, zf+1}, {0, 1, 0}, {zf-z+1, 0}});
+    AddVertex(Vertex{{x, y+1, z}, {0, 1, 0}, {0, 0}});
+    AddVertex(Vertex{{xf+1, y+1, z}, {0, 1, 0}, {0, xf-x+1}});
 
-    vertices.push_back(Vertex{{xf+1, y+1, z}, {0, 1, 0}, {0, xf-x+1}});
-    vertices.push_back(Vertex{{xf+1, y+1, zf+1}, {0, 1, 0}, {zf-z+1, xf-x+1}});
-    vertices.push_back(Vertex{{x, y+1, zf+1}, {0, 1, 0}, {zf-z+1, 0}});
+    AddVertex(Vertex{{xf+1, y+1, z}, {0, 1, 0}, {0, xf-x+1}});
+    AddVertex(Vertex{{xf+1, y+1, zf+1}, {0, 1, 0}, {zf-z+1, xf-x+1}});
+    AddVertex(Vertex{{x, y+1, zf+1}, {0, 1, 0}, {zf-z+1, 0}});
 }
 
 void GreedyMesher::CreateFaceLeft(int x, int y, int z)
@@ -339,13 +359,13 @@ void GreedyMesher::CreateFaceLeft(int x, int y, int z)
     int u = yf-y+1;
     int v = zf-z+1;
 
-    vertices.push_back(Vertex{{x, yf+1, z}, {-1, 0, 0}, {u, 0}});
-    vertices.push_back(Vertex{{x, y, z}, {-1, 0, 0}, {0, 0}});
-    vertices.push_back(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, v}});
+    AddVertex(Vertex{{x, yf+1, z}, {-1, 0, 0}, {u, 0}});
+    AddVertex(Vertex{{x, y, z}, {-1, 0, 0}, {0, 0}});
+    AddVertex(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, v}});
 
-    vertices.push_back(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, v}});
-    vertices.push_back(Vertex{{x, yf+1, zf+1}, {-1, 0, 0}, {u, v}});
-    vertices.push_back(Vertex{{x, yf+1, z}, {-1, 0, 0}, {u, 0}});
+    AddVertex(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, v}});
+    AddVertex(Vertex{{x, yf+1, zf+1}, {-1, 0, 0}, {u, v}});
+    AddVertex(Vertex{{x, yf+1, z}, {-1, 0, 0}, {u, 0}});
 }
 
 void GreedyMesher::CreateFaceRight(int x, int y, int z)
@@ -388,13 +408,13 @@ void GreedyMesher::CreateFaceRight(int x, int y, int z)
     int v = zf - z + 1;
     int u = yf - y + 1;
 
-    vertices.push_back(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {u, 0}});
-    vertices.push_back(Vertex{{x+1, y, z}, {1, 0, 0}, {0, 0}});
-    vertices.push_back(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, v}});
+    AddVertex(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {u, 0}});
+    AddVertex(Vertex{{x+1, y, z}, {1, 0, 0}, {0, 0}});
+    AddVertex(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, v}});
 
-    vertices.push_back(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, v}});
-    vertices.push_back(Vertex{{x+1, yf+1, zf+1}, {1, 0, 0}, {u, v}});
-    vertices.push_back(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {u, 0}});
+    AddVertex(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, v}});
+    AddVertex(Vertex{{x+1, yf+1, zf+1}, {1, 0, 0}, {u, v}});
+    AddVertex(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {u, 0}});
 }
 
 void GreedyMesher::CreateFaceBack(int x, int y, int z)
@@ -437,13 +457,13 @@ void GreedyMesher::CreateFaceBack(int x, int y, int z)
     int v = xf - x + 1;
     int u = yf - y + 1;
 
-    vertices.push_back(Vertex{{x, yf+1, z}, {1, 0, 0}, {u, 0}});
-    vertices.push_back(Vertex{{x, y, z}, {1, 0, 0}, {0, 0}});
-    vertices.push_back(Vertex{{xf+1, y, z}, {1, 0, 0}, {0, v}});
+    AddVertex(Vertex{{x, yf+1, z}, {1, 0, 0}, {u, 0}});
+    AddVertex(Vertex{{x, y, z}, {1, 0, 0}, {0, 0}});
+    AddVertex(Vertex{{xf+1, y, z}, {1, 0, 0}, {0, v}});
 
-    vertices.push_back(Vertex{{xf+1, y, z}, {1, 0, 0}, {0, v}});
-    vertices.push_back(Vertex{{xf+1, yf+1, z}, {1, 0, 0}, {u, v}});
-    vertices.push_back(Vertex{{x, yf+1, z}, {1, 0, 0}, {u, 0}});
+    AddVertex(Vertex{{xf+1, y, z}, {1, 0, 0}, {0, v}});
+    AddVertex(Vertex{{xf+1, yf+1, z}, {1, 0, 0}, {u, v}});
+    AddVertex(Vertex{{x, yf+1, z}, {1, 0, 0}, {u, 0}});
 }
 
 void GreedyMesher::CreateFaceFront(int x, int y, int z)
@@ -486,13 +506,13 @@ void GreedyMesher::CreateFaceFront(int x, int y, int z)
     int v = xf - x + 1;
     int u = yf - y + 1;
 
-    vertices.push_back(Vertex{{x, yf+1, z+1}, {1, 0, 0}, {u, 0}});
-    vertices.push_back(Vertex{{x, y, z+1}, {1, 0, 0}, {0, 0}});
-    vertices.push_back(Vertex{{xf+1, y, z+1}, {1, 0, 0}, {0, v}});
+    AddVertex(Vertex{{x, yf+1, z+1}, {1, 0, 0}, {u, 0}});
+    AddVertex(Vertex{{x, y, z+1}, {1, 0, 0}, {0, 0}});
+    AddVertex(Vertex{{xf+1, y, z+1}, {1, 0, 0}, {0, v}});
 
-    vertices.push_back(Vertex{{xf+1, y, z+1}, {1, 0, 0}, {0, v}});
-    vertices.push_back(Vertex{{xf+1, yf+1, z+1}, {1, 0, 0}, {u, v}});
-    vertices.push_back(Vertex{{x, yf+1, z+1}, {1, 0, 0}, {u, 0}});
+    AddVertex(Vertex{{xf+1, y, z+1}, {1, 0, 0}, {0, v}});
+    AddVertex(Vertex{{xf+1, yf+1, z+1}, {1, 0, 0}, {u, v}});
+    AddVertex(Vertex{{x, yf+1, z+1}, {1, 0, 0}, {u, 0}});
 }
 
 Mesh GreedyMesher::CreateMesh()
@@ -515,9 +535,9 @@ Mesh GreedyMesher::CreateMesh()
 	}
     }
 
-    indices.resize(vertices.size());
-    for (size_t i = 0; i < vertices.size(); i++)
-	indices[i] = i;
+	//    indices.resize(vertices.size());
+	//    for (size_t i = 0; i < vertices.size(); i++)
+	// indices[i] = i;
 
     std::vector<Texture> textures{};
     Texture tex;
