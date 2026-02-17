@@ -165,6 +165,7 @@
 	// crate->SetScale(glm::vec3(0.1f, 0.1f, 1.0f));
 	crate->SetPosition(glm::vec3(-2.0f, 0.0f, 0.0f));
 	Object *cat = engine.AddObject(&catModel);
+	(void)cat;
 	// cat->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
 	
 	Object *voxels = engine.AddObject(&voxelmodel);
@@ -238,7 +239,7 @@
 	    ImGui::Checkbox("Optimize vmodel", &voxelmodel.optimize);
 
 	    if (ImGui::BeginListBox("Voxel models")) {
-		for (int i = 0; i < vmodels.size(); i++)
+		for (size_t i = 0; i < vmodels.size(); i++)
 		{
 		    if (ImGui::Selectable(vmodels[i].c_str()))
 		    {
@@ -252,7 +253,7 @@
 	ImGui::Text("%zu objects", engine.GetObjectCount());
 
 	if (ImGui::BeginListBox("Object list")) {
-	    for (int i = 0; i < engine.GetObjectCount(); i++)
+	    for (size_t i = 0; i < engine.GetObjectCount(); i++)
 	    {
 		std::string name = std::to_string(i) + ".  "
 		    + engine.GetObject(i)->GetModel()->GetDirectory();
@@ -295,7 +296,7 @@
 	ImGui::Text("%zu ligths", engine.GetLightCount());
 
 	if (ImGui::BeginListBox("Light list")) {
-	    for (int i = 0; i < engine.GetLightCount(); i++)
+	    for (size_t i = 0; i < engine.GetLightCount(); i++)
 	    {
 		std::string name = "Light " + std::to_string(i);
 		if (ImGui::Selectable(name.c_str()))
