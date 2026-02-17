@@ -235,6 +235,8 @@
 
 	    std::vector<std::string> vmodels = {"vmodel.txt", "vcube.txt", "vstair.txt", "vwalls.txt"};
 
+	    ImGui::Checkbox("Optimize vmodel", &voxelmodel.optimize);
+
 	    if (ImGui::BeginListBox("Voxel models")) {
 		for (int i = 0; i < vmodels.size(); i++)
 		{

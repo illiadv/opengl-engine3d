@@ -69,25 +69,65 @@ void MarchingCubes(VoxelArray& array, std::vector<glm::vec3>& verts)
     }
 }
 
-void GreedyMesher::AddVertex(Vertex vertex)
+void GreedyMesher::AddFace(Face face)
 {
-#if 0
-    vertices.push_back(vertex);
-    indices.push_back(currentIndex);
-    currentIndex++;
-#else
-    auto it = vertexMap.find(vertex.position);
-    if (it == vertexMap.end()) {
-	vertices.push_back(vertex);
-	vertexMap[vertex.position] = currentIndex;
-	indices.push_back(currentIndex);
-	currentIndex++;
+    glm::vec3 normal{};
+    int u;
+    int v;
+
+    switch (face.direction) {
+	case FACE_BOTTOM: normal = {0, -1, 0};
+		       u = face.bottomRight.x - face.bottomLeft.x;
+		       v = face.topLeft.z - face.bottomLeft.z;
+		       break;
+	case FACE_TOP: normal = {0, 1, 0};
+		       u = face.bottomRight.x - face.bottomLeft.x;
+		       v = face.bottomLeft.z - face.topLeft.z;
+		       break;
+	case FACE_LEFT: normal = {-1, 0, 0};
+		       u = face.bottomRight.z - face.bottomLeft.z;
+		       v = face.topLeft.y - face.bottomLeft.y;
+		       break;
+	case FACE_RIGHT: normal = {1, 0, 0};
+		       u = face.bottomLeft.z - face.bottomRight.z;
+		       v = face.topLeft.y - face.bottomLeft.y;
+		       break;
+	case FACE_BACK: normal = {0, 0, -1};
+		       u = face.bottomLeft.x - face.bottomRight.x;
+		       v = face.topLeft.y - face.bottomLeft.y;
+		       break;
+	case FACE_FRONT: normal = {0, 0, 1};
+		       u = face.bottomRight.x - face.bottomLeft.x;
+		       v = face.topLeft.y - face.bottomLeft.y;
+		       break;
+    
     }
-    else {
-	indices.push_back(it->second);
-    }
-#endif
+
+    vertices.push_back(Vertex{face.bottomLeft, normal, {0, 0}});
+    vertices.push_back(Vertex{face.bottomRight, normal, {u, 0}});
+    vertices.push_back(Vertex{face.topRight, normal, {u, v}});
+    vertices.push_back(Vertex{face.topLeft, normal, {0, v}});
+
+    indices.push_back(currentIndex + 0);
+    indices.push_back(currentIndex + 1);
+    indices.push_back(currentIndex + 2);
+    indices.push_back(currentIndex + 0);
+    indices.push_back(currentIndex + 2);
+    indices.push_back(currentIndex + 3);
+
+    currentIndex += 4;
 }
+
+
+// Mesher finished; 156 verts, 52 tris
+// Loaded texture ./assets/crate/container2.png 500x500, 4 channels
+// Mesher finished; 234 verts, 78 tris
+// Loaded texture ./assets/crate/container2.png 500x500, 4 channels
+// Mesher finished; 156 verts, 52 tris
+// Loaded texture ./assets/crate/container2.png 500x500, 4 channels
+// Mesher finished; 36 verts, 12 tris
+// Loaded texture ./assets/crate/container2.png 500x500, 4 channels
+// Mesher finished; 276 verts, 92 tris
 
 
 bool GreedyMesher::FaceExistsBottom(int x, int y, int z)
@@ -262,16 +302,15 @@ void GreedyMesher::CreateFaceBottom(int x, int y, int z)
 	}
     }
 
-    int zf = zi-1;
+    Face face;
 
+    face.bottomLeft  = {x,  y, z};
+    face.bottomRight = {xi, y, z};
+    face.topRight    = {xi, y, zi};
+    face.topLeft     = {x,  y, zi};
+    face.direction = FACE_BOTTOM;
 
-    AddVertex(Vertex{{x, y, zf+1}, {0, -1, 0}, {zf-z+1, 0}});
-    AddVertex(Vertex{{x, y, z}, {0, -1, 0}, {0, 0}});
-    AddVertex(Vertex{{xf+1, y, z}, {0, -1, 0}, {0, xf-x+1}});
-
-    AddVertex(Vertex{{xf+1, y, z}, {0, -1, 0}, {0, xf-x+1}});
-    AddVertex(Vertex{{xf+1, y, zf+1}, {0, -1, 0}, {zf-z+1, xf-x+1}});
-    AddVertex(Vertex{{x, y, zf+1}, {0, -1, 0}, {zf-z+1, 0}});
+    AddFace(face);
 }
 
 void GreedyMesher::CreateFaceTop(int x, int y, int z)
@@ -308,16 +347,18 @@ void GreedyMesher::CreateFaceTop(int x, int y, int z)
 	}
     }
 
-    int zf = zi-1;
+    Face face;
 
+    face.bottomLeft  = {x,  y+1, zi};
+    face.bottomRight = {xi, y+1, zi};
+    face.topRight    = {xi, y+1, z};
+    face.topLeft     = {x,  y+1, z};
+    face.direction = FACE_TOP;
 
-    AddVertex(Vertex{{x, y+1, zf+1}, {0, 1, 0}, {zf-z+1, 0}});
-    AddVertex(Vertex{{x, y+1, z}, {0, 1, 0}, {0, 0}});
-    AddVertex(Vertex{{xf+1, y+1, z}, {0, 1, 0}, {0, xf-x+1}});
+    AddFace(face);
 
-    AddVertex(Vertex{{xf+1, y+1, z}, {0, 1, 0}, {0, xf-x+1}});
-    AddVertex(Vertex{{xf+1, y+1, zf+1}, {0, 1, 0}, {zf-z+1, xf-x+1}});
-    AddVertex(Vertex{{x, y+1, zf+1}, {0, 1, 0}, {zf-z+1, 0}});
+    // int zf = zi-1;
+
 }
 
 void GreedyMesher::CreateFaceLeft(int x, int y, int z)
@@ -354,18 +395,15 @@ void GreedyMesher::CreateFaceLeft(int x, int y, int z)
 	}
     }
 
-    int zf = zi-1;
+    Face face;
 
-    int u = yf-y+1;
-    int v = zf-z+1;
+    face.bottomLeft  = {x, y, z};
+    face.bottomRight = {x, y, zi};
+    face.topRight    = {x, yi, zi};
+    face.topLeft     = {x, yi, z};
+    face.direction = FACE_LEFT;
 
-    AddVertex(Vertex{{x, yf+1, z}, {-1, 0, 0}, {u, 0}});
-    AddVertex(Vertex{{x, y, z}, {-1, 0, 0}, {0, 0}});
-    AddVertex(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, v}});
-
-    AddVertex(Vertex{{x, y, zf+1}, {-1, 0, 0}, {0, v}});
-    AddVertex(Vertex{{x, yf+1, zf+1}, {-1, 0, 0}, {u, v}});
-    AddVertex(Vertex{{x, yf+1, z}, {-1, 0, 0}, {u, 0}});
+    AddFace(face);
 }
 
 void GreedyMesher::CreateFaceRight(int x, int y, int z)
@@ -402,19 +440,15 @@ void GreedyMesher::CreateFaceRight(int x, int y, int z)
 	}
     }
 
-    int zf = zi-1;
+    Face face;
 
+    face.bottomLeft  = {x + 1, y, zi};
+    face.bottomRight = {x + 1, y, z};
+    face.topRight    = {x + 1, yi, z};
+    face.topLeft     = {x + 1, yi, zi};
+    face.direction = FACE_RIGHT;
 
-    int v = zf - z + 1;
-    int u = yf - y + 1;
-
-    AddVertex(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {u, 0}});
-    AddVertex(Vertex{{x+1, y, z}, {1, 0, 0}, {0, 0}});
-    AddVertex(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, v}});
-
-    AddVertex(Vertex{{x+1, y, zf+1}, {1, 0, 0}, {0, v}});
-    AddVertex(Vertex{{x+1, yf+1, zf+1}, {1, 0, 0}, {u, v}});
-    AddVertex(Vertex{{x+1, yf+1, z}, {1, 0, 0}, {u, 0}});
+    AddFace(face);
 }
 
 void GreedyMesher::CreateFaceBack(int x, int y, int z)
@@ -451,19 +485,15 @@ void GreedyMesher::CreateFaceBack(int x, int y, int z)
 	}
     }
 
-    int xf = xi-1;
+    Face face;
 
+    face.bottomLeft  = {xi, y, z};
+    face.bottomRight = {x, y, z};
+    face.topRight    = {x, yi, z};
+    face.topLeft     = {xi, yi, z};
+    face.direction = FACE_BACK;
 
-    int v = xf - x + 1;
-    int u = yf - y + 1;
-
-    AddVertex(Vertex{{x, yf+1, z}, {1, 0, 0}, {u, 0}});
-    AddVertex(Vertex{{x, y, z}, {1, 0, 0}, {0, 0}});
-    AddVertex(Vertex{{xf+1, y, z}, {1, 0, 0}, {0, v}});
-
-    AddVertex(Vertex{{xf+1, y, z}, {1, 0, 0}, {0, v}});
-    AddVertex(Vertex{{xf+1, yf+1, z}, {1, 0, 0}, {u, v}});
-    AddVertex(Vertex{{x, yf+1, z}, {1, 0, 0}, {u, 0}});
+    AddFace(face);
 }
 
 void GreedyMesher::CreateFaceFront(int x, int y, int z)
@@ -500,19 +530,17 @@ void GreedyMesher::CreateFaceFront(int x, int y, int z)
 	}
     }
 
-    int xf = xi-1;
+    Face face;
+
+    face.bottomLeft  = {x, y, z+1};
+    face.bottomRight = {xi, y, z+1};
+    face.topRight    = {xi, yi, z+1};
+    face.topLeft     = {x, yi, z+1};
+    face.direction = FACE_FRONT;
+
+    AddFace(face);
 
 
-    int v = xf - x + 1;
-    int u = yf - y + 1;
-
-    AddVertex(Vertex{{x, yf+1, z+1}, {1, 0, 0}, {u, 0}});
-    AddVertex(Vertex{{x, y, z+1}, {1, 0, 0}, {0, 0}});
-    AddVertex(Vertex{{xf+1, y, z+1}, {1, 0, 0}, {0, v}});
-
-    AddVertex(Vertex{{xf+1, y, z+1}, {1, 0, 0}, {0, v}});
-    AddVertex(Vertex{{xf+1, yf+1, z+1}, {1, 0, 0}, {u, v}});
-    AddVertex(Vertex{{x, yf+1, z+1}, {1, 0, 0}, {u, 0}});
 }
 
 Mesh GreedyMesher::CreateMesh()
@@ -541,7 +569,8 @@ Mesh GreedyMesher::CreateMesh()
 
     std::vector<Texture> textures{};
     Texture tex;
-    tex.id = CreateTexture("./assets/crate/container2.png");
+    // tex.id = CreateTexture("./assets/crate/container2.png");
+    tex.id = CreateTexture("./e.png");
     tex.type = TextureType::diffuse;
     textures.push_back(tex);
 

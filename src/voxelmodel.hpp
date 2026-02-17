@@ -25,6 +25,18 @@ struct VoxelArray
     }
 };
 
+enum FaceDirection {
+    FACE_BOTTOM, FACE_TOP, FACE_LEFT, FACE_RIGHT, FACE_BACK, FACE_FRONT
+};
+
+struct Face {
+    glm::vec3 bottomLeft;
+    glm::vec3 bottomRight;
+    glm::vec3 topRight;
+    glm::vec3 topLeft;
+    FaceDirection direction;
+};
+
 class GreedyMesher {
 private:
     VoxelArray array;
@@ -50,7 +62,7 @@ public:
 	visitedBack = VoxelArray(array.width, array.height, array.depth);
 	visitedFront = VoxelArray(array.width, array.height, array.depth);
     }
-    void AddVertex(Vertex vertex);
+    void AddFace(Face face);
 
     bool FaceExistsBottom(int x, int y, int z);
     bool RowFullBottomX(int x1, int x2, int y, int z);
@@ -77,7 +89,6 @@ public:
     void CreateFaceFront(int x, int y, int z);
 
     Mesh CreateMesh();
-
 };
 
 class VoxelModel : public BaseModel
@@ -87,6 +98,8 @@ class VoxelModel : public BaseModel
 	void Draw(unsigned int shader);
 	const char* GetDirectory();
 	void LoadModel(const char* path);
+
+	bool optimize = false;
 
     private:
 	void LoadVoxels(const char* path, VoxelArray& array);
