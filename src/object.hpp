@@ -32,13 +32,17 @@ public:
 
 class Object
 {
-    private:
+    // private:
+    public:
     glm::vec3 position;
     glm::quat rotation;
     glm::vec3 scale;
 
+    glm::vec3 eulerRotation;
+
 
     void SetNormalMat(glm::mat4 model, unsigned int shader) ;
+    void SetEulerRotationToModel();
 
     BaseModel *model;
 
