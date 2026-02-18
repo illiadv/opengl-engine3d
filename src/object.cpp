@@ -93,7 +93,9 @@ void Object::Draw(unsigned int shader)
     modelMat = glm::scale(modelMat, scale);
 
     SetMat4(shader, "model", glm::value_ptr(modelMat));
+    glCheckError();
     SetNormalMat(modelMat, shader);
+    glCheckError();
 
     model->Draw(shader);
     // glUseProgram(0);

@@ -48,6 +48,9 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight)
     glCheckError();
     glBindBufferRange(GL_UNIFORM_BUFFER, 1, uboLights, 0, uboLightsSize);
     glCheckError();
+
+    normalShader = CreateShader("vertex.glsl", "normals.glsl");
+    uvShader = CreateShader("vertex.glsl", "uvs.glsl");
 }
 
 GfxEngine::~GfxEngine()
@@ -65,7 +68,7 @@ void GfxEngine::SetDefaultMaterial(Material* material)
 
 void GfxEngine::SetDebugShader(unsigned int shader)
 {
-    debugShader = shader;
+    wireframeShader = shader;
 }
 
 void GfxEngine::SetActiveCamera(Camera *camera)
@@ -162,14 +165,25 @@ void GfxEngine::Draw() {
 	glUniform1f(glGetUniformLocation(thisMaterial->shader, "material.shininess"), thisMaterial->shininess);
 	glCheckError();
 
-	object->Draw(thisMaterial->shader);
-	glCheckError();
+	if (debugDrawMode == 2) {
+	    glUseProgram(normalShader);
+	    object->Draw(normalShader);
+	}
+	else if (debugDrawMode == 3) {
+	    glUseProgram(uvShader);
+	    object->Draw(uvShader);
+	}
+	else {
+	    object->Draw(thisMaterial->shader);
+	}
+	
+	    glCheckError();
 	
 	// Debug draw
 	if (debugDrawWireframes) {
-	    glUseProgram(debugShader);
+	    glUseProgram(wireframeShader);
 	    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	    object->Draw(debugShader);
+	    object->Draw(wireframeShader);
 	    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	    glCheckError();
 	}

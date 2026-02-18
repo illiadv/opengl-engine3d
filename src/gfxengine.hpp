@@ -36,6 +36,7 @@ public:
     // unsigned int AddShader(const char* vertex, const char* fragment);
 
     bool debugDrawWireframes = false;
+    int debugDrawMode = 1;
 
 private:
     GLFWwindow *window;
@@ -47,7 +48,9 @@ private:
     Material* defaultMaterial;
     Camera *activeCamera = nullptr;
 
-    unsigned int debugShader;
+    unsigned int wireframeShader;
+    unsigned int normalShader;
+    unsigned int uvShader;
 
     unsigned int uboMatricies;
     unsigned int uboLights;
