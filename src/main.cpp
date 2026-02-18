@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <glm/gtx/euler_angles.hpp>
 
 #include "gfxengine.hpp"
 
@@ -121,6 +120,19 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
     camera.ProcessZoom((float)yoffset);
 }
 
+void Drag3Rotation(const char* label, Object* object)
+{
+
+    if (ImGui::DragFloat3(label, glm::value_ptr(object->eulerRotation), 0.1f))
+    {
+	glm::quat q = glm::quat(glm::radians(object->eulerRotation));
+	object->SetRotation(q);
+    }
+
+
+
+}
+
 int main()
 {
     GfxEngine engine(1000, 600);
@@ -210,7 +222,8 @@ int main()
     glm::vec3 rot(0);
     glm::vec3 sc(0);
     
-    int objSelected = 0;
+    size_t objSelectedIndex = 0;
+    Object* objSelected = engine.GetObject(0);
     int lightSelected = 0;
     
     int counter=0;
@@ -223,13 +236,13 @@ int main()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::SetWindowSize({200, 100});
+	ImGui::SetWindowSize({200, 600});
 
 	ImGui::Begin("Menu", &guiActive);
 	
 	if (ImGui::CollapsingHeader("Camera")) {
-	    ImGui::DragFloat3("Position", glm::value_ptr(camera.position), 0.1f);
-	    ImGui::DragFloat("FOV", &camera.fov, 0.5f);
+	    ImGui::DragFloat3("Position##1", glm::value_ptr(camera.position), 0.1f);
+	    ImGui::DragFloat("FOV", &camera.fov, 0.5f, 1.0f);
 	    ImGui::Separator();
 	}
 
@@ -259,32 +272,21 @@ int main()
 		{
 		    std::string name = std::to_string(i) + ".  "
 			+ engine.GetObject(i)->GetModel()->GetDirectory();
-		    if (ImGui::Selectable(name.c_str()))
+		    if (ImGui::Selectable(name.c_str(), (objSelectedIndex == i) ? true : false))
 		    {
-			objSelected = i;
+			objSelectedIndex = i;
 		    }
 		}
 		ImGui::EndListBox();
 	    }
 
-	    Object* obj = engine.GetObject(objSelected);
-	    ImGui::Text("%d. %s", objSelected, obj->GetModel()->GetDirectory());
+	    objSelected = engine.GetObject(objSelectedIndex);
+	    ImGui::Text("%zu. %s", objSelectedIndex, objSelected->GetModel()->GetDirectory());
 
 
-	    glm::mat4 m = glm::mat4_cast(obj->GetRotation());
-	    float y, p, r;
-	    glm::extractEulerAngleXYZ(m, y, p, r);
-	    rot = glm::vec3{y, p, r};
+	    ImGui::DragFloat3("Position##2", glm::value_ptr(objSelected->position), 0.1f);
 
-	    if (ImGui::DragFloat3("Position", glm::value_ptr(pos)), 0.1f)
-		obj->SetPosition(pos);
-
-	    if (ImGui::DragFloat("Rotation X", &rot.x, 0.001f, -360, 360))
-		obj->SetRotation(glm::quat(rot));
-	    if (ImGui::DragFloat("Rotation Y", &rot.y, 0.001f, -360, 360))
-		obj->SetRotation(glm::quat(rot));
-	    if (ImGui::DragFloat("Rotation Z", &rot.z, 0.001f, -360, 360))
-		obj->SetRotation(glm::quat(rot));
+	    Drag3Rotation("Rotation##2", objSelected);
 
 	    if (ImGui::Button("Add new object"))
 	    {
@@ -292,42 +294,43 @@ int main()
 		obj->SetPosition(pos);
 	    }
 	}
+
+	if (ImGui::CollapsingHeader("Lights")) {
+	    ImGui::Text("%zu ligths", engine.GetLightCount());
+
+	    if (ImGui::BeginListBox("Light list")) {
+		for (size_t i = 0; i < engine.GetLightCount(); i++)
+		{
+		    std::string name = "Light " + std::to_string(i);
+		    if (ImGui::Selectable(name.c_str()))
+		    {
+			lightSelected = i;
+		    }
+		}
+		ImGui::EndListBox();
+	    }
+
+	    Light *light = engine.GetLight(lightSelected);
+
+	    ImGui::DragFloat3("Position##3", glm::value_ptr(light->position), 0.1f);
+	    ImGui::ColorEdit3("Ambient", glm::value_ptr(light->ambient),ImGuiColorEditFlags_Float);
+	    ImGui::ColorEdit3("Diffuse", glm::value_ptr(light->diffuse),ImGuiColorEditFlags_Float);
+	    ImGui::ColorEdit3("Specular", glm::value_ptr(light->specular),ImGuiColorEditFlags_Float);
+	    ImGui::DragFloat("Type", &light->type, 0.01f);
+	    ImGui::DragFloat("Constant", &light->constant, 0.01f);
+	    ImGui::DragFloat("Linear", &light->linear, 0.01f);
+	    ImGui::DragFloat("Quadratic", &light->quadratic, 0.01f);
+
+	    if (ImGui::Button("Add new light"))
+	    {
+		Light l(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(0.2f), glm::vec3(1.0f), glm::vec3(1.0f), 1.0f, 0.09f, 0.032f);
+		engine.AddLight(l);
+	    }
+	}
 	
 	ImGui::End();
 
-	ImGui::Begin("Lights", &guiActive);
-	ImGui::Text("%zu ligths", engine.GetLightCount());
 
-	if (ImGui::BeginListBox("Light list")) {
-	    for (size_t i = 0; i < engine.GetLightCount(); i++)
-	    {
-		std::string name = "Light " + std::to_string(i);
-		if (ImGui::Selectable(name.c_str()))
-		{
-		    lightSelected = i;
-		}
-	    }
-	    ImGui::EndListBox();
-	}
-
-	Light *light = engine.GetLight(lightSelected);
-
-	ImGui::DragFloat3("Position", glm::value_ptr(light->position), 0.1f);
-	ImGui::ColorEdit3("Ambient", glm::value_ptr(light->ambient),ImGuiColorEditFlags_Float);
-	ImGui::ColorEdit3("Diffuse", glm::value_ptr(light->diffuse),ImGuiColorEditFlags_Float);
-	ImGui::ColorEdit3("Specular", glm::value_ptr(light->specular),ImGuiColorEditFlags_Float);
-	ImGui::DragFloat("Type", &light->type, 0.01f);
-	ImGui::DragFloat("Constant", &light->constant, 0.01f);
-	ImGui::DragFloat("Linear", &light->linear, 0.01f);
-	ImGui::DragFloat("Quadratic", &light->quadratic, 0.01f);
-
-	if (ImGui::Button("Add new light"))
-	{
-	    Light l(glm::vec3(0.0f, 3.0f, 0.0f), glm::vec3(0.2f), glm::vec3(1.0f), glm::vec3(1.0f), 1.0f, 0.09f, 0.032f);
-	    engine.AddLight(l);
-	}
-
-	ImGui::End();
 
 	
 
