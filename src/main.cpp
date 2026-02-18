@@ -333,9 +333,9 @@ int main()
 	    if (ImGui::RadioButton("None", engine.debugDrawMode == 1)) engine.debugDrawMode = 1;
 	    if (ImGui::RadioButton("Normals", engine.debugDrawMode == 2)) engine.debugDrawMode = 2;
 	    if (ImGui::RadioButton("UVs", engine.debugDrawMode == 3)) engine.debugDrawMode = 3;
+	    ImGui::Checkbox("Draw wireframes", &engine.debugDrawWireframes);
 	}
 
-	ImGui::Checkbox("Draw wireframes", &engine.debugDrawWireframes);
 	
 	ImGui::End();
 
