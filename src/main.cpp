@@ -327,6 +327,8 @@ int main()
 		engine.AddLight(l);
 	    }
 	}
+
+	ImGui::Checkbox("Draw wireframes", &engine.debugDrawWireframes);
 	
 	ImGui::End();
 

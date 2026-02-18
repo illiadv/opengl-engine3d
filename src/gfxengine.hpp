@@ -35,6 +35,8 @@ public:
     Light* GetLight(size_t index);
     // unsigned int AddShader(const char* vertex, const char* fragment);
 
+    bool debugDrawWireframes = false;
+
 private:
     GLFWwindow *window;
     std::vector<Object*> objects;

@@ -166,12 +166,13 @@ void GfxEngine::Draw() {
 	glCheckError();
 	
 	// Debug draw
-	glUseProgram(debugShader);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	object->Draw(debugShader);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-	glCheckError();
+	if (debugDrawWireframes) {
+	    glUseProgram(debugShader);
+	    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	    object->Draw(debugShader);
+	    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	    glCheckError();
+	}
     }
 }
 
