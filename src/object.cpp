@@ -1,5 +1,6 @@
 #include "object.hpp"
 #include "shader.hpp"
+#define GLM_ENABLE_EXPERIMENTAL 
 #include <glm/gtx/euler_angles.hpp>
 
 // Object::Object(Model* model)
@@ -63,9 +64,9 @@ void Object::SetEulerRotationToModel()
     eulerRotation = glm::vec3(glm::degrees(y), glm::degrees(p), glm::degrees(r));
 }
 
-void Object::Rotate(float deg, glm::vec3 axis)
+void Object::Rotate(float angle, glm::vec3 axis)
 {
-    rotation = glm::rotate(rotation, deg, axis);
+    rotation = glm::rotate(rotation, angle, axis);
     SetEulerRotationToModel();
 }
 

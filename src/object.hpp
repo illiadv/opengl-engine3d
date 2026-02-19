@@ -34,11 +34,10 @@ class Object
 {
     // private:
     public:
-    glm::vec3 position;
-    glm::quat rotation;
-    glm::vec3 scale;
-
-    glm::vec3 eulerRotation;
+    glm::vec3 position{};
+    glm::quat rotation = glm::quat(glm::mat4(1.0f));
+    glm::vec3 scale{};
+    glm::vec3 eulerRotation{};
 
 
     void SetNormalMat(glm::mat4 model, unsigned int shader) ;
