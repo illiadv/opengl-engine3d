@@ -123,7 +123,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 void Drag3Rotation(const char* label, Object* object)
 {
 
-    if (ImGui::DragFloat3(label, glm::value_ptr(object->eulerRotation), 0.1f))
+    if (ImGui::DragFloat3(label, glm::value_ptr(object->eulerRotation), 1.0f))
     {
 	glm::quat q = glm::quat(glm::radians(object->eulerRotation));
 	object->SetRotation(q);
@@ -161,10 +161,12 @@ int main()
     Model groundModel("assets/ground/ground.obj");
     Model girlModel("assets/pickme/pickme.obj");
     Model grassModel("assets/grass/grass.obj");
-
     Model cylinderModel("assets/cylinder/cylinder.obj");
+    Model lightHandleModel("assets/light-handle/light-handle.obj");
 
     VoxelModel voxelmodel("vmodel.txt");
+
+    engine.SetHandleModel(&catModel);
 
     // Object* backpack = engine.AddObject(&backpackModel);
     //
@@ -179,6 +181,9 @@ int main()
     Object *cat = engine.AddObject(&catModel);
     (void)cat;
     // cat->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
+    //
+    Object *test = engine.AddObject(&lightHandleModel);
+    test->SetPosition({2, 0, 6});
     
     Object *voxels = engine.AddObject(&voxelmodel);
     voxels->SetPosition(glm::vec3(0.0f, 6.0f, 0.0f));
@@ -195,7 +200,7 @@ int main()
 
     Object *cylinder = engine.AddObject(&cylinderModel);
     cylinder->SetPosition(glm::vec3(-4.0f, 0.0f, 3.0f));
-    cylinder->SetMaterial(&materialSingleColor);
+    // cylinder->SetMaterial(&materialSingleColor);
 
     for (int i = 0; i < 20; i++)
     {
@@ -301,7 +306,8 @@ int main()
 	    if (ImGui::BeginListBox("Light list")) {
 		for (size_t i = 0; i < engine.GetLightCount(); i++)
 		{
-		    std::string name = "Light " + std::to_string(i);
+		    std::string lightType = engine.GetLight(i)->type == 1.0f ? "Point" : "Directional";
+		    std::string name = "Light " + std::to_string(i) + " (" + lightType + ")";
 		    if (ImGui::Selectable(name.c_str()))
 		    {
 			lightSelected = i;
@@ -319,7 +325,7 @@ int main()
 	    ImGui::DragFloat("Type", &light->type, 0.01f);
 	    ImGui::DragFloat("Constant", &light->constant, 0.01f);
 	    ImGui::DragFloat("Linear", &light->linear, 0.01f);
-	    ImGui::DragFloat("Quadratic", &light->quadratic, 0.01f);
+	    ImGui::DragFloat("Quadratic", &light->quadratic, .01f);
 
 	    if (ImGui::Button("Add new light"))
 	    {
@@ -334,6 +340,8 @@ int main()
 	    if (ImGui::RadioButton("Normals", engine.debugDrawMode == 2)) engine.debugDrawMode = 2;
 	    if (ImGui::RadioButton("UVs", engine.debugDrawMode == 3)) engine.debugDrawMode = 3;
 	    ImGui::Checkbox("Draw wireframes", &engine.debugDrawWireframes);
+	    ImGui::Checkbox("Draw light handles", &engine.debugDrawLightHandles);
+	    ImGui::Checkbox("Draw object handles", &engine.debugDrawObjectHandles);
 	}
 
 	

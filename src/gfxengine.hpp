@@ -21,6 +21,7 @@ public:
     void SetDefaultMaterial(Material* material);
     void SetDebugShader(unsigned int shader);
     void SetActiveCamera(Camera *camera);
+    void SetHandleModel(Model* model);
     void AddLight(Light);
     void Draw();
     GLFWwindow *GetWindow();
@@ -36,21 +37,27 @@ public:
     // unsigned int AddShader(const char* vertex, const char* fragment);
 
     bool debugDrawWireframes = false;
+    bool debugDrawLightHandles = true;
+    bool debugDrawObjectHandles = false;
     int debugDrawMode = 1;
 
 private:
+    void DrawHandle(Model* model, glm::vec3 position, glm::vec3 scale, glm::vec3 direciton = glm::vec3({0.0f, 0.0f, 1.0f}));
+
     GLFWwindow *window;
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     static constexpr int maxLights = 100;
     static constexpr size_t uboLightsSize = maxLights * 4*sizeof(glm::vec4);
 
-    Material* defaultMaterial;
+    Material* defaultMaterial = nullptr;
     Camera *activeCamera = nullptr;
 
     unsigned int wireframeShader;
     unsigned int normalShader;
     unsigned int uvShader;
+
+    Model* handleModel = nullptr;
 
     unsigned int uboMatricies;
     unsigned int uboLights;

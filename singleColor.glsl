@@ -18,6 +18,7 @@ struct Light {
 #define MAX_LIGHTS 100
 
 uniform int numActiveLights;
+uniform vec3 color;
 
 layout (std140) uniform Lights {
     uniform Light lights[MAX_LIGHTS];
@@ -38,5 +39,5 @@ uniform vec3 viewPos;
 uniform Material material;
 void main()
 {
-    FragColor = vec4(1.0f, 0.4f, 0.0f, 1.0f);
+    FragColor = vec4(color, 1.0f);
 }

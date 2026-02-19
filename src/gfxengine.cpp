@@ -1,5 +1,6 @@
 #include "gfxengine.hpp"
 #include "util.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 
 GfxEngine::GfxEngine(int screenWidth, int screenHeight)
@@ -64,6 +65,11 @@ GfxEngine::~GfxEngine()
 void GfxEngine::SetDefaultMaterial(Material* material)
 {
     defaultMaterial = material;
+}
+
+void GfxEngine::SetHandleModel(Model* model)
+{
+    handleModel = model;
 }
 
 void GfxEngine::SetDebugShader(unsigned int shader)
@@ -182,13 +188,76 @@ void GfxEngine::Draw() {
 	// Debug draw
 	if (debugDrawWireframes) {
 	    glUseProgram(wireframeShader);
+	    SetVec3(wireframeShader, "color", 1.0f, 0.4f, 0.0f);
 	    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	    object->Draw(wireframeShader);
 	    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	    glCheckError();
 	}
     }
+
+    if (debugDrawLightHandles) {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDisable(GL_DEPTH_TEST);
+	glUseProgram(wireframeShader);
+	SetVec3(wireframeShader, "color", 1.0f, 0.8f, 0.0f);
+	for (auto light : lights)
+	{
+	    glm::vec3 scale(0.05f);
+	    glm::vec3 position = light->position;
+	    glm::vec3 direction({0.0f, 0.0f, 1.0f});
+
+	    if (light->type != 1.0f) {
+		position = glm::vec3(0, 10, 0);
+		direction = light->position;
+	    }
+	    DrawHandle(handleModel, position, scale, direction);
+
+	}
+	glEnable(GL_DEPTH_TEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    if (debugDrawObjectHandles) {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDisable(GL_DEPTH_TEST);
+	glUseProgram(wireframeShader);
+	SetVec3(wireframeShader, "color", 0.0f, 1.0f, 1.0f);
+	for (auto object : objects)
+	{
+	    DrawHandle(handleModel, object->position, glm::vec3(0.01f));
+	}
+	glEnable(GL_DEPTH_TEST);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 }
+
+
+void GfxEngine::DrawHandle(Model* model, glm::vec3 position, glm::vec3 scale, glm::vec3 direciton)
+{
+	glUseProgram(wireframeShader);
+	glCheckError();
+
+	glCheckError();
+
+	glm::mat4 modelMat = glm::mat4(1.0f);
+	modelMat = glm::translate(modelMat, position);
+	modelMat = modelMat * glm::lookAt({0, 0, 0}, direciton, glm::vec3(0, 1, 0));
+	(void)direciton;
+
+	float distance = glm::length(activeCamera->position - position);
+	float fovCorrection = tan(glm::radians(activeCamera->fov) / 2);
+	glm::vec3 finalScale = scale * fovCorrection * distance;
+	modelMat = glm::scale(modelMat, finalScale);
+
+	SetMat4(wireframeShader, "model", glm::value_ptr(modelMat));
+
+	// set normal mat
+	
+	glCheckError();
+	model->Draw(wireframeShader);
+}
+
 
 GLFWwindow *GfxEngine::GetWindow()
 {
