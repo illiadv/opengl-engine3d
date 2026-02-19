@@ -242,7 +242,8 @@ void GfxEngine::DrawHandle(Model* model, glm::vec3 position, glm::vec3 scale, gl
 
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, position);
-	modelMat = modelMat * glm::lookAt({0, 0, 0}, direciton, glm::vec3(0, 1, 0));
+	// modelMat = modelMat * glm::lookAt({0, 0, 0}, direciton, glm::vec3(0, 1, 0));
+	modelMat = modelMat * glm::mat4_cast(glm::quatLookAt(direciton, glm::vec3(0, 1, 0)));
 	(void)direciton;
 
 	float distance = glm::length(activeCamera->position - position);
