@@ -203,7 +203,7 @@ void GfxEngine::Draw() {
 	SetVec3(wireframeShader, "color", 1.0f, 0.8f, 0.0f);
 	for (auto light : lights)
 	{
-	    glm::vec3 scale(0.05f);
+	    glm::vec3 scale(0.1f);
 	    glm::vec3 position = light->position;
 	    glm::vec3 direction({0.0f, 0.0f, 1.0f});
 
@@ -242,7 +242,6 @@ void GfxEngine::DrawHandle(Model* model, glm::vec3 position, glm::vec3 scale, gl
 
 	glm::mat4 modelMat = glm::mat4(1.0f);
 	modelMat = glm::translate(modelMat, position);
-	// modelMat = modelMat * glm::lookAt({0, 0, 0}, direciton, glm::vec3(0, 1, 0));
 	modelMat = modelMat * glm::mat4_cast(glm::quatLookAt(direciton, glm::vec3(0, 1, 0)));
 	(void)direciton;
 

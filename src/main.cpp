@@ -152,7 +152,7 @@ int main()
 
     Material materialDefault = Material(shaderProgram, 64);
     Material materialGrass = Material(shaderProgramGrass, 0);
-    Material materialSingleColor = Material(shaderProgramSingleColor, 0);
+    // Material materialSingleColor = Material(shaderProgramSingleColor, 0);
 
     Model backpackModel("assets/backpack/backpack.obj", true);
     Model catModel("assets/cat/cat.obj");
@@ -165,7 +165,7 @@ int main()
 
     VoxelModel voxelmodel("vmodel.txt");
 
-    engine.SetHandleModel(&catModel);
+    engine.SetHandleModel(&lightHandleModel);
 
     // Object* backpack = engine.AddObject(&backpackModel);
     //
