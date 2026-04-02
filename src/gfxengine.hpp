@@ -1,3 +1,6 @@
+#ifndef GFXENGINE_HPP
+#define GFXENGINE_HPP
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -12,6 +15,7 @@
 #include "light.hpp"
 #include "object.hpp"
 
+class Gui;
 
 class GfxEngine {
 
@@ -20,11 +24,12 @@ public:
     ~GfxEngine();
     void SetDefaultMaterial(Material* material);
     void SetDebugShader(unsigned int shader);
-    void SetActiveCamera(Camera *camera);
+    void SetCamera(Camera *camera);
     void SetHandleModel(Model* model);
     void AddLight(Light);
     void Draw();
     GLFWwindow *GetWindow();
+    Camera *GetCamera();
     // template<class... Args> Object *AddObject(Args&&... args);
     Object *AddObject(BaseModel* model);
     void RemoveObject(Object *object);
@@ -36,29 +41,55 @@ public:
     Light* GetLight(size_t index);
     // unsigned int AddShader(const char* vertex, const char* fragment);
 
+    void processInput(float deltaTime);
+
     bool debugDrawWireframes = false;
     bool debugDrawLightHandles = true;
     bool debugDrawObjectHandles = false;
     int debugDrawMode = 1;
 
+protected:
+    virtual void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    virtual void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+    virtual void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+    virtual void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+    virtual void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+    
 private:
     void DrawHandle(Model* model, glm::vec3 position, glm::vec3 scale, glm::vec3 direciton = glm::vec3({0.0f, 0.0f, 1.0f}));
 
-    GLFWwindow *window;
-    std::vector<Object*> objects;
-    std::vector<Light*> lights;
-    static constexpr int maxLights = 100;
-    static constexpr size_t uboLightsSize = maxLights * 4*sizeof(glm::vec4);
+    static void s_framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    static void s_key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
+    static void s_mouse_callback(GLFWwindow* window, double xpos, double ypos);
+    static void s_mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+    static void s_scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
-    Material* defaultMaterial = nullptr;
-    Camera *activeCamera = nullptr;
 
-    unsigned int wireframeShader;
-    unsigned int normalShader;
-    unsigned int uvShader;
+    GLFWwindow *m_window;
+    float mouseLastX = 400;
+    float mouseLastY = 300;
 
-    Model* handleModel = nullptr;
 
-    unsigned int uboMatricies;
-    unsigned int uboLights;
+    std::vector<Object*> m_objects;
+    std::vector<Light*> m_lights;
+    static constexpr int m_maxLights = 100;
+    static constexpr size_t m_uboLightsSize = m_maxLights * 4*sizeof(glm::vec4);
+
+    Material* m_defaultMaterial = nullptr;
+    Camera *m_camera = nullptr;
+
+    unsigned int m_wireframeShader;
+    unsigned int m_normalShader;
+    unsigned int m_uvShader;
+
+    Model* m_handleModel = nullptr;
+
+    Gui *gui;
+
+    unsigned int m_uboMatricies;
+    unsigned int m_uboLights;
+
+    static GfxEngine *s_instance;
 };
+
+#endif
