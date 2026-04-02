@@ -40,6 +40,7 @@ set(SOURCES
     src/stb_image.c
     src/camera.cpp
     src/gfxengine.cpp
+    src/gui.cpp
     src/main.cpp
     src/mesh.cpp
     src/model.cpp
