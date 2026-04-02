@@ -1,3 +1,5 @@
+#ifndef OBJECT_HPP
+#define OBJECT_HPP
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -70,3 +72,5 @@ class Object
     void SetScale(glm::vec3 scale);
     void Draw(unsigned int shader);
 };
+
+#endif
