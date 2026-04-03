@@ -8,7 +8,7 @@ private:
     void ImguiInit(GLFWwindow* window);
     void Drag3Rotation(const char* label, Object* object);
 
-    bool guiActive = true;
+    bool guiActive = false;
     GfxEngine *engine;
     int drawMode = 1;
 

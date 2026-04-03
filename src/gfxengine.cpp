@@ -61,13 +61,13 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight)
     m_normalShader = CreateShader("vertex.glsl", "normals.glsl");
     m_uvShader = CreateShader("vertex.glsl", "uvs.glsl");
 
-    gui = new Gui(this);
-
     glfwSetFramebufferSizeCallback(m_window, s_framebuffer_size_callback);
     glfwSetKeyCallback(m_window, s_key_callback);
     glfwSetCursorPosCallback(m_window, s_mouse_callback);
     glfwSetMouseButtonCallback(m_window, s_mouse_button_callback);
     glfwSetScrollCallback(m_window, s_scroll_callback);
+
+    gui = new Gui(this);
 }
 
 GfxEngine::~GfxEngine()
