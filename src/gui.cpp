@@ -17,9 +17,11 @@ void Gui::ImguiInit(GLFWwindow* window) {
 
 void Gui::Drag3Rotation(const char* label, Object* object)
 {
-    if (ImGui::DragFloat3(label, glm::value_ptr(object->eulerRotation), 1.0f))
+    glm::vec3 buffer = object->GetEulerRotation();
+    if (ImGui::DragFloat3(label, glm::value_ptr(buffer), 1.0f))
     {
-	glm::quat q = glm::quat(glm::radians(object->eulerRotation));
+	glm::quat q = glm::quat(glm::radians(buffer));
+	object->SetEulerRotation(buffer);
 	object->SetRotation(q);
     }
 }
@@ -102,14 +104,17 @@ void Gui::DrawObjectsMenu()
 	ImGui::Text("%zu. %s", m_objSelectedIndex, objSelected->GetModel()->GetDirectory());
 
 
-	ImGui::DragFloat3("Position##2", glm::value_ptr(objSelected->position), 0.1f);
+	glm::vec3 buffer = objSelected->GetPosition();
+	if (ImGui::DragFloat3("Position##2", glm::value_ptr(buffer), 0.1f)) {
+	    objSelected->SetPosition(buffer);
+	}
 
 	Drag3Rotation("Rotation##2", objSelected);
 
 	if (ImGui::Button("Add new object"))
 	{
 	    Object *obj = engine->AddObject(objSelected->GetModel());
-	    obj->SetPosition(objSelected->position);
+	    // obj->SetPosition(objSelected->position);
 	}
     }
 }

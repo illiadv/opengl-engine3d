@@ -46,6 +46,11 @@ glm::quat Object::GetRotation()
     return rotation;
 }
 
+glm::vec3 Object::GetEulerRotation()
+{
+    return eulerRotation;
+}
+
 glm::vec3 Object::GetScale()
 {
     return scale;
@@ -80,10 +85,20 @@ void Object::SetMaterial(Material* material)
     this->material = material;
 }
 
+Material *Object::GetMaterial()
+{
+    return material;
+}
+
 void Object::SetRotation(glm::quat rotation)
 {
     this->rotation = rotation;
     // SetEulerRotationToModel();
+}
+
+void Object::SetEulerRotation(glm::vec3 eulerRotation)
+{
+    this->eulerRotation = eulerRotation;
 }
 
 void Object::Draw(unsigned int shader)

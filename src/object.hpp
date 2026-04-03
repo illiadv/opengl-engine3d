@@ -34,23 +34,21 @@ public:
 
 class Object
 {
-    // private:
-    public:
+    private:
+    // public:
     glm::vec3 position{};
     glm::quat rotation = glm::quat(glm::mat4(1.0f));
-    glm::vec3 scale{};
     glm::vec3 eulerRotation{};
+    glm::vec3 scale{};
 
 
     void SetNormalMat(glm::mat4 model, unsigned int shader) ;
     void SetEulerRotationToModel();
 
     BaseModel *model;
-
-    public:
     Material *material;
 
-    // Object(Model* model);
+    public:
 
     Object(BaseModel* model,
 	Material* material = nullptr,
@@ -61,15 +59,18 @@ class Object
 	);
 
     BaseModel* GetModel();
-    void SetMaterial(Material* material);
-    void SetModel(glm::mat4 modelMat);
     glm::vec3 GetPosition();
     glm::vec3 GetScale();
     glm::quat GetRotation();
+    glm::vec3 GetEulerRotation();
+    Material* GetMaterial(void);
     void SetPosition(glm::vec3 trans);
     void SetRotation(glm::quat rotation);
+    void SetEulerRotation(glm::vec3 );
     void Rotate(float deg, glm::vec3 axis);
     void SetScale(glm::vec3 scale);
+    void SetMaterial(Material* material);
+    void SetModel(glm::mat4 modelMat);
     void Draw(unsigned int shader);
 };
 

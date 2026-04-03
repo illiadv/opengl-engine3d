@@ -168,13 +168,13 @@ void GfxEngine::Draw() {
     for (Object *object : m_objects)
     {
 
-	if (object->material == nullptr)
+	if (object->GetMaterial() == nullptr)
 	{
 	    thisMaterial = m_defaultMaterial;
 	}
 	else
 	{
-	    thisMaterial = object->material;
+	    thisMaterial = object->GetMaterial();
 	}
 
 	// TODO: Do smth about this
@@ -247,7 +247,7 @@ void GfxEngine::Draw() {
 	SetVec3(m_wireframeShader, "color", 0.0f, 1.0f, 1.0f);
 	for (auto object : m_objects)
 	{
-	    DrawHandle(m_handleModel, object->position, glm::vec3(0.01f));
+	    DrawHandle(m_handleModel, object->GetPosition(), glm::vec3(0.01f));
 	}
 	glEnable(GL_DEPTH_TEST);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
