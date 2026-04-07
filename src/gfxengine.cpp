@@ -18,7 +18,7 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    m_window = glfwCreateWindow(screenWidth, screenHeight, "Event Tester", NULL, NULL);
+    m_window = glfwCreateWindow(screenWidth, screenHeight, "engine3d", NULL, NULL);
 
     if (m_window == NULL)
     {
