@@ -30,7 +30,6 @@ public:
     void Draw();
     GLFWwindow *GetWindow();
     Camera *GetCamera();
-    // template<class... Args> Object *AddObject(Args&&... args);
     Object *AddObject(BaseModel* model);
     void RemoveObject(Object *object);
 
@@ -39,7 +38,6 @@ public:
 
     size_t GetLightCount();
     Light* GetLight(size_t index);
-    // unsigned int AddShader(const char* vertex, const char* fragment);
 
     void processInput(float deltaTime);
 

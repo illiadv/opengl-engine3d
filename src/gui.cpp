@@ -27,8 +27,6 @@ void Gui::Drag3Rotation(const char* label, Object* object)
 }
 
 
-//public:
-
 Gui::Gui(GfxEngine *engine)
     : engine(engine)
 {
@@ -188,9 +186,6 @@ void Gui::Draw() {
 
     ImGui::End();
 
-    // Rendering
-    // (Your code clears your framebuffer, renders your other stuff etc.)
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    // (Your code calls glfwSwapBuffers() etc.)
 }

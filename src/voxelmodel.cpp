@@ -36,7 +36,6 @@ void VoxelModel::LoadModel(const char* path)
     directory = path;
     VoxelArray array;
     LoadVoxels(path, array);
-    // meshes.push_back(Mesher(array));
     GreedyMesher mesher(array);
     meshes.push_back(mesher.CreateMesh());
 }
@@ -117,18 +116,6 @@ void GreedyMesher::AddFace(Face face)
 
     currentIndex += 4;
 }
-
-
-// Mesher finished; 156 verts, 52 tris
-// Loaded texture ./assets/crate/container2.png 500x500, 4 channels
-// Mesher finished; 234 verts, 78 tris
-// Loaded texture ./assets/crate/container2.png 500x500, 4 channels
-// Mesher finished; 156 verts, 52 tris
-// Loaded texture ./assets/crate/container2.png 500x500, 4 channels
-// Mesher finished; 36 verts, 12 tris
-// Loaded texture ./assets/crate/container2.png 500x500, 4 channels
-// Mesher finished; 276 verts, 92 tris
-
 
 bool GreedyMesher::FaceExistsBottom(int x, int y, int z)
 {
@@ -563,14 +550,9 @@ Mesh GreedyMesher::CreateMesh()
 	}
     }
 
-	//    indices.resize(vertices.size());
-	//    for (size_t i = 0; i < vertices.size(); i++)
-	// indices[i] = i;
-
     std::vector<Texture> textures{};
     Texture tex;
-    // tex.id = CreateTexture("./assets/crate/container2.png");
-    tex.id = CreateTexture("./e.png");
+    tex.id = CreateTexture("./assets/test.png");
     tex.type = TextureType::diffuse;
     textures.push_back(tex);
 

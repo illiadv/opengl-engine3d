@@ -43,7 +43,7 @@ int main()
 
 
     Object *voxels = engine.AddObject(&voxelmodel);
-    voxels->SetPosition(glm::vec3(0.0f, 6.0f, 0.0f));
+    voxels->SetPosition(glm::vec3(-10.0f, 0.0f, -10.0f));
 
     Object *crate = engine.AddObject(&crateModel);
     // crate->SetScale(glm::vec3(0.1f, 0.1f, 1.0f));

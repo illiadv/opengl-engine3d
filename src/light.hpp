@@ -1,7 +1,6 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 
-// #include <GL/glew.h>
 #include <glad/glad.h>
 
 #include <glm/glm.hpp>
