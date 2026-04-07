@@ -6,6 +6,7 @@
 
 GfxEngine* GfxEngine::s_instance = nullptr;
 
+// TODO: Move platform-specific code to its own class mb?
 GfxEngine::GfxEngine(int screenWidth, int screenHeight)
 {
     if (s_instance != nullptr) {
@@ -118,22 +119,19 @@ void GfxEngine::Draw() {
     glfwGetFramebufferSize(m_window, &viewportWidth, &viewportHeight);
 
     glm::mat4 view = m_camera->GetViewMatrix();
-	Material* thisMaterial;
+    float aspectRatio = (float)viewportWidth / (float)viewportHeight;
+    Material* thisMaterial;
     glm::mat4 projection = glm::perspective(
-	    glm::radians(m_camera->fov),
-	    (float)viewportWidth / (float)viewportHeight, 0.1f, 100.0f);
+	glm::radians(m_camera->fov),
+	aspectRatio, 0.1f, 100.0f);
+    
 
     glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatricies);
-    glCheckError();
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view));
-    glCheckError();
     glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection));
-    glCheckError();
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
-    glCheckError();
 
     glBindBuffer(GL_UNIFORM_BUFFER, m_uboLights);
-    glCheckError();
 
     struct LightGPU {
 	glm::vec4 position; // w is type (0 = DirLight, 1 = PointLight)
@@ -157,12 +155,9 @@ void GfxEngine::Draw() {
     }
 
     glBindBuffer(GL_UNIFORM_BUFFER, m_uboLights);
-    glCheckError();
     glBufferSubData(GL_UNIFORM_BUFFER, 0, m_uboLightsSize, ligtsGPU);
-    glCheckError();
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-    glCheckError();
 
 
     for (Object *object : m_objects)
@@ -181,17 +176,10 @@ void GfxEngine::Draw() {
 	glUseProgram(thisMaterial->shader);
 	// light->UpdateUniforms(thisMaterial->shader);
 
-	glCheckError();
-
 	glUniform1i(glGetUniformLocation(thisMaterial->shader, "numActiveLights"), m_lights.size());
-	glCheckError();
-
 	glUniform3f(glGetUniformLocation(thisMaterial->shader, "viewPos"),
 		    m_camera->position.x, m_camera->position.y, m_camera->position.z);
-	glCheckError();
-
 	glUniform1f(glGetUniformLocation(thisMaterial->shader, "material.shininess"), thisMaterial->shininess);
-	glCheckError();
 
 	if (debugDrawMode == 2) {
 	    glUseProgram(m_normalShader);
@@ -218,14 +206,24 @@ void GfxEngine::Draw() {
 	}
     }
 
+    // float orthoSize = 1.0f;
+
+    glm::mat4 projectionOrtho = glm::ortho(0.0f, (float)viewportWidth, 0.0f, (float)viewportHeight, -100.0f, 100.0f);
+    glm::mat4 viewOrtho = glm::mat4(1.0f);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatricies);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(viewOrtho));
+    glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projectionOrtho));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glDisable(GL_DEPTH_TEST);
     if (debugDrawLightHandles) {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDisable(GL_DEPTH_TEST);
 	glUseProgram(m_wireframeShader);
-	SetVec3(m_wireframeShader, "color", 1.0f, 0.8f, 0.0f);
+	SetVec3(m_wireframeShader, "color", 1.0f, 0.4f, 0.0f);
 	for (auto light : m_lights)
 	{
-	    glm::vec3 scale(0.1f);
+	    glm::vec3 scale(16.0f);
 	    glm::vec3 position = light->position;
 	    glm::vec3 direction({0.0f, 0.0f, 1.0f});
 
@@ -233,56 +231,54 @@ void GfxEngine::Draw() {
 		position = glm::vec3(0, 10, 0);
 		direction = light->position;
 	    }
-	    DrawHandle(m_handleModel, position, scale, direction);
+	    DrawObjectOverlayed(m_handleModel, position, scale, direction, {0, 0, viewportWidth, viewportHeight}, projection);
 
 	}
-	glEnable(GL_DEPTH_TEST);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
     if (debugDrawObjectHandles) {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glDisable(GL_DEPTH_TEST);
 	glUseProgram(m_wireframeShader);
-	SetVec3(m_wireframeShader, "color", 0.0f, 1.0f, 1.0f);
+	SetVec3(m_wireframeShader, "color", 1.0f, 0.0f, 1.0f);
 	for (auto object : m_objects)
 	{
-	    DrawHandle(m_handleModel, object->GetPosition(), glm::vec3(0.01f));
+	    DrawObjectOverlayed(m_handleModel, object->GetPosition(), glm::vec3(16.0f), {0.0f, 1.0f, 0.0f}, {0, 0, viewportWidth, viewportHeight}, projection);
 	}
-	glEnable(GL_DEPTH_TEST);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
+    glEnable(GL_DEPTH_TEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     gui->Draw();
 
 }
 
 
-void GfxEngine::DrawHandle(Model* model, glm::vec3 position, glm::vec3 scale, glm::vec3 direciton)
+void GfxEngine::DrawObjectOverlayed(Model* model, glm::vec3 position, glm::vec3 scale, glm::vec3 direciton, glm::vec4 viewport, glm::mat4 projection)
 {
-	glUseProgram(m_wireframeShader);
-	glCheckError();
+    glUseProgram(m_wireframeShader);
+    glCheckError();
 
-	glCheckError();
+    glm::vec3 screenPos = glm::project(
+	    position,
+	    m_camera->GetViewMatrix(),
+	    projection,
+	    viewport
+	    );
 
-	glm::mat4 modelMat = glm::mat4(1.0f);
-	modelMat = glm::translate(modelMat, position);
-	modelMat = modelMat * glm::mat4_cast(glm::quatLookAt(direciton, glm::vec3(0, 1, 0)));
-	(void)direciton;
+    if (screenPos.z > 1.0f || screenPos.z < 0.0f) {
+	// Skip rendering this object for this frame
+    return; 
+    }
 
-	float distance = glm::length(m_camera->position - position);
-	float fovCorrection = tan(glm::radians(m_camera->fov) / 2);
-	glm::vec3 finalScale = scale * fovCorrection * distance;
-	modelMat = glm::scale(modelMat, finalScale);
+    glm::mat4 modelMat = glm::mat4(1.0f);
+    modelMat = glm::translate(modelMat, {screenPos.x, screenPos.y, 0.0f});
+    modelMat = modelMat * glm::mat4_cast(glm::quatLookAt(direciton, glm::vec3(0, 1, 0)));
+    modelMat = glm::scale(modelMat, scale);
 
-	SetMat4(m_wireframeShader, "model", glm::value_ptr(modelMat));
+    SetMat4(m_wireframeShader, "model", glm::value_ptr(modelMat));
 
-	// set normal mat
-	
-	glCheckError();
-	model->Draw(m_wireframeShader);
+    glCheckError();
+    model->Draw(m_wireframeShader);
 }
-
 
 GLFWwindow *GfxEngine::GetWindow()
 {

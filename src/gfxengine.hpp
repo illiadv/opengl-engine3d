@@ -45,7 +45,7 @@ public:
 
     bool debugDrawWireframes = false;
     bool debugDrawLightHandles = true;
-    bool debugDrawObjectHandles = false;
+    bool debugDrawObjectHandles = true;
     int debugDrawMode = 1;
 
 protected:
@@ -56,7 +56,7 @@ protected:
     virtual void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
     
 private:
-    void DrawHandle(Model* model, glm::vec3 position, glm::vec3 scale, glm::vec3 direciton = glm::vec3({0.0f, 0.0f, 1.0f}));
+    void DrawObjectOverlayed(Model* model, glm::vec3 position, glm::vec3 scale, glm::vec3 direciton, glm::vec4 viewport, glm::mat4 projection);
 
     static void s_framebuffer_size_callback(GLFWwindow* window, int width, int height);
     static void s_key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
