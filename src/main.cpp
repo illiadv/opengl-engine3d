@@ -20,7 +20,7 @@ int main()
     unsigned int shaderProgramSingleColor = CreateShader("vertex.glsl", "singleColor.glsl");
 
     Material materialDefault = Material(shaderProgram, 64);
-    Material materialGrass = Material(shaderProgramGrass, 0);
+    // Material materialGrass = Material(shaderProgramGrass, 0);
     // Material materialSingleColor = Material(shaderProgramSingleColor, 0);
 
     Model backpackModel("assets/backpack/backpack.obj", true);
@@ -79,7 +79,7 @@ int main()
 	Object* grass = engine.AddObject(&grassModel);
 	grass->SetPosition(pos);
 	grass->Rotate(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	grass->SetMaterial(&materialGrass);
+	grass->SetMaterial(&materialDefault);
     }
 
     Light dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.5f));
@@ -98,13 +98,8 @@ int main()
     {
 	engine.processInput(deltaTime);
 
-
 	engine.Draw();
-
-	// SetMat4(shaderProgramGrass, "view", glm::value_ptr(view));
-	// SetMat4(shaderProgramGrass, "projection", glm::value_ptr(projection));
 	
-
 	glfwSwapBuffers(engine.GetWindow());
 
 	float currentFrame = glfwGetTime();
