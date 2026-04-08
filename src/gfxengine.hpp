@@ -46,6 +46,8 @@ public:
     bool debugDrawObjectHandles = true;
     int debugDrawMode = 1;
 
+    glm::vec3 backgroundColor = glm::vec3(0.4f, 0.85f, 0.9f);
+
 protected:
     virtual void framebuffer_size_callback(GLFWwindow* window, int width, int height);
     virtual void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
@@ -79,6 +81,7 @@ private:
     unsigned int m_wireframeShader;
     unsigned int m_normalShader;
     unsigned int m_uvShader;
+
 
     Model* m_handleModel = nullptr;
 

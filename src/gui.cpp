@@ -167,6 +167,13 @@ void Gui::DrawDisplayOptionsMenu()
     }
 }
 
+void Gui::DrawDisplayWorldMenu()
+{
+    if (ImGui::CollapsingHeader("World Options")) {
+	ImGui::ColorEdit3("Ambient", glm::value_ptr(engine->backgroundColor),ImGuiColorEditFlags_Float);
+    }
+}
+
 void Gui::Draw() {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -178,6 +185,7 @@ void Gui::Draw() {
 
 
     DrawCameraMenu();
+    DrawDisplayWorldMenu();
     DrawVoxelModelsMenu();
     DrawObjectsMenu();
     DrawLightsMenu();
