@@ -21,6 +21,7 @@ public:
     bool WantMouse();
     void DrawVoxelModelsMenu();
     void DrawCameraMenu();
+    void DrawDisplayWorldMenu();
     void DrawObjectsMenu();
     void DrawLightsMenu();
     void DrawDisplayOptionsMenu();

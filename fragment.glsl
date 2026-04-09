@@ -64,12 +64,14 @@ layout (std140) uniform Lights {
     uniform Light lights[MAX_LIGHTS];
 };
 
-
 // sun
 vec3 CalcDirLight(Light light, vec3 norm, vec3 viewDir)
 {
+    vec4 tex = texture(material.diffuse, texCoord);
+    if (tex.a < 0.1)
+	discard;
     // ambient
-    vec3 ambient = vec3(light.ambient) * vec3(texture(material.diffuse, texCoord));
+    vec3 ambient = vec3(light.ambient) * vec3(tex);
 
     // diffuse
     vec3 lightDir = normalize(vec3(-light.position));
@@ -87,7 +89,10 @@ vec3 CalcDirLight(Light light, vec3 norm, vec3 viewDir)
 
 vec3 CalcPointLight(Light light, vec3 norm, vec3 fragPos, vec3 viewDir)
 {
-    vec3 ambient = vec3(light.ambient) * vec3(texture(material.diffuse, texCoord));
+    vec4 tex = texture(material.diffuse, texCoord);
+    if (tex.a < 0.1)
+	discard;
+    vec3 ambient = vec3(light.ambient) * vec3(tex);
 
     vec3 lightDir = normalize(vec3(light.position) - fragmentPos);
     float diff = max(dot(norm, lightDir), 0.0);
@@ -113,7 +118,10 @@ vec3 CalcPointLight(Light light, vec3 norm, vec3 fragPos, vec3 viewDir)
 
 vec3 CalcSpotLight(SpotLight light, vec3 norm, vec3 fragPos, vec3 viewDir)
 {
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, texCoord));
+    vec4 tex = texture(material.diffuse, texCoord);
+    if (tex.a < 0.1)
+	discard;
+    vec3 ambient = light.ambient * vec3(tex);
 
     vec3 lightDir = normalize(light.position - fragmentPos);
     float diff = max(dot(norm, lightDir), 0.0);
@@ -143,10 +151,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 norm, vec3 fragPos, vec3 viewDir)
 
 void main()
 {
-    // FragColor = mix(texture(ourTexture, texCoord), texture(ourTexture2, vec2(texCoord.x, -texCoord.y)), mixFactor);
-
-    // vec3 ambient = light.ambient * vec3(texture(material.diffuse, texCoord));
-
     // diffuse
     vec3 norm = normalize(normal); // normalize everything
 

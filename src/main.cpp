@@ -20,14 +20,14 @@ int main()
     unsigned int shaderProgramSingleColor = CreateShader("vertex.glsl", "singleColor.glsl");
 
     Material materialDefault = Material(shaderProgram, 64);
-    Material materialGrass = Material(shaderProgramGrass, 0);
+    // Material materialGrass = Material(shaderProgramGrass, 0);
     // Material materialSingleColor = Material(shaderProgramSingleColor, 0);
 
-    Model backpackModel("assets/backpack/backpack.obj", true);
+    Model treeModel("assets/laubbaum/laubbaum.obj");
     Model catModel("assets/cat/cat.obj");
     Model crateModel("assets/crate/crate.obj");
     Model groundModel("assets/ground/ground.obj");
-    Model girlModel("assets/pickme/pickme.obj");
+    Model girlModel("assets/pink/pink.obj");
     Model grassModel("assets/grass/grass.obj");
     Model cylinderModel("assets/cylinder/cylinder.obj");
     Model lightHandleModel("assets/light-handle/light-handle.obj");
@@ -52,8 +52,8 @@ int main()
     (void)cat;
     // cat->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
     //
-    Object *test = engine.AddObject(&lightHandleModel);
-    test->SetPosition({2, 0, 6});
+    Object *tree = engine.AddObject(&treeModel);
+    tree->SetPosition({2, 0, 6});
     
     // voxels->SetMaterial(&materialSingleColor);
 
@@ -79,7 +79,7 @@ int main()
 	Object* grass = engine.AddObject(&grassModel);
 	grass->SetPosition(pos);
 	grass->Rotate(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	grass->SetMaterial(&materialGrass);
+	grass->SetMaterial(&materialDefault);
     }
 
     Light dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.5f));
@@ -98,15 +98,8 @@ int main()
     {
 	engine.processInput(deltaTime);
 
-	glClearColor(0.4f, 0.85f, 0.9f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
 	engine.Draw();
-
-	// SetMat4(shaderProgramGrass, "view", glm::value_ptr(view));
-	// SetMat4(shaderProgramGrass, "projection", glm::value_ptr(projection));
 	
-
 	glfwSwapBuffers(engine.GetWindow());
 
 	float currentFrame = glfwGetTime();

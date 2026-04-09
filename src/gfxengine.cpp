@@ -113,7 +113,10 @@ void GfxEngine::AddLight(Light light)
 	m_lights.push_back(newLight);
 }
 
-void GfxEngine::Draw() {
+void GfxEngine::Draw()
+{
+    glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(m_window, &viewportWidth, &viewportHeight);
