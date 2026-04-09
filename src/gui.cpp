@@ -109,10 +109,14 @@ void Gui::DrawObjectsMenu()
 
 	Drag3Rotation("Rotation##2", objSelected);
 
+	buffer = objSelected->GetScale();
+	if (ImGui::DragFloat3("Scale##2", glm::value_ptr(buffer), 0.1f)) {
+	    objSelected->SetScale(buffer);
+	}
+
 	if (ImGui::Button("Add new object"))
 	{
-	    Object *obj = engine->AddObject(objSelected->GetModel());
-	    // obj->SetPosition(objSelected->position);
+	    engine->AddObject(objSelected->GetModel());
 	}
     }
 }
