@@ -17,8 +17,5 @@ build
 build.sh
 compile_flags.txt
 
-*.jpg
-*.png
-assets/*
 *.ini
 *.supp
