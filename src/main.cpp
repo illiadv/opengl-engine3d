@@ -23,6 +23,7 @@ int main()
     // Material materialGrass = Material(shaderProgramGrass, 0);
     // Material materialSingleColor = Material(shaderProgramSingleColor, 0);
 
+    Model treeModel("assets/laubbaum/laubbaum.obj");
     Model backpackModel("assets/backpack/backpack.obj", true);
     Model catModel("assets/cat/cat.obj");
     Model crateModel("assets/crate/crate.obj");
@@ -52,8 +53,8 @@ int main()
     (void)cat;
     // cat->SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
     //
-    Object *test = engine.AddObject(&lightHandleModel);
-    test->SetPosition({2, 0, 6});
+    Object *tree = engine.AddObject(&treeModel);
+    tree->SetPosition({2, 0, 6});
     
     // voxels->SetMaterial(&materialSingleColor);
 
