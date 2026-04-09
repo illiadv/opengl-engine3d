@@ -24,11 +24,10 @@ int main()
     // Material materialSingleColor = Material(shaderProgramSingleColor, 0);
 
     Model treeModel("assets/laubbaum/laubbaum.obj");
-    Model backpackModel("assets/backpack/backpack.obj", true);
     Model catModel("assets/cat/cat.obj");
     Model crateModel("assets/crate/crate.obj");
     Model groundModel("assets/ground/ground.obj");
-    Model girlModel("assets/pickme/pickme.obj");
+    Model girlModel("assets/pink/pink.obj");
     Model grassModel("assets/grass/grass.obj");
     Model cylinderModel("assets/cylinder/cylinder.obj");
     Model lightHandleModel("assets/light-handle/light-handle.obj");
