@@ -19,7 +19,7 @@ Camera::Camera(
 	this->yaw = -90.0f;
     }
 
-glm::mat4 Camera::GetViewMatrix()
+glm::mat4 Camera::GetViewMatrix() const
 {
 	return glm::lookAt(position,  // pos
 			   position + front,  // target

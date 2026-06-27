@@ -32,7 +32,7 @@ public:
 	    float sensitivity = 0.05f
 	  );
 
-    glm::mat4 GetViewMatrix();
+    glm::mat4 GetViewMatrix() const;
 
     void ProcessMovement(CameraDirection direction, float deltaTime);
 
