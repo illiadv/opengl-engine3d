@@ -1,14 +1,16 @@
 #include "model.hpp"
 #include "texture.hpp"
 
-void Model::Draw(unsigned int shader)
+
+std::vector<Mesh> ModelLoader::Load(const char *path, bool flipUVs)
 {
-    for (auto &mesh : meshes)
-	mesh.Draw(shader);
+    Model model;
+    model.LoadModel(path, flipUVs);
+    return model.meshes;
 }
 
 // Entry point to model loading
-void Model::LoadModel(std::string path, bool flipUVs)
+void ModelLoader::Model::LoadModel(std::string path, bool flipUVs)
 {
     Assimp::Importer importer;
 
@@ -37,7 +39,7 @@ void Model::LoadModel(std::string path, bool flipUVs)
 }
 
 // Process nodes recursively
-void Model::ProcessNode(aiNode *node, const aiScene *scene)
+void ModelLoader::Model::ProcessNode(aiNode *node, const aiScene *scene)
 {
     // nodes only contain mesh indexes
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -56,7 +58,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene)
 }
 
 // Called from ProcessNode
-Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
+Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 {
     // Create corresponding vectors for this mesh
     std::vector<Vertex> vertices;
@@ -140,7 +142,7 @@ Mesh Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     return Mesh(vertices, indices, textures);
 }
 
-Texture Model::LoadMaterialTextures(aiString str, aiTextureType type)
+Texture ModelLoader::Model::LoadMaterialTextures(aiString str, aiTextureType type)
 {
     // get full path for this texture (not just the file name)
     std::string path = directory + "/" + str.C_Str();
@@ -170,9 +172,4 @@ Texture Model::LoadMaterialTextures(aiString str, aiTextureType type)
     texturesLoaded.push_back(texture);
     
     return texture;
-}
-
-const char* Model::GetDirectory()
-{
-    return directory.c_str();
 }
