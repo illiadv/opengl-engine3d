@@ -1,5 +1,4 @@
-#include "camera.hpp"
-
+#include "engine3d/camera.hpp"
 
 Camera::Camera(
 	    glm::vec3 position,

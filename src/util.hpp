@@ -8,6 +8,6 @@ GLenum glCheckError_(const char *file, int line);
 
 #define glCheckError() glCheckError_(__FILE__, __LINE__) 
 
-#define glCall(x) x; glCheckError()
+#define glCall(x) while(glGetError() != GL_NO_ERROR); x; glCheckError()
 
 #endif

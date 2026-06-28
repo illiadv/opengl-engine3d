@@ -1,10 +1,16 @@
+#include <stdio.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "gfxengine.hpp"
+#include "engine3d/camera.hpp"
+#include "engine3d/gfxengine.hpp"
+#include "engine3d/light.hpp"
+#include "engine3d/model.hpp"
+#include "engine3d/material.hpp"
 
 GLFWwindow *window;
 Camera camera;
@@ -97,14 +103,8 @@ int main()
     engine.ResizeViewport(viewportWidth, viewportHeight);
     glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 
-    unsigned int shaderProgram = CreateShader("vertex.glsl", "fragment.glsl");
-    unsigned int shaderProgramGrass = CreateShader("vertex.glsl", "grass.glsl");
-
-    unsigned int shaderProgramSingleColor = CreateShader("vertex.glsl", "singleColor.glsl");
-
-    Material materialDefault = Material(shaderProgram, 64);
-    // Material materialGrass = Material(shaderProgramGrass, 0);
-    // Material materialSingleColor = Material(shaderProgramSingleColor, 0);
+    Material materialDefault = Material("vertex.glsl", "fragment.glsl", 64);
+    // Material materialGrass = Material("vertex.glsl", "grass.glsl", 64);
 
     auto treeModel = ModelLoader::Load("assets/laubbaum/laubbaum.obj");
     auto catModel = ModelLoader::Load("assets/cat/cat.obj");
@@ -114,16 +114,6 @@ int main()
     auto grassModel = ModelLoader::Load("assets/grass/grass.obj");
     auto cylinderModel = ModelLoader::Load("assets/cylinder/cylinder.obj");
     auto lightHandleModel = ModelLoader::Load("assets/light-handle/light-handle.obj");
-
-    // VoxelModel voxelmodel("vmodel.txt");
-
-
-    // Object* backpack = engine.AddObject(&backpackModel);
-    //
-    // backpack->SetPosition(glm::vec3(2.0, 1.0, 1.0f));
-    // backpack->SetScale(glm::vec3(0.3f));
-
-
 
     Light dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.5f));
     Light pointLight(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.8f, 0.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f);
@@ -177,9 +167,6 @@ int main()
     }
 	    
     // clean up
-
-    glDeleteProgram(shaderProgram);
-    glDeleteProgram(shaderProgramGrass);
     glfwTerminate();
     printf("Bye\n");
     

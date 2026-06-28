@@ -4,24 +4,16 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "stb_image.h"
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "camera.hpp"
-#include "light.hpp"
-#include "object.hpp"
+struct Renderable;
+struct Light;
+struct Mesh;
+struct Camera;
+struct Material;
 
-class Gui;
-
-struct Renderable
-{
-    Mesh mesh;
-    Material material;
-    glm::mat4 transform;
-};
 
 class GfxEngine {
 
@@ -51,8 +43,6 @@ private:
     std::vector<Renderable> m_renderables;
     static constexpr int m_maxLights = 100;
     static constexpr size_t m_uboLightsSize = m_maxLights * 4*sizeof(glm::vec4);
-
-    Gui *gui;
 
     unsigned int m_uboMatricies;
     unsigned int m_uboLights;

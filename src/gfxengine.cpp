@@ -1,7 +1,22 @@
-#include "gfxengine.hpp"
-// #include "gui.hpp"
-#include "util.hpp"
 #include <stdexcept>
+
+#include "engine3d/gfxengine.hpp"
+#include "engine3d/camera.hpp"
+#include "engine3d/light.hpp"
+#include "engine3d/mesh.hpp"
+#include "engine3d/material.hpp"
+#include "shader.hpp"
+#include "util.hpp"
+#include "stb_image.h"
+
+
+struct Renderable
+{
+    Mesh mesh;
+    Material material;
+    glm::mat4 transform;
+};
+
 
 GfxEngine* GfxEngine::s_instance = nullptr;
 
@@ -103,8 +118,6 @@ void GfxEngine::BeginFrame(const Camera &camera)
 
 void GfxEngine::EndFrame(const Camera &camera)
 {
-    glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboLights));
-
     struct LightGPU {
 	glm::vec4 position; // w is type (0 = DirLight, 1 = PointLight)
     	glm::vec4 ambient;
@@ -133,19 +146,19 @@ void GfxEngine::EndFrame(const Camera &camera)
     for (auto r : m_renderables)
     {
 
-	glCall(glUseProgram(r.material.shader));
+	glCall(glUseProgram(r.material.GetShaderProgram()));
 
-	SetMat4(r.material.shader, "model", glm::value_ptr(r.transform));
+	SetMat4(r.material.GetShaderProgram(), "model", glm::value_ptr(r.transform));
 	glm::mat3 normalMat;
 	normalMat = glm::transpose(glm::inverse(/* view * */ r.transform));
-	SetMat3(r.material.shader, "normalMat", glm::value_ptr(normalMat));
+	SetMat3(r.material.GetShaderProgram(), "normalMat", glm::value_ptr(normalMat));
 
-	glCall(glUniform1i(glGetUniformLocation(r.material.shader, "numActiveLights"), m_lights.size()));
-	glCall(glUniform3f(glGetUniformLocation(r.material.shader, "viewPos"),
+	glCall(glUniform1i(glGetUniformLocation(r.material.GetShaderProgram(), "numActiveLights"), m_lights.size()));
+	glCall(glUniform3f(glGetUniformLocation(r.material.GetShaderProgram(), "viewPos"),
 		    camera.position.x, camera.position.y, camera.position.z));
-	glCall(glUniform1f(glGetUniformLocation(r.material.shader, "material.shininess"), r.material.shininess));
+	glCall(glUniform1f(glGetUniformLocation(r.material.GetShaderProgram(), "material.shininess"), r.material.shininess));
 
-	r.mesh.Draw(r.material.shader);
+	r.mesh.Draw(r.material.GetShaderProgram());
 	
     }
 }

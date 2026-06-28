@@ -1,9 +1,8 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "engine3d/mesh.hpp"
-
 #include "assimp/material.h"
+#include "mesh.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>

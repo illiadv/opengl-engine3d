@@ -1,6 +1,5 @@
-#include "model.hpp"
+#include "engine3d/model.hpp"
 #include "texture.hpp"
-
 
 std::vector<Mesh> ModelLoader::Load(const char *path, bool flipUVs)
 {
