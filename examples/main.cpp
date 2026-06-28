@@ -103,7 +103,11 @@ int main()
     engine.ResizeViewport(viewportWidth, viewportHeight);
     glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 
-    Material materialDefault = Material("vertex.glsl", "fragment.glsl", 64);
+    Material materialDefault = Material(
+	    "assets/shaders/vertex.glsl",
+	    "assets/shaders/fragment.glsl",
+	    64
+	    );
     // Material materialGrass = Material("vertex.glsl", "grass.glsl", 64);
 
     auto treeModel = ModelLoader::Load("assets/laubbaum/laubbaum.obj");
