@@ -15,7 +15,8 @@ const int screenHeight = 720;
 float mouseLastX = 400;
 float mouseLastY = 300;
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+void MouseCallback(GLFWwindow *window, double xpos, double ypos)
+{
 
     (void)window;
 
@@ -26,7 +27,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
     // if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 	camera.ProcessLookAround(xOffset, yOffset);
+}
 
+void FramebufferSizeCallback(GLFWwindow *window, int width, int height)
+{
+    void *pointer = glfwGetWindowUserPointer(window);
+    GfxEngine *engine = static_cast<GfxEngine*>(pointer);
+    engine->ResizeViewport(width, height);
 }
 
 void processInput(float deltaTime)
@@ -72,7 +79,8 @@ void InitWindow() {
 	fprintf(stderr, "Failed to initialize GLAD\n");
     }
 
-    glfwSetCursorPosCallback(window, mouse_callback);
+
+    glfwSetCursorPosCallback(window, MouseCallback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // int viewportWidth, viewportHeight;
@@ -83,7 +91,11 @@ int main()
 {
     InitWindow();
     GfxEngine engine(1280, 720);
-
+    glfwSetWindowUserPointer(window, &engine);
+    int viewportWidth, viewportHeight;
+    glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
+    engine.ResizeViewport(viewportWidth, viewportHeight);
+    glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
 
     unsigned int shaderProgram = CreateShader("vertex.glsl", "fragment.glsl");
     unsigned int shaderProgramGrass = CreateShader("vertex.glsl", "grass.glsl");

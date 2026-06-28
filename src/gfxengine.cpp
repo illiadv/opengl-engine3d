@@ -36,6 +36,11 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight)
     // gui = new Gui(this);
 }
 
+void GfxEngine::ResizeViewport(int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
 GfxEngine::~GfxEngine()
 {
     for (auto l : m_lights)

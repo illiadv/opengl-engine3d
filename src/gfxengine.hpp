@@ -28,6 +28,7 @@ class GfxEngine {
 public:
     GfxEngine(int screenWidth, int screenHeight);
     ~GfxEngine();
+    void ResizeViewport(int width, int height);
     void BeginFrame(const Camera &camera);
     void EndFrame(const Camera &camera);
 
