@@ -34,7 +34,7 @@ class Mesh {
     std::vector<Texture> textures;
 
     Mesh(std::vector<Vertex> &verticies, std::vector<unsigned int> &indicies, std::vector<Texture> &texture);
-    void Draw(unsigned int shader);
+    void Draw(unsigned int shader) const;
 
     private:
     unsigned int VBO, EBO, VAO;

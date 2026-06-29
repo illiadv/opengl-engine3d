@@ -38,7 +38,7 @@ void Mesh::SetupMesh()
     glCall(glEnableVertexAttribArray(2));
 }
 
-void Mesh::Draw(unsigned int shader)
+void Mesh::Draw(unsigned int shader) const
 {
     // bind textures to slots
     for (size_t i = 0; i < textures.size(); i++) {
