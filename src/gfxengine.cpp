@@ -12,8 +12,8 @@
 
 struct Renderable
 {
-    Mesh mesh;
-    Material material;
+    const Mesh *mesh;
+    const Material *material;
     glm::mat4 transform;
 };
 
@@ -58,39 +58,33 @@ void GfxEngine::ResizeViewport(int width, int height)
 
 GfxEngine::~GfxEngine()
 {
-    for (auto l : m_lights)
-	delete l;
-
-    // delete gui;
-
     if (s_instance == this) {
 	s_instance = nullptr;
     }
 }
 
 
-void GfxEngine::SubmitLight(const Light &light)
+void GfxEngine::SubmitLight(const Light *light)
 {
-    Light *newLight = new Light(light);
-
     if (m_lights.size() < m_maxLights)
-	m_lights.push_back(newLight);
+	m_lights.push_back(light);
 }
 
-void GfxEngine::SubmitMesh(const Mesh &mesh, const Material &material, const glm::mat4 &transform)
+void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform)
 {
     Renderable r = {mesh, material, transform};
     m_renderables.push_back(r);
 }
 
-void GfxEngine::SubmitModel(const std::vector<Mesh> &model, const Material &material, const glm::mat4 &transform)
+void GfxEngine::SubmitModel(const std::vector<Mesh> *model, const Material *material, const glm::mat4 &transform)
 {
-    for (auto mesh : model)
+    for (const Mesh &mesh : *model)
     {
-	Renderable r = {mesh, material, transform};
+	Renderable r = {&mesh, material, transform};
 	m_renderables.push_back(r);
     }
 }
+
 
 void GfxEngine::BeginFrame(const Camera &camera)
 {
@@ -99,8 +93,6 @@ void GfxEngine::BeginFrame(const Camera &camera)
 
     glCall(glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f));
     glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-
-    // glfwGetFramebufferSize(m_window, &viewportWidth, &viewportHeight);
 
     glm::mat4 view = camera.GetViewMatrix();
     float aspectRatio = (float)m_screenWidth / (float)m_screenHeight;
@@ -129,7 +121,7 @@ void GfxEngine::EndFrame(const Camera &camera)
 
     for (size_t i = 0; i < m_lights.size(); i++)
     {
-	Light *light = m_lights[i];
+	const Light *light = m_lights[i];
 	LightGPU lightGPU;
 	lightGPU.position = glm::vec4(light->position.x, light->position.y, light->position.z, light->type);
 	lightGPU.ambient = glm::vec4(light->ambient.x, light->ambient.y, light->ambient.z, light->constant);
@@ -146,32 +138,19 @@ void GfxEngine::EndFrame(const Camera &camera)
     for (auto r : m_renderables)
     {
 
-	glCall(glUseProgram(r.material.GetShaderProgram()));
+	glCall(glUseProgram(r.material->GetShaderProgram()));
 
-	SetMat4(r.material.GetShaderProgram(), "model", glm::value_ptr(r.transform));
+	SetMat4(r.material->GetShaderProgram(), "model", glm::value_ptr(r.transform));
 	glm::mat3 normalMat;
 	normalMat = glm::transpose(glm::inverse(/* view * */ r.transform));
-	SetMat3(r.material.GetShaderProgram(), "normalMat", glm::value_ptr(normalMat));
+	SetMat3(r.material->GetShaderProgram(), "normalMat", glm::value_ptr(normalMat));
 
-	glCall(glUniform1i(glGetUniformLocation(r.material.GetShaderProgram(), "numActiveLights"), m_lights.size()));
-	glCall(glUniform3f(glGetUniformLocation(r.material.GetShaderProgram(), "viewPos"),
+	glCall(glUniform1i(glGetUniformLocation(r.material->GetShaderProgram(), "numActiveLights"), m_lights.size()));
+	glCall(glUniform3f(glGetUniformLocation(r.material->GetShaderProgram(), "viewPos"),
 		    camera.position.x, camera.position.y, camera.position.z));
-	glCall(glUniform1f(glGetUniformLocation(r.material.GetShaderProgram(), "material.shininess"), r.material.shininess));
+	glCall(glUniform1f(glGetUniformLocation(r.material->GetShaderProgram(), "material.shininess"), r.material->shininess));
 
-	r.mesh.Draw(r.material.GetShaderProgram());
+	r.mesh->Draw(r.material->GetShaderProgram());
 	
     }
-}
-
-size_t GfxEngine::GetLightCount()
-{
-    return m_lights.size();
-}
-
-Light* GfxEngine::GetLight(size_t index)
-{
-    if (index < m_lights.size())
-	return m_lights[index];
-    else
-	throw std::exception();
 }

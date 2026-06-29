@@ -132,19 +132,19 @@ int main()
 	engine.BeginFrame(camera);
 
 
-	engine.SubmitModel(crateModel, materialDefault, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
-	engine.SubmitModel(catModel, materialDefault, glm::mat4(1.0f));
-	engine.SubmitModel(treeModel, materialDefault, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
-	engine.SubmitModel(groundModel, materialDefault, glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)), glm::vec3(10.0f)));
+	engine.SubmitModel(&crateModel, &materialDefault, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
+	engine.SubmitModel(&catModel, &materialDefault, glm::mat4(1.0f));
+	engine.SubmitModel(&treeModel, &materialDefault, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
+	engine.SubmitModel(&groundModel, &materialDefault, glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)), glm::vec3(10.0f)));
 
-	engine.SubmitModel(girlModel, materialDefault, glm::scale(
+	engine.SubmitModel(&girlModel, &materialDefault, glm::scale(
 		    glm::rotate(
 		    glm::translate(glm::mat4(1.0f), glm::vec3(2.5, 0, 0)),
 		    glm::radians(105.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
 		    glm::vec3(2.0f)));
 
-	engine.SubmitLight(dirLight);
-	engine.SubmitLight(pointLight);
+	engine.SubmitLight(&dirLight);
+	engine.SubmitLight(&pointLight);
 
 
 	// for (int i = 0; i < 20; i++)

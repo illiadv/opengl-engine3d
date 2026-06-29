@@ -24,22 +24,16 @@ public:
     void BeginFrame(const Camera &camera);
     void EndFrame(const Camera &camera);
 
-    void SubmitMesh(const Mesh &mesh, const Material& material, const glm::mat4 &transform);
-    void SubmitModel(const std::vector<Mesh> &model, const Material &material, const glm::mat4 &transform);
-    void SubmitLight(const Light &light);
-
-    size_t GetLightCount();
-    Light* GetLight(size_t index);
+    void SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform);
+    void SubmitModel(const std::vector<Mesh> *model, const Material *material, const glm::mat4 &transform);
+    void SubmitLight(const Light *light);
 
     glm::vec3 backgroundColor = glm::vec3(0.4f, 0.85f, 0.9f);
 
 protected:
     
 private:
-    float mouseLastX = 400;
-    float mouseLastY = 300;
-
-    std::vector<Light*> m_lights;
+    std::vector<const Light*> m_lights;
     std::vector<Renderable> m_renderables;
     static constexpr int m_maxLights = 100;
     static constexpr size_t m_uboLightsSize = m_maxLights * 4*sizeof(glm::vec4);
