@@ -171,6 +171,7 @@ int main()
     }
 	    
     // clean up
+    glfwDestroyWindow(window);
     glfwTerminate();
     printf("Bye\n");
     
