@@ -140,7 +140,7 @@ int main()
 	engine.SubmitModel(&girlModel, &materialDefault, glm::scale(
 		    glm::rotate(
 		    glm::translate(glm::mat4(1.0f), glm::vec3(2.5, 0, 0)),
-		    glm::radians(105.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
+		    glm::radians(195.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
 		    glm::vec3(2.0f)));
 
 	engine.SubmitLight(&dirLight);
