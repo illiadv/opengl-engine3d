@@ -25,6 +25,7 @@ endif()
 add_compile_options(-Wall -Wextra -Wuninitialized -Wmaybe-uninitialized)
 
 set(SOURCES 
+    src/bufferlayout.cpp
     src/glad.c 
     src/stb_image.c
     src/camera.cpp
