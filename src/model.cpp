@@ -1,6 +1,13 @@
 #include "engine3d/model.hpp"
 #include "texture.hpp"
 
+struct Vertex {
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 texCoord;
+};
+
+
 std::vector<Mesh> ModelLoader::Load(const char *path, bool flipUVs)
 {
     Model model;
@@ -127,18 +134,13 @@ Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 	printf("No specular texture for %s\n", directory.c_str());
     }
 
+    BufferLayout layout = {
+	BufferElement( AttributeType::Float, 3 ), // Position
+	BufferElement( AttributeType::Float, 3 ), // Normal
+	BufferElement( AttributeType::Float, 2 ), // TexCoord
+    };
 
-
-	//    // Some debug info
-	//    printf (" == Mesh loaded");
-	//    printf ("Textures:\n");
-	//    int i = 1;
-	//    for (auto t : textures) {
-	// printf ("%d: %s (%s)\n", i, t.path.c_str(), t.type == TextureType::diffuse ? "diffuse" : "specular");
-	// i++;
-	// }
-
-    return Mesh(vertices, indices, textures);
+    return Mesh(vertices.data(), vertices.size() * sizeof(Vertex), indices, layout, textures);
 }
 
 Texture ModelLoader::Model::LoadMaterialTextures(aiString str, aiTextureType type)
