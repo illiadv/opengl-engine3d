@@ -1,41 +1,54 @@
 #include "engine3d/mesh.hpp"
 #include "util.hpp"
 
-Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, std::vector<Texture> &texture)
+Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout, std::vector<Texture> &texture)
 {
-    this->vertices = vertices;
-    this->indices = indices;
     this->textures = texture;
 
-    SetupMesh();
-}
+    // Create OpenGL objects
+    glCall(glGenBuffers(1, &m_VBO));
+    glCall(glGenVertexArrays(1, &m_VAO));
+    glCall(glGenBuffers(1, &m_EBO));
 
-void Mesh::SetupMesh()
-{
-    // OpenGL objects
-    glCall(glGenBuffers(1, &VBO));
-    glCall(glGenVertexArrays(1, &VAO));
-    glCall(glGenBuffers(1, &EBO));
+    // Bind VAO first
+    glCall(glBindVertexArray(m_VAO));
+    // Bind VBO as ARRAY_BUFFER
+    glCall(glBindBuffer(GL_ARRAY_BUFFER, m_VBO));
+    // Set VBO data
+    glCall(glBufferData(GL_ARRAY_BUFFER, vertexDataSize, vertexData, GL_STATIC_DRAW));
 
-    // bind VAO
-    glCall(glBindVertexArray(VAO));
-    // bind VBO as ARRAY_BUFFER
-    glCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-    // set VBO data
-    glCall(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW));
-
-    // bind EBO as ELEMENT_ARRAY_BUFFER
-    glCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
-    // set EBO data
+    // Sind EBO as ELEMENT_ARRAY_BUFFER
+    glCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
+    // Set EBO data
     glCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW));
+    m_indexCount = indices.size();
 
-    // set vertex attrib pointers
-    glCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0));
-    glCall(glEnableVertexAttribArray(0));
-    glCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)offsetof(Vertex, normal)));
-    glCall(glEnableVertexAttribArray(1));
-    glCall(glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)offsetof(Vertex, texCoord)));
-    glCall(glEnableVertexAttribArray(2));
+    // Set vertex attrib pointers based on the layout description
+    unsigned int elementIndex = 0;
+    for (auto element : layout.GetElements())
+    {
+	if (element.type == AttributeType::Float)
+	{
+	    glCall(glVertexAttribPointer(elementIndex,
+		    element.count,
+		    element.GetGLBaseType(),
+		    element.normalized ? GL_TRUE : GL_FALSE,
+		    layout.GetStride(),
+		    (void*)(uintptr_t)element.offset));
+	}
+	else
+	{
+	    glCall(glVertexAttribIPointer(elementIndex,
+		    element.count,
+		    element.GetGLBaseType(),
+		    layout.GetStride(),
+		    (void*)(uintptr_t)element.offset));
+	}
+
+
+	glCall(glEnableVertexAttribArray(elementIndex));
+	elementIndex++;
+    }
 }
 
 void Mesh::Draw(unsigned int shader) const
@@ -59,9 +72,9 @@ void Mesh::Draw(unsigned int shader) const
     }
 
     // bind arrays
-    glCall(glBindVertexArray(VAO));
+    glCall(glBindVertexArray(m_VAO));
     // Draw
-    glCall(glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0));
+    glCall(glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0));
 
     // unbind arrays
     glCall(glBindVertexArray(0));
