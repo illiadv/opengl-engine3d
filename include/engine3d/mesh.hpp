@@ -24,13 +24,8 @@ struct Texture {
 
 class Mesh {
     public:
-    // std::vector<Vertex> vertices;
-    // std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
-
-    // Mesh(std::vector<Vertex> &verticies, std::vector<unsigned int> &indicies, std::vector<Texture> &texture);
-    Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout, std::vector<Texture> &texture);
-    void Draw(unsigned int shader) const;
+    Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout);
+    void Draw() const;
 
     private:
     unsigned int m_VBO, m_EBO, m_VAO;

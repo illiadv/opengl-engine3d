@@ -1,9 +1,8 @@
 #include "engine3d/mesh.hpp"
 #include "util.hpp"
 
-Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout, std::vector<Texture> &texture)
+Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout)
 {
-    this->textures = texture;
 
     // Create OpenGL objects
     glCall(glGenBuffers(1, &m_VBO));
@@ -51,37 +50,12 @@ Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<un
     }
 }
 
-void Mesh::Draw(unsigned int shader) const
+void Mesh::Draw() const
 {
-    // bind textures to slots
-    for (size_t i = 0; i < textures.size(); i++) {
-	std::string name = "material.";
-
-	switch (textures[i].type) {
-	    case TextureType::diffuse:
-		name += "diffuse"; break;
-	    case TextureType::specular:
-		name += "specular"; break;
-	    case TextureType::emission:
-		name += "emission"; break;
-	}
-	glCall(glActiveTexture(GL_TEXTURE0 + i));
-	// we only actually have to do this once?
-	glCall(glUniform1i(glGetUniformLocation(shader, name.c_str()), i));
-	glCall(glBindTexture(GL_TEXTURE_2D, textures[i].id));
-    }
-
-    // bind arrays
+    // Bind arrays
     glCall(glBindVertexArray(m_VAO));
     // Draw
     glCall(glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0));
-
-    // unbind arrays
+    // Unbind arrays
     glCall(glBindVertexArray(0));
-
-    // Unbind textures from slots
-    for (size_t i = 0; i < textures.size(); i++) {
-	glCall(glActiveTexture(GL_TEXTURE0 + i));
-	glCall(glBindTexture(GL_TEXTURE_2D, 0));
-    }
 }
