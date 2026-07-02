@@ -15,6 +15,7 @@ public:
     void SetFloat(const char* uniform, float f);
     void SetInt(const char* uniform, int i);
     void Bind();
+    GLuint GetID() const;
 private:
     GLuint m_ID;
 };

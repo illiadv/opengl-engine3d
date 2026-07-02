@@ -97,6 +97,11 @@ void Shader::Bind()
     glUseProgram(m_ID);
 }
 
+GLuint Shader::GetID() const
+{
+    return m_ID;
+}
+
 Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
     std::string vertexShaderSource;
