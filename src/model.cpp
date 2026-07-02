@@ -69,7 +69,7 @@ Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     // Create corresponding vectors for this mesh
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
+    // std::vector<Texture> textures;
 
     // Load all verticies for this mesh
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -110,29 +110,29 @@ Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     }
 
 
-    // Get material by its index
-    aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-    
-    // Texture filename gets loaded here
-    aiString str;
+    // // Get material by its index
+    // aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
+    // 
+    // // Texture filename gets loaded here
+    // aiString str;
 
-    if (material->GetTexture(aiTextureType_DIFFUSE, 0, &str) == AI_SUCCESS) {
-	// Load this type of texture
-	Texture diffuseMap = LoadMaterialTextures(str, aiTextureType_DIFFUSE);
-	// And push it to the vector
-	textures.push_back(diffuseMap);
-    }
-    else {
-	printf("No diffuse texture for %s\n", directory.c_str());
-    }
+    // if (material->GetTexture(aiTextureType_DIFFUSE, 0, &str) == AI_SUCCESS) {
+    //     // Load this type of texture
+    //     Texture diffuseMap = LoadMaterialTextures(str, aiTextureType_DIFFUSE);
+    //     // And push it to the vector
+    //     textures.push_back(diffuseMap);
+    // }
+    // else {
+    //     printf("No diffuse texture for %s\n", directory.c_str());
+    // }
 
-    if (material->GetTexture(aiTextureType_SPECULAR, 0, &str) == AI_SUCCESS) {
-	Texture specularMap = LoadMaterialTextures(str, aiTextureType_SPECULAR);
-	textures.push_back(specularMap);
-    }
-    else {
-	printf("No specular texture for %s\n", directory.c_str());
-    }
+    // if (material->GetTexture(aiTextureType_SPECULAR, 0, &str) == AI_SUCCESS) {
+    //     Texture specularMap = LoadMaterialTextures(str, aiTextureType_SPECULAR);
+    //     textures.push_back(specularMap);
+    // }
+    // else {
+    //     printf("No specular texture for %s\n", directory.c_str());
+    // }
 
     BufferLayout layout = {
 	BufferElement( AttributeType::Float, 3 ), // Position
@@ -140,7 +140,7 @@ Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
 	BufferElement( AttributeType::Float, 2 ), // TexCoord
     };
 
-    return Mesh(vertices.data(), vertices.size() * sizeof(Vertex), indices, layout, textures);
+    return Mesh(vertices.data(), vertices.size() * sizeof(Vertex), indices, layout);
 }
 
 Texture ModelLoader::Model::LoadMaterialTextures(aiString str, aiTextureType type)
@@ -164,7 +164,7 @@ Texture ModelLoader::Model::LoadMaterialTextures(aiString str, aiTextureType typ
     Texture texture;
     printf("Loading %s texture %s for material\n", type == aiTextureType_DIFFUSE ? "diffuse" : "specular", path.c_str());
     // Load texture data from file into gpu memory
-    texture.id = CreateTexture(path.c_str());
+    // texture.id = CreateTexture(path.c_str());
     // Set texutre type
     texture.type = type == aiTextureType_DIFFUSE ? TextureType::diffuse : TextureType::specular;
     // Set texture path so we can compare later
