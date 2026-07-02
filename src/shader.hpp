@@ -16,6 +16,8 @@ void SetVec4(unsigned int shader, const char* uniform, const float* vec4);
 
 void SetFloat(unsigned int shader, const char* uniform, float f);
 
+void SetInt(unsigned int shader, const char* uniform, int i);
+
 unsigned int CreateShader(const char* vertexShaderPath, const char* fragmentShaderPath);
 
 #endif

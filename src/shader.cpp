@@ -49,6 +49,14 @@ void SetFloat(unsigned int shader, const char* uniform, float f)
     glUniform1f(location, f);
 }
 
+void SetInt(unsigned int shader, const char* uniform, int i)
+{
+    int location = glGetUniformLocation(shader, uniform);
+    if (location == -1)
+        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    glUniform1i(location, i);
+}
+
 unsigned int CreateShader(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
     printf("CreateShader called\n");
