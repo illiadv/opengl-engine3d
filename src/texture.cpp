@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <cstring>
 
-#include "texture.hpp"
+#include "engine3d/texture.hpp"
 #include "util.hpp"
 #include "stb_image.h"
 
@@ -58,6 +58,12 @@ void Texture2D::Bind(uint32_t slot)
     glCall(glActiveTexture(GL_TEXTURE0 + slot));
     // glCall(glUniform1i(glGetUniformLocation(shader, name.c_str()), i));
     glCall(glBindTexture(GL_TEXTURE_2D, m_ID));
+}
+
+void Texture2D::Unbind(uint32_t slot)
+{
+    glCall(glActiveTexture(GL_TEXTURE0 + slot));
+    glCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 unsigned int CreateTextureArray(std::initializer_list<const char*> filenames)
@@ -135,4 +141,10 @@ void TextureArray2D::Bind(uint32_t slot)
     glCall(glActiveTexture(GL_TEXTURE0 + slot));
     // glCall(glUniform1i(glGetUniformLocation(shader, name.c_str()), i));
     glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, m_ID));
+}
+
+void TextureArray2D::Unbind(uint32_t slot)
+{
+    glCall(glActiveTexture(GL_TEXTURE0 + slot));
+    glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, 0));
 }

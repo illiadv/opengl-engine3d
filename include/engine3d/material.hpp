@@ -9,8 +9,8 @@
 #include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
-#include "shader.hpp"
-#include "texture.hpp"
+#include "engine3d/shader.hpp"
+#include "engine3d/texture.hpp"
 
 
 class Material
@@ -23,6 +23,7 @@ public:
     void SetVec3(std::string name, glm::vec3 v);
 
     void Bind() const;
+    void Unbind() const;
 
     std::shared_ptr<Shader> GetShader() const;
 

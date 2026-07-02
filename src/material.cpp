@@ -1,6 +1,6 @@
 #include "engine3d/material.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "shader.hpp"
+#include "engine3d/shader.hpp"
 #include "util.hpp"
 
 Material::Material(std::shared_ptr<Shader> shader)
@@ -48,8 +48,17 @@ void Material::Bind() const
 
     for (auto& [name, textureData] : m_textures)
     {
+	// glActiveTexture is called on texture->Bind
 	textureData.texture->Bind(textureData.slot);
 	m_shader->SetInt(name.c_str(), textureData.slot);
+    }
+}
+
+void Material::Unbind() const
+{
+    for (auto& [name, textureData] : m_textures)
+    {
+	textureData.texture->Unbind(textureData.slot);
     }
 }
 

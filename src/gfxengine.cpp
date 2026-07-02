@@ -149,5 +149,6 @@ void GfxEngine::EndFrame(const Camera &camera)
 
 	r.mesh->Draw();
 	
+	r.material->Unbind();
     }
 }
