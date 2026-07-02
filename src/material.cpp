@@ -3,18 +3,17 @@
 #include "shader.hpp"
 #include "util.hpp"
 
-Material::Material(const char *vertexShaderSource, const char *fragmentShaderSource)
+Material::Material(std::shared_ptr<Shader> shader)
+    : m_shader(shader)
 {
-    m_shader = CreateShader(vertexShaderSource, fragmentShaderSource);
-
-    unsigned int blockIndex = glGetUniformBlockIndex(m_shader, "Matricies");
+    unsigned int blockIndex = glGetUniformBlockIndex(m_shader->GetID(), "Matricies");
     glCheckError();
-    glUniformBlockBinding(m_shader, blockIndex, 0);
+    glUniformBlockBinding(m_shader->GetID(), blockIndex, 0);
     glCheckError();
 
-    blockIndex = glGetUniformBlockIndex(m_shader, "Lights");
+    blockIndex = glGetUniformBlockIndex(m_shader->GetID(), "Lights");
     glCheckError();
-    glUniformBlockBinding(m_shader, blockIndex, 1);
+    glUniformBlockBinding(m_shader->GetID(), blockIndex, 1);
     glCheckError();
 
 }
@@ -39,22 +38,22 @@ void Material::Bind() const
 
     for (auto& [name, value] : m_floats)
     {
-	SetFloat(m_shader, name.c_str(), value);
+	m_shader->SetFloat(name.c_str(), value);
     }
 
     for (auto& [name, value] : m_vec3s)
     {
-	SetVec3(m_shader, name.c_str(), glm::value_ptr(value));
+	m_shader->SetVec3(name.c_str(), glm::value_ptr(value));
     }
 
     for (auto& [name, textureData] : m_textures)
     {
 	textureData.texture->Bind(textureData.slot);
-	SetInt(m_shader, name.c_str(), textureData.slot);
+	m_shader->SetInt(name.c_str(), textureData.slot);
     }
 }
 
-const unsigned int& Material::GetShaderProgram() const
+std::shared_ptr<Shader> Material::GetShader() const
 {
     return m_shader;
 }
