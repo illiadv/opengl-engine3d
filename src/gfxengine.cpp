@@ -5,7 +5,6 @@
 #include "engine3d/light.hpp"
 #include "engine3d/mesh.hpp"
 #include "engine3d/material.hpp"
-#include "shader.hpp"
 #include "util.hpp"
 #include "stb_image.h"
 

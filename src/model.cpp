@@ -1,5 +1,4 @@
 #include "engine3d/model.hpp"
-#include "texture.hpp"
 
 struct Vertex {
     glm::vec3 position;
@@ -143,34 +142,34 @@ Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     return Mesh(vertices.data(), vertices.size() * sizeof(Vertex), indices, layout);
 }
 
-Texture ModelLoader::Model::LoadMaterialTextures(aiString str, aiTextureType type)
-{
-    // get full path for this texture (not just the file name)
-    std::string path = directory + "/" + str.C_Str();
-
-    // check all textures that have been loaded
-    for (unsigned int j = 0; j < texturesLoaded.size(); j++)
-    {
-	// if (std::strcmp(texturesLoaded[j].path.data(), str.C_Str()) == 0)
-	// compare its path to the one we're loading right now
-	if (std::strcmp(texturesLoaded[j].path.data(), path.data()) == 0)
-	{
-	    // if it is the same, return it
-	    return texturesLoaded[j];
-	}
-    }
-    
-    // Create a new texture
-    Texture texture;
-    printf("Loading %s texture %s for material\n", type == aiTextureType_DIFFUSE ? "diffuse" : "specular", path.c_str());
-    // Load texture data from file into gpu memory
-    // texture.id = CreateTexture(path.c_str());
-    // Set texutre type
-    texture.type = type == aiTextureType_DIFFUSE ? TextureType::diffuse : TextureType::specular;
-    // Set texture path so we can compare later
-    texture.path = path.c_str();
-    // Add to textures that are already loaded
-    texturesLoaded.push_back(texture);
-    
-    return texture;
-}
+// Texture ModelLoader::Model::LoadMaterialTextures(aiString str, aiTextureType type)
+// {
+//     // get full path for this texture (not just the file name)
+//     std::string path = directory + "/" + str.C_Str();
+//
+//     // check all textures that have been loaded
+//     for (unsigned int j = 0; j < texturesLoaded.size(); j++)
+//     {
+// 	// if (std::strcmp(texturesLoaded[j].path.data(), str.C_Str()) == 0)
+// 	// compare its path to the one we're loading right now
+// 	if (std::strcmp(texturesLoaded[j].path.data(), path.data()) == 0)
+// 	{
+// 	    // if it is the same, return it
+// 	    return texturesLoaded[j];
+// 	}
+//     }
+//
+//     // Create a new texture
+//     Texture texture;
+//     printf("Loading %s texture %s for material\n", type == aiTextureType_DIFFUSE ? "diffuse" : "specular", path.c_str());
+//     // Load texture data from file into gpu memory
+//     // texture.id = CreateTexture(path.c_str());
+//     // Set texutre type
+//     texture.type = type == aiTextureType_DIFFUSE ? TextureType::diffuse : TextureType::specular;
+//     // Set texture path so we can compare later
+//     texture.path = path.c_str();
+//     // Add to textures that are already loaded
+//     texturesLoaded.push_back(texture);
+//
+//     return texture;
+// }

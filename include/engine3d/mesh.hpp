@@ -5,22 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <string>
 
 #include <vector>
 
 #include "glad/glad.h"
 #include "engine3d/bufferlayout.hpp"
-
-enum TextureType {
-    diffuse, specular, emission
-};
-
-struct Texture {
-    unsigned int id;
-    TextureType type;
-    std::string path;
-};
 
 class Mesh {
     public:
