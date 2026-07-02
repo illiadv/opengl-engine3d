@@ -35,6 +35,8 @@ void Material::SetTexture(std::string name, Texture *texture, uint32_t slot)
 
 void Material::Bind() const
 {
+    m_shader->Bind();
+
     for (auto& [name, value] : m_floats)
     {
 	SetFloat(m_shader, name.c_str(), value);
