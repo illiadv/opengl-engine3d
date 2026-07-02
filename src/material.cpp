@@ -27,7 +27,7 @@ void Material::uSetVec3(std::string name, glm::vec3 v)
     m_vec3s[name] = v;
 }
 
-void Material::SetTexture(std::string name, Texture *texture, uint32_t slot)
+void Material::SetTexture(std::string name, std::shared_ptr<Texture> texture, uint32_t slot)
 {
     m_textures[name] = {texture, slot};
 }

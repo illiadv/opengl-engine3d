@@ -18,7 +18,7 @@ class Material
 public:
     Material(std::shared_ptr<Shader> shader);
 
-    void SetTexture(std::string name, Texture *texture, uint32_t slot);
+    void SetTexture(std::string name, std::shared_ptr<Texture> texture, uint32_t slot);
     void uSetFloat(std::string name, float f);
     void uSetVec3(std::string name, glm::vec3 v);
 
@@ -32,7 +32,7 @@ private:
     std::unordered_map<std::string, glm::vec3> m_vec3s;
 
     struct TextureData {
-	Texture *texture;
+	std::shared_ptr<Texture> texture;
 	uint32_t slot;
     };
 
