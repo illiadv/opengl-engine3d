@@ -137,20 +137,18 @@ void GfxEngine::EndFrame(const Camera &camera)
 
     for (auto r : m_renderables)
     {
-
-	glCall(glUseProgram(r.material->GetShaderProgram()));
-
-	SetMat4(r.material->GetShaderProgram(), "model", glm::value_ptr(r.transform));
 	glm::mat3 normalMat;
 	normalMat = glm::transpose(glm::inverse(/* view * */ r.transform));
-	SetMat3(r.material->GetShaderProgram(), "normalMat", glm::value_ptr(normalMat));
 
-	glCall(glUniform1i(glGetUniformLocation(r.material->GetShaderProgram(), "numActiveLights"), m_lights.size()));
-	glCall(glUniform3f(glGetUniformLocation(r.material->GetShaderProgram(), "viewPos"),
-		    camera.position.x, camera.position.y, camera.position.z));
-	glCall(glUniform1f(glGetUniformLocation(r.material->GetShaderProgram(), "material.shininess"), r.material->shininess));
+	r.material->Bind();
 
-	r.mesh->Draw(r.material->GetShaderProgram());
+	r.material->GetShader()->SetMat4("model", glm::value_ptr(r.transform));
+	r.material->GetShader()->SetMat3("normalMat", glm::value_ptr(normalMat));
+	r.material->GetShader()->SetVec3("viewPos", glm::value_ptr(camera.position));
+
+	r.material->GetShader()->SetInt("numActiveLights", m_lights.size());
+
+	r.mesh->Draw();
 	
     }
 }
