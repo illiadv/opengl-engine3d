@@ -19,8 +19,8 @@ public:
     Material(std::shared_ptr<Shader> shader);
 
     void SetTexture(std::string name, std::shared_ptr<Texture> texture, uint32_t slot);
-    void uSetFloat(std::string name, float f);
-    void uSetVec3(std::string name, glm::vec3 v);
+    void SetFloat(std::string name, float f);
+    void SetVec3(std::string name, glm::vec3 v);
 
     void Bind() const;
 

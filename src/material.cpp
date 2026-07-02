@@ -17,12 +17,12 @@ Material::Material(std::shared_ptr<Shader> shader)
     glCheckError();
 
 }
-void Material::uSetFloat(std::string name, float f)
+void Material::SetFloat(std::string name, float f)
 {
     m_floats[name] = f;
 }
 
-void Material::uSetVec3(std::string name, glm::vec3 v)
+void Material::SetVec3(std::string name, glm::vec3 v)
 {
     m_vec3s[name] = v;
 }
