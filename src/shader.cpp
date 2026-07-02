@@ -4,104 +4,111 @@
 #include <string>
 
 
-void SetMat4(unsigned int shader, const char* uniform, float* matrix)
+void Shader::SetMat4(const char* uniform, float* matrix)
 {
-    int location = glGetUniformLocation(shader, uniform);
+    int location = glGetUniformLocation(m_ID, uniform);
     if (location == -1)
-        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    {
+        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+    }
     glUniformMatrix4fv(location, 1, GL_FALSE, matrix);
 }
 
-void SetMat3(unsigned int shader, const char* uniform, float* matrix)
+void Shader::SetMat3(const char* uniform, float* matrix)
 {
-    int location = glGetUniformLocation(shader, uniform);
+    int location = glGetUniformLocation(m_ID, uniform);
     if (location == -1)
-        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    {
+        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+    }
     glUniformMatrix3fv(location, 1, GL_FALSE, matrix);
 }
 
-void SetVec3(unsigned int shader, const char* uniform, const float* vec3) {
-    int location = glGetUniformLocation(shader, uniform);
+void Shader::SetVec3(const char* uniform, const float* vec3)
+{
+    int location = glGetUniformLocation(m_ID, uniform);
     if (location == -1)
-        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    {
+        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+    }
     glUniform3fv(location, 1, vec3);
 }
 
-void SetVec3(unsigned int shader, const char* uniform, float x, float y, float z) {
-    int location = glGetUniformLocation(shader, uniform);
+void Shader::SetVec3(const char* uniform, float x, float y, float z)
+{
+    int location = glGetUniformLocation(m_ID, uniform);
     if (location == -1)
-        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    {
+        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+    }
     glUniform3f(location, x, y, z);
 }
 
-void SetVec4(unsigned int shader, const char* uniform, const float* vec4) {
-    int location = glGetUniformLocation(shader, uniform);
+void Shader::SetVec4(const char* uniform, const float* vec4)
+{
+    int location = glGetUniformLocation(m_ID, uniform);
     if (location == -1)
-        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    {
+        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+    }
     glUniform4fv(location, 1, vec4);
 }
 
-void SetFloat(unsigned int shader, const char* uniform, float f)
+void Shader::SetFloat(const char* uniform, float f)
 {
-    int location = glGetUniformLocation(shader, uniform);
+    int location = glGetUniformLocation(m_ID, uniform);
     if (location == -1)
-        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    {
+        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+    }
     glUniform1f(location, f);
 }
 
-void SetInt(unsigned int shader, const char* uniform, int i)
+void Shader::SetInt(const char* uniform, int i)
 {
-    int location = glGetUniformLocation(shader, uniform);
+    int location = glGetUniformLocation(m_ID, uniform);
     if (location == -1)
-        {}//printf("Failed to get location of the uniform \"%s\"\n", uniform);
+    {
+        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+    }
     glUniform1i(location, i);
 }
 
-unsigned int CreateShader(const char* vertexShaderPath, const char* fragmentShaderPath)
+void ReadSourceFile(const char* path, std::string &dest)
 {
-    printf("CreateShader called\n");
-    std::string vertexShaderSource;
-    std::string fragmentShaderSource;
-    unsigned int program;
-
-    std::ifstream file(vertexShaderPath, std::ios::in | std::ios::binary | std::ios::ate);
+    std::ifstream file(path, std::ios::in | std::ios::binary | std::ios::ate);
 
     if (!file)
     {
-	printf("CreateShader: Error opening source file %s\n", vertexShaderPath);
-	return 0;
+	throw std::runtime_error(std::string("CreateShader: Error opening source file ") + path + "\n");
     }
 
     long filesize = file.tellg();
     file.seekg(0, std::ios_base::beg);
-    vertexShaderSource.resize(filesize);
+    dest.resize(filesize);
 
-    file.read(vertexShaderSource.data(), filesize);
-
-    file.close();
-
-    file.open(fragmentShaderPath, std::ios::in | std::ios::binary | std::ios::ate);
-
-    if (!file)
-    {
-	printf("CreateShader: Error opening source file %s\n", vertexShaderPath);
-	return 0;
-    }
-
-    filesize = file.tellg();
-    file.seekg(0, std::ios_base::beg);
-    fragmentShaderSource.resize(filesize);
-
-    file.read(fragmentShaderSource.data(), filesize);
+    file.read(dest.data(), filesize);
 
     file.close();
+}
 
+void Shader::Bind()
+{
+    glUseProgram(m_ID);
+}
+
+Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
+{
+    std::string vertexShaderSource;
+    std::string fragmentShaderSource;
+
+    ReadSourceFile(vertexShaderPath, vertexShaderSource);
+    ReadSourceFile(fragmentShaderPath, fragmentShaderSource);
 
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
     const char* src = vertexShaderSource.c_str();
-    // printf("%s\n", vertexShaderSource.c_str());
     glShaderSource(vertexShader, 1, &src, NULL);
     src = fragmentShaderSource.c_str();
     glShaderSource(fragmentShader, 1, &src, NULL);
@@ -115,9 +122,8 @@ unsigned int CreateShader(const char* vertexShaderPath, const char* fragmentShad
     if (!success)
     {
 	glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-	printf("Vertex shader compilation failed!\nIn file %s:\n%s\n", vertexShaderPath, infoLog);
-	throw std::exception();
-	return 0;
+	printf("Error in file %s:\n%s\n", vertexShaderPath, infoLog);
+	throw std::runtime_error("Vertex shader compilation failed!\n");
     }
 
     glCompileShader(fragmentShader);
@@ -127,26 +133,22 @@ unsigned int CreateShader(const char* vertexShaderPath, const char* fragmentShad
     if (!success)
     {
 	glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-	printf("Fragment shader compilation failed!\nIn file %s:\n%s\n", fragmentShaderPath, infoLog);
-	throw std::exception();
-	return 0;
+	printf("Error in file %s:\n%s\n", fragmentShaderPath, infoLog);
+	throw std::runtime_error("Fragment shader compilation failed!\n");
     }
 
-    program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
+    m_ID = glCreateProgram();
+    glAttachShader(m_ID, vertexShader);
+    glAttachShader(m_ID, fragmentShader);
+    glLinkProgram(m_ID);
 
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
+    glGetProgramiv(m_ID, GL_LINK_STATUS, &success);
     if(!success) {
-	glGetProgramInfoLog(program, 512, NULL, infoLog);
-	printf("Shader program linking failed!\n%s\n", infoLog);
-	return 0;
+	glGetProgramInfoLog(m_ID, 512, NULL, infoLog);
+	printf("Error: %s\n", infoLog);
+	throw std::runtime_error("Shader program linking failed!\n");
     }
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-    printf("CreateShader finished\n");
-
-    return program;
 }

@@ -1,23 +1,22 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef SHADER_HPP
+#define SHADER_HPP
 
-// #include <GL/glew.h>
 #include <glad/glad.h>
 
-void SetMat4(unsigned int shader, const char* uniform, float* matrix);
-
-void SetMat3(unsigned int shader, const char* uniform, float* matrix);
-
-void SetVec3(unsigned int shader, const char* uniform, const float* vec3);
-
-void SetVec3(unsigned int shader, const char* uniform, float x, float y, float z);
-
-void SetVec4(unsigned int shader, const char* uniform, const float* vec4);
-
-void SetFloat(unsigned int shader, const char* uniform, float f);
-
-void SetInt(unsigned int shader, const char* uniform, int i);
-
-unsigned int CreateShader(const char* vertexShaderPath, const char* fragmentShaderPath);
+class Shader
+{
+public:
+    Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
+    void SetMat4(const char* uniform, float* matrix);
+    void SetMat3(const char* uniform, float* matrix);
+    void SetVec3(const char* uniform, const float* vec3);
+    void SetVec3(const char* uniform, float x, float y, float z);
+    void SetVec4(const char* uniform, const float* vec4);
+    void SetFloat(const char* uniform, float f);
+    void SetInt(const char* uniform, int i);
+    void Bind();
+private:
+    GLuint m_ID;
+};
 
 #endif
