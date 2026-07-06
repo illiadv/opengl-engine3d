@@ -108,41 +108,14 @@ int main()
 	    "assets/shaders/fragment.glsl");
 
 	    
-    auto treeModel = ModelLoader::Load("assets/laubbaum/laubbaum.obj");
-    auto catModel = ModelLoader::Load("assets/cat/cat.obj");
-    auto crateModel = ModelLoader::Load("assets/crate/crate.obj");
-    auto groundModel = ModelLoader::Load("assets/ground/ground.obj");
-    auto girlModel = ModelLoader::Load("assets/pink/pink.obj");
-    auto grassModel = ModelLoader::Load("assets/grass/grass.obj");
-    auto cylinderModel = ModelLoader::Load("assets/cylinder/cylinder.obj");
-    auto lightHandleModel = ModelLoader::Load("assets/light-handle/light-handle.obj");
-
-    auto treeTexture = std::make_shared<Texture2D>("assets/laubbaum/laubbaum.png");
-    Material treeMaterial = Material(shader);
-    treeMaterial.SetFloat("material.shininess", 64);
-    treeMaterial.SetTexture("material.diffuse", treeTexture, 0);
-
-    auto catTexture = std::make_shared<Texture2D>("assets/cat/cat.png");
-    Material catMaterial(shader);
-    catMaterial.SetFloat("material.shininess", 64);
-    catMaterial.SetTexture("material.diffuse", catTexture, 0);
-
-    auto groundTexture = std::make_shared<Texture2D>("assets/ground/grass16.png");
-    Material groundMaterial(shader);
-    groundMaterial.SetFloat("material.shininess", 64);
-    groundMaterial.SetTexture("material.diffuse", groundTexture, 0);
-
-    auto crateTexture = std::make_shared<Texture2D>("assets/crate/container2.png");
-    auto crateTextureSpec = std::make_shared<Texture2D>("assets/crate/container2_specular.png");
-    Material crateMaterial(shader);
-    crateMaterial.SetFloat("material.shininess", 64);
-    crateMaterial.SetTexture("material.diffuse", crateTexture, 0);
-    crateMaterial.SetTexture("material.specular", crateTextureSpec, 1);
-
-    auto girlTexture = std::make_shared<Texture2D>("assets/pink/pink.png");
-    Material girlMaterial(shader);
-    girlMaterial.SetFloat("material.shininess", 64);
-    girlMaterial.SetTexture("material.diffuse", girlTexture, 0);
+    Model treeModel("assets/laubbaum/laubbaum.obj", shader);
+    Model catModel("assets/cat/cat.obj", shader);
+    Model crateModel("assets/crate/crate.obj", shader);
+    Model groundModel("assets/ground/ground.obj", shader);
+    Model girlModel("assets/pink/pink.obj", shader);
+    Model grassModel("assets/grass/grass.obj", shader);
+    Model cylinderModel("assets/cylinder/cylinder.obj", shader);
+    Model lightHandleModel("assets/light-handle/light-handle.obj", shader);
 
     Light dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.5f));
     Light pointLight(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.8f, 0.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f);
@@ -156,12 +129,12 @@ int main()
 
 	engine.BeginFrame(camera);
 
-	engine.SubmitModel(&crateModel, &crateMaterial, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
-	engine.SubmitModel(&catModel, &catMaterial, glm::mat4(1.0f));
-	engine.SubmitModel(&treeModel, &treeMaterial, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
-	engine.SubmitModel(&groundModel, &groundMaterial, glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)), glm::vec3(10.0f)));
+	engine.SubmitModel(&crateModel.meshes, &crateModel.material, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
+	engine.SubmitModel(&catModel.meshes, &catModel.material, glm::mat4(1.0f));
+	engine.SubmitModel(&treeModel.meshes, &treeModel.material, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
+	engine.SubmitModel(&groundModel.meshes, &groundModel.material, glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)), glm::vec3(10.0f)));
 
-	engine.SubmitModel(&girlModel, &girlMaterial, glm::scale(
+	engine.SubmitModel(&girlModel.meshes, &girlModel.material, glm::scale(
 		    glm::rotate(
 		    glm::translate(glm::mat4(1.0f), glm::vec3(2.5, 0, 0)),
 		    glm::radians(195.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
