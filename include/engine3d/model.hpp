@@ -18,10 +18,10 @@ public:
 private:
     std::string directory;
     std::shared_ptr<Shader> shader;
-    void ProcessNode(aiNode *node, const aiScene *scene);
-    Mesh ProcessMesh(aiMesh *mesh);
+    void ProcessNode(aiNode *assimpNode, const aiScene *assimpScene);
+    Mesh ProcessMesh(aiMesh *assimpMesh);
     void LoadMaterial(aiMaterial *assimpMaterial);
-    std::shared_ptr<Texture2D> LoadMaterialTexture(aiString str);
+    std::shared_ptr<Texture2D> LoadMaterialTexture(aiString fllename);
 };
 
 #endif

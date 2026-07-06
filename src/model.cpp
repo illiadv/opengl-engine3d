@@ -6,22 +6,21 @@ struct Vertex {
     glm::vec2 texCoord;
 };
 
-
 // Entry point to model loading
 Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
     : shader(shader)
 {
     Assimp::Importer importer;
 
-    unsigned int flags = 0;
-    flags |= aiProcess_Triangulate;
+    unsigned int assimpFlags = 0;
+    assimpFlags |= aiProcess_Triangulate;
 
     if (flipUVs) {
-	flags |= aiProcess_FlipUVs;
+	assimpFlags |= aiProcess_FlipUVs;
     }
 
     // Load the scene
-    const aiScene *assimpScene = importer.ReadFile(path.c_str(), flags);
+    const aiScene *assimpScene = importer.ReadFile(path.c_str(), assimpFlags);
 
     if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
     {
@@ -44,21 +43,21 @@ Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
 }
 
 // Process nodes recursively
-void Model::ProcessNode(aiNode *node, const aiScene *scene)
+void Model::ProcessNode(aiNode *assimpNode, const aiScene *assimpScene)
 {
     // nodes only contain mesh indexes
-    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    for (unsigned int i = 0; i < assimpNode->mNumMeshes; i++)
     {
 	// Get a mesh by its index
-	aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+	aiMesh *assimpMesh = assimpScene->mMeshes[assimpNode->mMeshes[i]];
 	// Process a mesh (load its data) and add it to model's meshes
-	meshes.push_back(ProcessMesh(mesh));
+	meshes.push_back(ProcessMesh(assimpMesh));
     }
 
     // After that, process all children nodes of this mesh recursively
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    for (unsigned int i = 0; i < assimpNode->mNumChildren; i++)
     {
-	ProcessNode(node->mChildren[i], scene);
+	ProcessNode(assimpNode->mChildren[i], assimpScene);
     }
 }
 
@@ -148,10 +147,10 @@ void Model::LoadMaterial(aiMaterial *assimpMaterial)
 }
 
 
-std::shared_ptr<Texture2D> Model::LoadMaterialTexture(aiString str)
+std::shared_ptr<Texture2D> Model::LoadMaterialTexture(aiString filename)
 {
     // get full path for this texture (not just the file name)
-    std::string path = directory + "/" + str.C_Str();
+    std::string path = directory + "/" + filename.C_Str();
 
     // Create a new texture
     return std::make_shared<Texture2D>(path.c_str());
