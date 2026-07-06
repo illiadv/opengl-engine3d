@@ -131,7 +131,7 @@ void Model::LoadMaterial(aiMesh *assimpMesh, const aiScene *assimpScene)
 
     if (assimpMaterial->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) == AI_SUCCESS) {
 	auto texture = LoadMaterialTexture(textureFilename);
-        material.SetTexture("material.diffuse", texture, 0);
+        material.SetTexture("material.specular", texture, 1);
     }
     else {
         printf("No specular texture for %s\n", directory.c_str());
