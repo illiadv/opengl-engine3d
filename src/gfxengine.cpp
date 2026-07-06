@@ -75,16 +75,6 @@ void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm
     m_renderables.push_back(r);
 }
 
-void GfxEngine::SubmitModel(const std::vector<Mesh> *model, const Material *material, const glm::mat4 &transform)
-{
-    for (const Mesh &mesh : *model)
-    {
-	Renderable r = {&mesh, material, transform};
-	m_renderables.push_back(r);
-    }
-}
-
-
 void GfxEngine::BeginFrame(const Camera &camera)
 {
     m_renderables.clear();

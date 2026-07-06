@@ -93,6 +93,15 @@ void InitWindow() {
     // glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
 }
 
+void SubmitModel(GfxEngine &engine, const Model &model, const glm::mat4 &transform)
+{
+    for (size_t i = 0; i < model.meshes.size(); i++)
+    {
+	int materialIndex = model.materialIndexes[i];
+	engine.SubmitMesh(&model.meshes[i], &model.materials[materialIndex], transform);
+    }
+}
+
 int main()
 {
     InitWindow();
@@ -107,7 +116,6 @@ int main()
 	    "assets/shaders/vertex.glsl",
 	    "assets/shaders/fragment.glsl");
 
-	    
     Model treeModel("assets/laubbaum/laubbaum.obj", shader);
     Model catModel("assets/cat/cat.obj", shader);
     Model crateModel("assets/crate/crate.obj", shader);
@@ -129,12 +137,11 @@ int main()
 
 	engine.BeginFrame(camera);
 
-	engine.SubmitModel(&crateModel.meshes, &crateModel.material, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
-	engine.SubmitModel(&catModel.meshes, &catModel.material, glm::mat4(1.0f));
-	engine.SubmitModel(&treeModel.meshes, &treeModel.material, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
-	engine.SubmitModel(&groundModel.meshes, &groundModel.material, glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)), glm::vec3(10.0f)));
-
-	engine.SubmitModel(&girlModel.meshes, &girlModel.material, glm::scale(
+	SubmitModel(engine, crateModel, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
+	SubmitModel(engine, catModel, glm::mat4(1.0f));
+	SubmitModel(engine, treeModel, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
+	SubmitModel(engine, groundModel, glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)), glm::vec3(10.0f)));
+	SubmitModel(engine, girlModel, glm::scale(
 		    glm::rotate(
 		    glm::translate(glm::mat4(1.0f), glm::vec3(2.5, 0, 0)),
 		    glm::radians(195.0f), glm::vec3(0.0f, 1.0f, 0.0f)),
