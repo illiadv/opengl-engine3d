@@ -115,9 +115,14 @@ Mesh Model::ProcessMesh(aiMesh *assimpMesh, const aiScene *scene)
 
 void Model::LoadMaterial(aiMesh *assimpMesh, const aiScene *assimpScene)
 {
-    printf("LoadMaterial called for %s\n", directory.c_str());
+    int materialIndex = assimpMesh->mMaterialIndex;
+    if (materialIndex <= materialIndexLoaded)
+    {
+	return; // No need to load this material again
+    }
     // Get material by its index
-    aiMaterial *assimpMaterial = assimpScene->mMaterials[assimpMesh->mMaterialIndex];
+    aiMaterial *assimpMaterial = assimpScene->mMaterials[materialIndex];
+    materialIndexLoaded++;
 
     aiString textureFilename;
 
@@ -145,8 +150,6 @@ std::shared_ptr<Texture2D> Model::LoadMaterialTexture(aiString str)
 {
     // get full path for this texture (not just the file name)
     std::string path = directory + "/" + str.C_Str();
-
-    // Add some kind of optimization here
 
     // Create a new texture
     return std::make_shared<Texture2D>(path.c_str());

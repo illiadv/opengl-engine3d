@@ -17,7 +17,7 @@ public:
 private:
     std::string directory;
     std::shared_ptr<Shader> shader;
-    // std::unordered_map<std::string, std::unique_ptr<Texture>> texturesLoaded;
+    int materialIndexLoaded = -1;
     void ProcessNode(aiNode *node, const aiScene *scene);
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
     void LoadMaterial(aiMesh *mesh, const aiScene *scene);
