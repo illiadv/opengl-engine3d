@@ -12,7 +12,7 @@ struct Model
 public:
     std::vector<Mesh> meshes;
     Material material;
-    Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs);
+    Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs = false);
 
 private:
     std::string directory;
