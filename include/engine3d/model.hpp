@@ -11,16 +11,15 @@ struct Model
 {
 public:
     std::vector<Mesh> meshes;
-    Material material;
+    std::vector<Material> materials;
     Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs = false);
 
 private:
     std::string directory;
     std::shared_ptr<Shader> shader;
-    int materialIndexLoaded = -1;
     void ProcessNode(aiNode *node, const aiScene *scene);
     Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
-    void LoadMaterial(aiMesh *mesh, const aiScene *scene);
+    void LoadMaterial(aiMaterial *assimpMaterial);
     std::shared_ptr<Texture2D> LoadMaterialTexture(aiString str);
 };
 

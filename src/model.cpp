@@ -9,7 +9,7 @@ struct Vertex {
 
 // Entry point to model loading
 Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
-    : material(shader), shader(shader)
+    : shader(shader)
 {
     Assimp::Importer importer;
 
@@ -21,9 +21,9 @@ Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
     }
 
     // Load the scene
-    const aiScene *scene = importer.ReadFile(path.c_str(), flags);
+    const aiScene *assimpScene = importer.ReadFile(path.c_str(), flags);
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
     {
 	printf("Assimp error: %s", importer.GetErrorString());
 	return;
@@ -33,7 +33,13 @@ Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
     directory = path.substr(0, path.find_last_of('/'));
 
     // Process the root node
-    ProcessNode(scene->mRootNode, scene);
+    ProcessNode(assimpScene->mRootNode, assimpScene);
+
+    for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
+    {
+	aiMaterial *assimpMaterial = assimpScene->mMaterials[i];
+	LoadMaterial(assimpMaterial);
+    }
 
 }
 
@@ -102,7 +108,7 @@ Mesh Model::ProcessMesh(aiMesh *assimpMesh, const aiScene *scene)
 	}
     }
 
-    LoadMaterial(assimpMesh, scene);
+    LoadMaterial(assimpMesh);
 
     BufferLayout layout = {
 	BufferElement( AttributeType::Float, 3 ), // Position
@@ -113,16 +119,9 @@ Mesh Model::ProcessMesh(aiMesh *assimpMesh, const aiScene *scene)
     return Mesh(vertices.data(), vertices.size() * sizeof(Vertex), indices, layout);
 }
 
-void Model::LoadMaterial(aiMesh *assimpMesh, const aiScene *assimpScene)
+void Model::LoadMaterial(aiMaterial *assimpMaterial)
 {
-    int materialIndex = assimpMesh->mMaterialIndex;
-    if (materialIndex <= materialIndexLoaded)
-    {
-	return; // No need to load this material again
-    }
-    // Get material by its index
-    aiMaterial *assimpMaterial = assimpScene->mMaterials[materialIndex];
-    materialIndexLoaded++;
+    Material material(shader);
 
     aiString textureFilename;
 
@@ -143,6 +142,8 @@ void Model::LoadMaterial(aiMesh *assimpMesh, const aiScene *assimpScene)
     }
 
     material.SetFloat("material.shininess", 64);
+
+    materials.push_back(material);
 }
 
 
