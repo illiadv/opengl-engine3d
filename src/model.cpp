@@ -52,7 +52,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene)
 	// Get a mesh by its index
 	aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
 	// Process a mesh (load its data) and add it to model's meshes
-	meshes.push_back(ProcessMesh(mesh, scene));
+	meshes.push_back(ProcessMesh(mesh));
     }
 
     // After that, process all children nodes of this mesh recursively
@@ -63,7 +63,7 @@ void Model::ProcessNode(aiNode *node, const aiScene *scene)
 }
 
 // Called from ProcessNode
-Mesh Model::ProcessMesh(aiMesh *assimpMesh, const aiScene *scene)
+Mesh Model::ProcessMesh(aiMesh *assimpMesh)
 {
     // Create corresponding vectors for this mesh
     std::vector<Vertex> vertices;
