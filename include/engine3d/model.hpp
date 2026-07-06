@@ -11,6 +11,7 @@ struct Model
 {
 public:
     std::vector<Mesh> meshes;
+    std::vector<int> materialIndexes;
     std::vector<Material> materials;
     Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs = false);
 

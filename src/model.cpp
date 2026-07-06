@@ -108,7 +108,8 @@ Mesh Model::ProcessMesh(aiMesh *assimpMesh, const aiScene *scene)
 	}
     }
 
-    LoadMaterial(assimpMesh);
+    // Store material index of this mesh to use when rendering
+    materialIndexes.push_back(assimpMesh->mMaterialIndex);
 
     BufferLayout layout = {
 	BufferElement( AttributeType::Float, 3 ), // Position
