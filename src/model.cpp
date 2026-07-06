@@ -7,15 +7,9 @@ struct Vertex {
 };
 
 
-std::vector<Mesh> ModelLoader::Load(const char *path, bool flipUVs)
-{
-    Model model;
-    model.LoadModel(path, flipUVs);
-    return model.meshes;
-}
-
 // Entry point to model loading
-void ModelLoader::Model::LoadModel(std::string path, bool flipUVs)
+Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
+    : material(shader), shader(shader)
 {
     Assimp::Importer importer;
 
@@ -44,7 +38,7 @@ void ModelLoader::Model::LoadModel(std::string path, bool flipUVs)
 }
 
 // Process nodes recursively
-void ModelLoader::Model::ProcessNode(aiNode *node, const aiScene *scene)
+void Model::ProcessNode(aiNode *node, const aiScene *scene)
 {
     // nodes only contain mesh indexes
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -63,7 +57,7 @@ void ModelLoader::Model::ProcessNode(aiNode *node, const aiScene *scene)
 }
 
 // Called from ProcessNode
-Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
+Mesh Model::ProcessMesh(aiMesh *assimpMesh, const aiScene *scene)
 {
     // Create corresponding vectors for this mesh
     std::vector<Vertex> vertices;
@@ -71,26 +65,26 @@ Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     // std::vector<Texture> textures;
 
     // Load all verticies for this mesh
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    for (unsigned int i = 0; i < assimpMesh->mNumVertices; i++)
     {
 	// Load vertex
 	Vertex vertex;
 	glm::vec3 tmp;
-	tmp.x = mesh->mVertices[i].x;
-	tmp.y = mesh->mVertices[i].y;
-	tmp.z = mesh->mVertices[i].z;
+	tmp.x = assimpMesh->mVertices[i].x;
+	tmp.y = assimpMesh->mVertices[i].y;
+	tmp.z = assimpMesh->mVertices[i].z;
 	vertex.position = tmp;
 
-	tmp.x = mesh->mNormals[i].x;
-	tmp.y = mesh->mNormals[i].y;
-	tmp.z = mesh->mNormals[i].z;
+	tmp.x = assimpMesh->mNormals[i].x;
+	tmp.y = assimpMesh->mNormals[i].y;
+	tmp.z = assimpMesh->mNormals[i].z;
 	vertex.normal = tmp;
 
 	// Load texture coords if they are present
-	if (mesh->mTextureCoords[0]) {
+	if (assimpMesh->mTextureCoords[0]) {
 	    glm::vec2 vec;
-	    vec.x = mesh->mTextureCoords[0][i].x;
-	    vec.y = mesh->mTextureCoords[0][i].y;
+	    vec.x = assimpMesh->mTextureCoords[0][i].x;
+	    vec.y = assimpMesh->mTextureCoords[0][i].y;
 	    vertex.texCoord = vec;
 	}
 	else
@@ -100,38 +94,15 @@ Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     }
 
     // Load indices
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+    for (unsigned int i = 0; i < assimpMesh->mNumFaces; i++)
     {
-	for (unsigned int j = 0; j < mesh->mFaces[i].mNumIndices; j++)
+	for (unsigned int j = 0; j < assimpMesh->mFaces[i].mNumIndices; j++)
 	{
-	    indices.push_back(mesh->mFaces[i].mIndices[j]);
+	    indices.push_back(assimpMesh->mFaces[i].mIndices[j]);
 	}
     }
 
-
-    // // Get material by its index
-    // aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
-    // 
-    // // Texture filename gets loaded here
-    // aiString str;
-
-    // if (material->GetTexture(aiTextureType_DIFFUSE, 0, &str) == AI_SUCCESS) {
-    //     // Load this type of texture
-    //     Texture diffuseMap = LoadMaterialTextures(str, aiTextureType_DIFFUSE);
-    //     // And push it to the vector
-    //     textures.push_back(diffuseMap);
-    // }
-    // else {
-    //     printf("No diffuse texture for %s\n", directory.c_str());
-    // }
-
-    // if (material->GetTexture(aiTextureType_SPECULAR, 0, &str) == AI_SUCCESS) {
-    //     Texture specularMap = LoadMaterialTextures(str, aiTextureType_SPECULAR);
-    //     textures.push_back(specularMap);
-    // }
-    // else {
-    //     printf("No specular texture for %s\n", directory.c_str());
-    // }
+    LoadMaterial(assimpMesh, scene);
 
     BufferLayout layout = {
 	BufferElement( AttributeType::Float, 3 ), // Position
@@ -142,34 +113,41 @@ Mesh ModelLoader::Model::ProcessMesh(aiMesh *mesh, const aiScene *scene)
     return Mesh(vertices.data(), vertices.size() * sizeof(Vertex), indices, layout);
 }
 
-// Texture ModelLoader::Model::LoadMaterialTextures(aiString str, aiTextureType type)
-// {
-//     // get full path for this texture (not just the file name)
-//     std::string path = directory + "/" + str.C_Str();
-//
-//     // check all textures that have been loaded
-//     for (unsigned int j = 0; j < texturesLoaded.size(); j++)
-//     {
-// 	// if (std::strcmp(texturesLoaded[j].path.data(), str.C_Str()) == 0)
-// 	// compare its path to the one we're loading right now
-// 	if (std::strcmp(texturesLoaded[j].path.data(), path.data()) == 0)
-// 	{
-// 	    // if it is the same, return it
-// 	    return texturesLoaded[j];
-// 	}
-//     }
-//
-//     // Create a new texture
-//     Texture texture;
-//     printf("Loading %s texture %s for material\n", type == aiTextureType_DIFFUSE ? "diffuse" : "specular", path.c_str());
-//     // Load texture data from file into gpu memory
-//     // texture.id = CreateTexture(path.c_str());
-//     // Set texutre type
-//     texture.type = type == aiTextureType_DIFFUSE ? TextureType::diffuse : TextureType::specular;
-//     // Set texture path so we can compare later
-//     texture.path = path.c_str();
-//     // Add to textures that are already loaded
-//     texturesLoaded.push_back(texture);
-//
-//     return texture;
-// }
+void Model::LoadMaterial(aiMesh *assimpMesh, const aiScene *assimpScene)
+{
+    printf("LoadMaterial called for %s\n", directory.c_str());
+    // Get material by its index
+    aiMaterial *assimpMaterial = assimpScene->mMaterials[assimpMesh->mMaterialIndex];
+
+    aiString textureFilename;
+
+    if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilename) == AI_SUCCESS) {
+	auto texture = LoadMaterialTexture(textureFilename);
+        material.SetTexture("material.diffuse", texture, 0);
+    }
+    else {
+        printf("No diffuse texture for %s\n", directory.c_str());
+    }
+
+    if (assimpMaterial->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) == AI_SUCCESS) {
+	auto texture = LoadMaterialTexture(textureFilename);
+        material.SetTexture("material.diffuse", texture, 0);
+    }
+    else {
+        printf("No specular texture for %s\n", directory.c_str());
+    }
+
+    material.SetFloat("material.shininess", 64);
+}
+
+
+std::shared_ptr<Texture2D> Model::LoadMaterialTexture(aiString str)
+{
+    // get full path for this texture (not just the file name)
+    std::string path = directory + "/" + str.C_Str();
+
+    // Add some kind of optimization here
+
+    // Create a new texture
+    return std::make_shared<Texture2D>(path.c_str());
+}

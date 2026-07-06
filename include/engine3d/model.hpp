@@ -1,30 +1,27 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include "mesh.hpp"
+#include "engine3d/mesh.hpp"
+#include "engine3d/material.hpp"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-class ModelLoader
+struct Model
 {
 public:
-    static std::vector<Mesh> Load(const char *path, bool flipUVs = false);
+    std::vector<Mesh> meshes;
+    Material material;
+    Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs);
+
 private:
-    class Model
-    {
-    public:
-	std::vector<Mesh> meshes;
-	std::string directory;
-
-	// std::vector<Texture> texturesLoaded;
-
-	void LoadModel(std::string path, bool flipUVs);
-	void ProcessNode(aiNode *node, const aiScene *scene);
-	Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
-	// std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
-	// Texture LoadMaterialTextures(aiString str, aiTextureType type);
-    };
+    std::string directory;
+    std::shared_ptr<Shader> shader;
+    // std::unordered_map<std::string, std::unique_ptr<Texture>> texturesLoaded;
+    void ProcessNode(aiNode *node, const aiScene *scene);
+    Mesh ProcessMesh(aiMesh *mesh, const aiScene *scene);
+    void LoadMaterial(aiMesh *mesh, const aiScene *scene);
+    std::shared_ptr<Texture2D> LoadMaterialTexture(aiString str);
 };
 
 #endif
