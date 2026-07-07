@@ -1,4 +1,5 @@
 #include "engine3d/model.hpp"
+#include <stdexcept>
 
 struct Vertex {
     glm::vec3 position;
@@ -24,8 +25,7 @@ Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
 
     if (!assimpScene || assimpScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !assimpScene->mRootNode)
     {
-	printf("Assimp error: %s", importer.GetErrorString());
-	return;
+	throw std::runtime_error(std::string("Assimp error: ") + importer.GetErrorString());
     }
 
     // Get directory path where the model is located
