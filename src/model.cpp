@@ -129,16 +129,10 @@ void Model::LoadMaterial(aiMaterial *assimpMaterial)
 	auto texture = LoadMaterialTexture(textureFilename);
         material.SetTexture("material.diffuse", texture, 0);
     }
-    else {
-        printf("No diffuse texture for %s\n", directory.c_str());
-    }
 
     if (assimpMaterial->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) == AI_SUCCESS) {
 	auto texture = LoadMaterialTexture(textureFilename);
         material.SetTexture("material.specular", texture, 1);
-    }
-    else {
-        printf("No specular texture for %s\n", directory.c_str());
     }
 
     material.SetFloat("material.shininess", 64);
