@@ -125,8 +125,10 @@ int main()
     Model cylinderModel("assets/cylinder/cylinder.obj", shader);
     Model lightHandleModel("assets/light-handle/light-handle.obj", shader);
 
+    Model cubeballModel("assets/cube-ball/cube-ball.obj", shader);
+
     Light dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.5f));
-    Light pointLight(glm::vec3(0.0f, 3.0f, 3.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.8f, 0.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f);
+    Light pointLight(glm::vec3(0.0f, 5.0f, 3.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.8f, 0.0f), glm::vec3(0.5f), 1.0f, 0.09f, 0.032f);
     
     float deltaTime = 0.0f; // Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
@@ -139,6 +141,7 @@ int main()
 
 	SubmitModel(engine, crateModel, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
 	SubmitModel(engine, catModel, glm::mat4(1.0f));
+	SubmitModel(engine, cubeballModel, glm::translate(glm::mat4(1.0f), glm::vec3(-2, 0, -8)));
 	SubmitModel(engine, treeModel, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
 	SubmitModel(engine, groundModel, glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)), glm::vec3(10.0f)));
 	SubmitModel(engine, girlModel, glm::scale(
