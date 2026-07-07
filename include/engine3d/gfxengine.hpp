@@ -19,7 +19,7 @@ public:
     ~GfxEngine();
     void ResizeViewport(int width, int height);
     void BeginFrame(const Camera &camera);
-    void EndFrame(const Camera &camera);
+    void EndFrame();
 
     void SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform);
     void SubmitLight(const Light *light);

@@ -100,7 +100,7 @@ void GfxEngine::BeginFrame(const Camera &camera)
 
 }
 
-void GfxEngine::EndFrame(const Camera &camera)
+void GfxEngine::EndFrame()
 {
     struct LightGPU {
 	glm::vec4 position; // w is type (0 = DirLight, 1 = PointLight)
