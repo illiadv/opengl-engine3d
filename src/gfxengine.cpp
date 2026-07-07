@@ -35,7 +35,9 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight)
 
     glCall(glGenBuffers(1, &m_uboMatricies));
 
-    unsigned int uboMatriciesSize = 2 * sizeof(glm::mat4) + sizeof (glm::vec3);
+    constexpr unsigned int uboMatriciesSize =
+	2 * sizeof(glm::mat4)
+	+ sizeof (glm::vec3);
 
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatricies));
     glCall(glBufferData(GL_UNIFORM_BUFFER, uboMatriciesSize, NULL, GL_STATIC_DRAW));
@@ -44,10 +46,14 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight)
 
     glCall(glGenBuffers(1, &m_uboLights));
 
+    constexpr unsigned int uboLigthsSize =
+	m_lightsArraySize
+	+ sizeof(unsigned int);
+
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboLights));
-    glCall(glBufferData(GL_UNIFORM_BUFFER, m_uboLightsSize, NULL, GL_STATIC_DRAW));
+    glCall(glBufferData(GL_UNIFORM_BUFFER, uboLigthsSize, NULL, GL_STATIC_DRAW));
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
-    glCall(glBindBufferRange(GL_UNIFORM_BUFFER, 1, m_uboLights, 0, m_uboLightsSize));
+    glCall(glBindBufferRange(GL_UNIFORM_BUFFER, 1, m_uboLights, 0, uboLigthsSize));
 
     // gui = new Gui(this);
 }
@@ -123,8 +129,11 @@ void GfxEngine::EndFrame()
 	ligtsGPU[i] = lightGPU;
     }
 
+    unsigned int numActiveLigths = m_lights.size();
+
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboLights));
-    glCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, m_uboLightsSize, ligtsGPU));
+    glCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, m_lightsArraySize, ligtsGPU));
+    glCall(glBufferSubData(GL_UNIFORM_BUFFER, m_lightsArraySize, sizeof(unsigned int), &numActiveLigths));
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
     for (auto r : m_renderables)
@@ -136,8 +145,6 @@ void GfxEngine::EndFrame()
 
 	r.material->GetShader()->SetMat4("model", glm::value_ptr(r.transform));
 	r.material->GetShader()->SetMat3("normalMat", glm::value_ptr(normalMat));
-
-	r.material->GetShader()->SetInt("numActiveLights", m_lights.size());
 
 	r.mesh->Draw();
 	

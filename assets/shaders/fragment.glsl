@@ -56,7 +56,6 @@ uniform Material material;
 
 #define MAX_LIGHTS 100
 
-uniform int numActiveLights;
 
 layout (std140) uniform Matricies {
     mat4 view;
@@ -66,6 +65,7 @@ layout (std140) uniform Matricies {
 
 layout (std140) uniform Lights {
     uniform Light lights[MAX_LIGHTS];
+    uint numActiveLights;
 };
 
 // sun
@@ -165,7 +165,7 @@ void main()
 
 	//    result += CalcSpotLight(spotLight, norm, fragmentPos, viewDir);
 
-    for (int i = 0; i < numActiveLights; i++)
+    for (uint i = 0u; i < numActiveLights; i++)
     {
 	float type = lights[i].position.w;
 	if (type > 0.1f) {

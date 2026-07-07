@@ -32,7 +32,7 @@ private:
     std::vector<const Light*> m_lights;
     std::vector<Renderable> m_renderables;
     static constexpr int m_maxLights = 100;
-    static constexpr size_t m_uboLightsSize = m_maxLights * 4*sizeof(glm::vec4);
+    static constexpr unsigned int m_lightsArraySize = m_maxLights * 4*sizeof(glm::vec4);
 
     unsigned int m_uboMatricies;
     unsigned int m_uboLights;
