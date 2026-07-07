@@ -7,71 +7,64 @@
 void Shader::SetMat4(const char* uniform, float* matrix)
 {
     int location = glGetUniformLocation(m_ID, uniform);
-    if (location == -1)
+    if (location != -1)
     {
-        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+	glUniformMatrix4fv(location, 1, GL_FALSE, matrix);
     }
-    glUniformMatrix4fv(location, 1, GL_FALSE, matrix);
 }
 
 void Shader::SetMat3(const char* uniform, float* matrix)
 {
     int location = glGetUniformLocation(m_ID, uniform);
-    if (location == -1)
+    if (location != -1)
     {
-        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+	glUniformMatrix3fv(location, 1, GL_FALSE, matrix);
     }
-    glUniformMatrix3fv(location, 1, GL_FALSE, matrix);
 }
 
 void Shader::SetVec3(const char* uniform, const float* vec3)
 {
     int location = glGetUniformLocation(m_ID, uniform);
-    if (location == -1)
+    if (location != -1)
     {
-        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+	glUniform3fv(location, 1, vec3);
     }
-    glUniform3fv(location, 1, vec3);
 }
 
 void Shader::SetVec3(const char* uniform, float x, float y, float z)
 {
     int location = glGetUniformLocation(m_ID, uniform);
-    if (location == -1)
+    if (location != -1)
     {
-        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+	glUniform3f(location, x, y, z);
     }
-    glUniform3f(location, x, y, z);
 }
 
 void Shader::SetVec4(const char* uniform, const float* vec4)
 {
     int location = glGetUniformLocation(m_ID, uniform);
-    if (location == -1)
+    if (location != -1)
     {
-        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+	glUniform4fv(location, 1, vec4);
     }
-    glUniform4fv(location, 1, vec4);
 }
 
 void Shader::SetFloat(const char* uniform, float f)
 {
     int location = glGetUniformLocation(m_ID, uniform);
-    if (location == -1)
+    if (location != -1)
     {
-        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+	glUniform1f(location, f);
     }
-    glUniform1f(location, f);
 }
 
 void Shader::SetInt(const char* uniform, int i)
 {
     int location = glGetUniformLocation(m_ID, uniform);
-    if (location == -1)
+    if (location != -1)
     {
-        throw std::runtime_error(std::string("Failed to get location of the uniform ") + uniform + "\n");
+	glUniform1i(location, i);
     }
-    glUniform1i(location, i);
 }
 
 void ReadSourceFile(const char* path, std::string &dest)
