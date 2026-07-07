@@ -167,7 +167,7 @@ int main()
 	// }
 	
 
-	engine.EndFrame(camera);
+	engine.EndFrame();
 
 	float currentFrame = glfwGetTime();
 	deltaTime = currentFrame - lastFrame;
