@@ -22,6 +22,7 @@ private:
     Mesh ProcessMesh(aiMesh *assimpMesh);
     void LoadMaterial(aiMaterial *assimpMaterial);
     std::shared_ptr<Texture2D> LoadMaterialTexture(aiString fllename);
+    void LoadMaterialKeys(Material &material, aiMaterial *assimpMaterial);
 };
 
 #endif

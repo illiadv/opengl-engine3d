@@ -37,7 +37,9 @@ Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
     for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
     {
 	aiMaterial *assimpMaterial = assimpScene->mMaterials[i];
+	printf("Loading material for %s\n", path.c_str());
 	LoadMaterial(assimpMaterial);
+	printf("\n");
     }
 
 }
@@ -135,11 +137,53 @@ void Model::LoadMaterial(aiMaterial *assimpMaterial)
         material.SetTexture("material.specular", texture, 1);
     }
 
-    material.SetFloat("material.shininess", 64);
+    LoadMaterialKeys(material, assimpMaterial);
 
     materials.push_back(material);
 }
 
+void Model::LoadMaterialKeys(Material &material, aiMaterial *assimpMaterial)
+{
+    aiString name;
+    if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_NAME, name))
+    {
+	printf("NAME = %s\n", name.C_Str());
+    }
+
+    aiColor3D color;
+    if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, color))
+    {
+	printf("COLOR_AMBIENT = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+    }
+
+    if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color))
+    {
+	printf("COLOR_DIFFUSE = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+    }
+
+    if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, color))
+    {
+	printf("COLOR_SPECULAR = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+    }
+
+    float fl;
+    if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_REFLECTIVITY, fl))
+    {
+	printf("REFLECTIVITY = %.3f\n", fl);
+    }
+
+    if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_SHININESS, fl))
+    {
+	printf("SHININESS = %.3f\n", fl);
+	material.SetFloat("material.shininess", fl);
+    }
+
+    if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_SHININESS_STRENGTH, fl))
+    {
+	printf("SHININESS_STRENGTH = %.3f\n", fl);
+    }
+
+}
 
 std::shared_ptr<Texture2D> Model::LoadMaterialTexture(aiString filename)
 {
