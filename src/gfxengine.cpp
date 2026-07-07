@@ -35,10 +35,12 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight)
 
     glCall(glGenBuffers(1, &m_uboMatricies));
 
+    unsigned int uboMatriciesSize = 2 * sizeof(glm::mat4) + sizeof (glm::vec3);
+
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatricies));
-    glCall(glBufferData(GL_UNIFORM_BUFFER, 2*sizeof(glm::mat4), NULL, GL_STATIC_DRAW));
+    glCall(glBufferData(GL_UNIFORM_BUFFER, uboMatriciesSize, NULL, GL_STATIC_DRAW));
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
-    glCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_uboMatricies, 0, 2*sizeof(glm::mat4)));
+    glCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_uboMatricies, 0, uboMatriciesSize));
 
     glCall(glGenBuffers(1, &m_uboLights));
 
@@ -93,6 +95,7 @@ void GfxEngine::BeginFrame(const Camera &camera)
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatricies));
     glCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view)));
     glCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection)));
+    glCall(glBufferSubData(GL_UNIFORM_BUFFER, 2*sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera.position)));
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
 }
@@ -133,7 +136,6 @@ void GfxEngine::EndFrame(const Camera &camera)
 
 	r.material->GetShader()->SetMat4("model", glm::value_ptr(r.transform));
 	r.material->GetShader()->SetMat3("normalMat", glm::value_ptr(normalMat));
-	r.material->GetShader()->SetVec3("viewPos", glm::value_ptr(camera.position));
 
 	r.material->GetShader()->SetInt("numActiveLights", m_lights.size());
 

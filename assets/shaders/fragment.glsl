@@ -52,13 +52,17 @@ in vec3 fragmentPos;
 
 out vec4 FragColor;
 
-uniform vec3 viewPos;
-
 uniform Material material;
 
 #define MAX_LIGHTS 100
 
 uniform int numActiveLights;
+
+layout (std140) uniform Matricies {
+    mat4 view;
+    mat4 projection;
+    vec3 viewPos;
+};
 
 layout (std140) uniform Lights {
     uniform Light lights[MAX_LIGHTS];

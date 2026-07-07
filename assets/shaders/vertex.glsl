@@ -4,8 +4,9 @@ layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoord;
 
 layout (std140) uniform Matricies {
-    uniform mat4 view;
-    uniform mat4 projection;
+    mat4 view;
+    mat4 projection;
+    vec3 viewPos;
 };
 
 uniform mat4 model;
