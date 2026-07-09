@@ -26,7 +26,7 @@ class TextureArray2D : public Texture
 {
 public:
     TextureArray2D(const char *path);
-    TextureArray2D(std::initializer_list<const char *> pathList);
+    TextureArray2D(std::initializer_list<const char *> pathList, unsigned int nDesiredChannels = 0);
     void Bind(uint32_t slot = 0) override;
     void Unbind(uint32_t slot = 0) override;
 private:

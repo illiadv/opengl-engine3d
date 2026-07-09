@@ -71,7 +71,7 @@ void Texture2D::Unbind(uint32_t slot)
     glCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
-unsigned int CreateTextureArray(std::initializer_list<const char*> filenames)
+TextureArray2D::TextureArray2D(std::initializer_list<const char*> filenames, unsigned int nDesiredChannels)
 {
     unsigned char *texArray = nullptr;
     int width, height, nChannels;
@@ -79,8 +79,7 @@ unsigned int CreateTextureArray(std::initializer_list<const char*> filenames)
     int i = 0;
     for (auto filename : filenames)
     {
-	// NOTE: for some files it may be necessary to force certain nChannels (e.g. 4)
-	unsigned char *textureData = LoadTextureFile(filename, width, height, nChannels);
+	unsigned char *textureData = LoadTextureFile(filename, width, height, nChannels, nDesiredChannels);
 
 	if (texArray == nullptr)
 	{
@@ -92,28 +91,12 @@ unsigned int CreateTextureArray(std::initializer_list<const char*> filenames)
 	i++;
     }
 
+    unsigned int sourceFormat = GetSourceFormat(nChannels);
 
-    unsigned int sourceFormat = 0;
-    switch (nChannels) {
-	case 1:
-	    sourceFormat = GL_RED;
-	    break;
-	case 3:
-	    sourceFormat = GL_RGB;
-	    break;
-	case 4:
-	    sourceFormat = GL_RGBA;
-	    break;
-	default:
-	    printf("Unknown image format with %d channels", nChannels);
-	    break;
-    }
-
-    unsigned int texture;
-    glCall(glGenTextures(1, &texture));
+    glCall(glGenTextures(1, &m_ID));
 
 
-    glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, texture));
+    glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, m_ID));
 
     
     glCall(glTexImage3D(GL_TEXTURE_2D_ARRAY,
@@ -123,7 +106,7 @@ unsigned int CreateTextureArray(std::initializer_list<const char*> filenames)
 		 height,            // height
 		 filenames.size(),  // depth
 		 0,                 // border
-		 GL_RGBA,           // cpu pixel format
+		 sourceFormat,	    // cpu pixel format
 		 GL_UNSIGNED_BYTE,  // cpu pixel coord type
 		 texArray));        // pixel data
     glCall(glGenerateMipmap(GL_TEXTURE_2D_ARRAY));
@@ -137,8 +120,6 @@ unsigned int CreateTextureArray(std::initializer_list<const char*> filenames)
 
     if (texArray != nullptr)
 	delete[] texArray;
-
-    return texture;
 }
 
 void TextureArray2D::Bind(uint32_t slot)
