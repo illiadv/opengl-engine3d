@@ -4,9 +4,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "light.hpp"
 
 struct Renderable;
-struct Light;
 struct Mesh;
 struct Camera;
 struct Material;
@@ -26,9 +26,23 @@ public:
 
     glm::vec3 backgroundColor = glm::vec3(0.4f, 0.85f, 0.9f);
 
-protected:
-    
 private:
+    struct LightGPU {
+	glm::vec4 position; // w is type (0 = DirLight, 1 = PointLight)
+    	glm::vec4 ambient;
+    	glm::vec4 diffuse;
+    	glm::vec4 specular;
+    };
+
+    class LightConverter : public LightConsumer
+    {
+    public:
+	LightGPU result;
+	void ConsumeDirectionalLight(const DirectionalLight* light) override;
+	void ConsumePointLight(const PointLight* light) override;
+    };
+
+
     std::vector<const Light*> m_lights;
     std::vector<Renderable> m_renderables;
     static constexpr int m_maxLights = 100;

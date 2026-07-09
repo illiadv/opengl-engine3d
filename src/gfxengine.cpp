@@ -106,27 +106,36 @@ void GfxEngine::BeginFrame(const Camera &camera)
 
 }
 
+void GfxEngine::LightConverter::ConsumeDirectionalLight(const DirectionalLight* light)
+{
+    result = LightGPU {
+	.position = glm::vec4(light->direction.x, light->direction.y, light->direction.z, 0.0f),
+	.ambient = glm::vec4(light->ambient.x, light->ambient.y, light->ambient.z, 0.0f),
+	.diffuse = glm::vec4(light->diffuse.x, light->diffuse.y, light->diffuse.z, 0.0f),
+	.specular = glm::vec4(light->specular.x, light->specular.y, light->specular.z, 0.0f),
+    };
+}
+
+void GfxEngine::LightConverter::ConsumePointLight(const PointLight* light)
+{
+    result = LightGPU {
+	.position = glm::vec4(light->position.x, light->position.y, light->position.z, 1.0f),
+	.ambient = glm::vec4(light->ambient.x, light->ambient.y, light->ambient.z, light->constant),
+	.diffuse = glm::vec4(light->diffuse.x, light->diffuse.y, light->diffuse.z, light->linear),
+	.specular = glm::vec4(light->specular.x, light->specular.y, light->specular.z, light->quadratic),
+    };
+}
+
 void GfxEngine::EndFrame()
 {
-    struct LightGPU {
-	glm::vec4 position; // w is type (0 = DirLight, 1 = PointLight)
-    	glm::vec4 ambient;
-    	glm::vec4 diffuse;
-    	glm::vec4 specular;
-    };
-
     LightGPU ligtsGPU[m_maxLights]{};
 
     for (size_t i = 0; i < m_lights.size(); i++)
     {
+	LightConverter converter;
 	const Light *light = m_lights[i];
-	LightGPU lightGPU;
-	lightGPU.position = glm::vec4(light->position.x, light->position.y, light->position.z, light->type);
-	lightGPU.ambient = glm::vec4(light->ambient.x, light->ambient.y, light->ambient.z, light->constant);
-	lightGPU.diffuse = glm::vec4(light->diffuse.x, light->diffuse.y, light->diffuse.z, light->linear);
-	lightGPU.specular = glm::vec4(light->specular.x, light->specular.y, light->specular.z, light->quadratic);
-
-	ligtsGPU[i] = lightGPU;
+	light->Accept(converter);
+	ligtsGPU[i] = converter.result;
     }
 
     unsigned int numActiveLigths = m_lights.size();
