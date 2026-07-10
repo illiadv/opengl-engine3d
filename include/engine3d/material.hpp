@@ -6,7 +6,6 @@
 #include <unordered_map>
 
 #include "glm/ext/vector_float3.hpp"
-#include "glad/glad.h"
 #include <GLFW/glfw3.h>
 
 #include "engine3d/shader.hpp"

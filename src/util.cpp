@@ -1,3 +1,4 @@
+#include "glad/gl.h"
 #include "util.hpp"
 #include <string>
 #include <stdio.h>

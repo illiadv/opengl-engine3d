@@ -1,3 +1,4 @@
+#include "glad/gl.h"
 #include "engine3d/material.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "engine3d/shader.hpp"

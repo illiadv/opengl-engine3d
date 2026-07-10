@@ -1,8 +1,6 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-#include <glad/glad.h>
-
 class Shader
 {
 public:
@@ -15,9 +13,9 @@ public:
     void SetFloat(const char* uniform, float f);
     void SetInt(const char* uniform, int i);
     void Bind();
-    GLuint GetID() const;
+    unsigned int GetID() const;
 private:
-    GLuint m_ID;
+    unsigned int m_ID;
 };
 
 #endif

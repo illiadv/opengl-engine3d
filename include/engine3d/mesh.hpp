@@ -8,7 +8,6 @@
 
 #include <vector>
 
-#include "glad/glad.h"
 #include "engine3d/bufferlayout.hpp"
 
 class Mesh {

@@ -1,5 +1,6 @@
 #include <stdexcept>
 
+#include "glad/gl.h"
 #include "engine3d/gfxengine.hpp"
 #include "engine3d/camera.hpp"
 #include "engine3d/light.hpp"

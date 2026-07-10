@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <cstring>
 
+#include "glad/gl.h"
 #include "engine3d/texture.hpp"
 #include "util.hpp"
 #include "stb_image.h"

@@ -1,3 +1,4 @@
+#include "glad/gl.h"
 #include "engine3d/bufferlayout.hpp"
 
 BufferElement::BufferElement(AttributeType type, uint8_t count, bool normalized)
@@ -13,7 +14,7 @@ BufferElement::BufferElement(AttributeType type, uint8_t count, bool normalized)
     }
 }
 
-GLenum BufferElement::GetGLBaseType() const
+unsigned int BufferElement::GetGLBaseType() const
 {
     switch (type)
     {

@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <glad/glad.h>
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -10,7 +10,6 @@
 #include "engine3d/gfxengine.hpp"
 #include "engine3d/light.hpp"
 #include "engine3d/model.hpp"
-#include "engine3d/material.hpp"
 
 GLFWwindow *window;
 Camera camera;
@@ -65,7 +64,7 @@ void processInput(float deltaTime)
 
 }
 
-void InitWindow() {
+bool InitWindow() {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -75,22 +74,24 @@ void InitWindow() {
 
     if (window == NULL)
     {
-	printf("Failed to init glfw window\n");
-	glfwTerminate();
+	printf("Failed to initilize glfw window\n");
+	return false;
     }
 
     glfwMakeContextCurrent(window);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-	fprintf(stderr, "Failed to initialize GLAD\n");
-    }
-
+	//    int version = gladLoadGL(glfwGetProcAddress);
+	//    if (version == 0)
+	//    {
+	// printf("Failed to initialize OpenGL context\n");
+	// return false;
+	//    }
+	//    printf("Loaded OpenGL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
 
     glfwSetCursorPosCallback(window, MouseCallback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    // int viewportWidth, viewportHeight;
-    // glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
+    return true;
 }
 
 void SubmitModel(GfxEngine &engine, const Model &model, const glm::mat4 &transform)
@@ -104,7 +105,8 @@ void SubmitModel(GfxEngine &engine, const Model &model, const glm::mat4 &transfo
 
 int main()
 {
-    InitWindow();
+    if (!InitWindow())
+	return 1;
     GfxEngine engine(1280, 720);
     glfwSetWindowUserPointer(window, &engine);
     int viewportWidth, viewportHeight;

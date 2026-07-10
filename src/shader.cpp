@@ -1,3 +1,4 @@
+#include "glad/gl.h"
 #include "engine3d/shader.hpp"
 #include <stdio.h>
 #include <fstream>

@@ -1,8 +1,6 @@
 #include <stdint.h>
 #include <vector>
 
-#include "glad/glad.h"
-
 enum class AttributeType {
     Byte, Int, Float
 };
@@ -14,7 +12,7 @@ struct BufferElement {
     uint32_t offset;
 
     BufferElement(AttributeType type, uint8_t count, bool normalized = false);
-    GLenum GetGLBaseType() const;
+    unsigned int GetGLBaseType() const;
 };
 
 class BufferLayout {
