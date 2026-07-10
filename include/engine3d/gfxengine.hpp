@@ -15,7 +15,7 @@ struct Material;
 class GfxEngine {
 
 public:
-    GfxEngine(int screenWidth, int screenHeight);
+    GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const char *))());
     ~GfxEngine();
     void ResizeViewport(int width, int height);
     void BeginFrame(const Camera &camera);

@@ -20,12 +20,24 @@ struct Renderable
 
 GfxEngine* GfxEngine::s_instance = nullptr;
 
-GfxEngine::GfxEngine(int screenWidth, int screenHeight)
+GfxEngine::GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const char *))())
 {
     if (s_instance != nullptr) {
 	throw std::runtime_error("No more than one instance of GfxEngine is allowed");
     }
     s_instance = this;
+
+    int version = gladLoadGL(loadFunc);
+    if (version == 0)
+    {
+	throw std::runtime_error("Failed to initialize OpenGL context");
+    }
+    printf("Loaded OpenGL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    if (GLAD_VERSION_MAJOR(version) < 3 || (GLAD_VERSION_MAJOR(version) == 3 && GLAD_VERSION_MINOR(version) < 3))
+    {
+	throw std::runtime_error("Engine Error: The Host Application did not create an OpenGL 3.3+ context!");
+    }
+
 
     m_screenWidth = screenWidth;
     m_screenHeight = screenHeight;

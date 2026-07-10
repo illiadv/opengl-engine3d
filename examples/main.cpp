@@ -80,14 +80,6 @@ bool InitWindow() {
 
     glfwMakeContextCurrent(window);
 
-	//    int version = gladLoadGL(glfwGetProcAddress);
-	//    if (version == 0)
-	//    {
-	// printf("Failed to initialize OpenGL context\n");
-	// return false;
-	//    }
-	//    printf("Loaded OpenGL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
-
     glfwSetCursorPosCallback(window, MouseCallback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -107,7 +99,7 @@ int main()
 {
     if (!InitWindow())
 	return 1;
-    GfxEngine engine(1280, 720);
+    GfxEngine engine(1280, 720, glfwGetProcAddress);
     glfwSetWindowUserPointer(window, &engine);
     int viewportWidth, viewportHeight;
     glfwGetFramebufferSize(window, &viewportWidth, &viewportHeight);
