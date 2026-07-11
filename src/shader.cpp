@@ -96,6 +96,43 @@ GLuint Shader::GetID() const
     return m_ID;
 }
 
+
+const std::vector<std::string> Shader::GetSamplers() const
+{
+    return m_samplers;
+}
+
+void Shader::Reflect()
+{
+    int count;
+    char *name;
+    int nameLength;
+    int size;
+    GLenum type;
+
+    glGetProgramiv(m_ID, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(m_ID, GL_ACTIVE_UNIFORM_MAX_LENGTH, &nameLength);
+
+    name = new char[nameLength];
+    
+    for (int i = 0; i < count; i++)
+    {
+	glGetActiveUniform(m_ID, i, nameLength, NULL, &size, &type, name);
+	if (type == GL_SAMPLER_2D)
+	{
+	    m_samplers.push_back(name);
+	}
+    }
+
+    printf("Found %zu samplers:\n", m_samplers.size());
+    for (unsigned int i = 0; i < m_samplers.size(); i++)
+    {
+	printf("%d. %s\n", i, m_samplers[i].c_str());
+    }
+
+    delete[] name;
+}
+
 Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
 {
     std::string vertexShaderSource;
@@ -150,4 +187,6 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    Reflect();
 }

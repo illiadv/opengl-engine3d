@@ -1,6 +1,9 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
+#include <string>
+#include <vector>
+
 class Shader
 {
 public:
@@ -13,9 +16,12 @@ public:
     void SetFloat(const char* uniform, float f);
     void SetInt(const char* uniform, int i);
     void Bind();
+    void Reflect();
     unsigned int GetID() const;
+    const std::vector<std::string> GetSamplers() const;
 private:
     unsigned int m_ID;
+    std::vector<std::string> m_samplers;
 };
 
 #endif
