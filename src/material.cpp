@@ -28,9 +28,9 @@ void Material::SetVec3(std::string name, glm::vec3 v)
     m_vec3s[name] = v;
 }
 
-void Material::SetTexture(std::string name, std::shared_ptr<Texture> texture, uint32_t slot)
+void Material::SetTexture(std::string name, std::shared_ptr<Texture> texture)
 {
-    m_textures[name] = {texture, slot};
+    m_textures[name] = texture;
 }
 
 void Material::Bind() const
@@ -47,12 +47,26 @@ void Material::Bind() const
 	m_shader->SetVec3(name.c_str(), glm::value_ptr(value));
     }
 
-    for (auto& [name, textureData] : m_textures)
+    // Look through all the samplers the shader has and bind a texture to them
+    int slot = 0;
+    for (auto sampler : m_shader->GetSamplers())
     {
-	// glActiveTexture is called on texture->Bind
-	textureData.texture->Bind(textureData.slot);
-	m_shader->SetInt(name.c_str(), textureData.slot);
+	// Find a texture with a corresponding name
+	auto it = m_textures.find(sampler);
+
+	// If a texture is found, bind it to current slot
+	if (it != m_textures.end())
+	{
+	    it->second->Bind(slot);
+	}
+	else
+	{
+	    fallback->Bind(slot);
+	}
+	m_shader->SetInt(sampler.c_str(), slot);
+	slot++;
     }
+
 }
 
 void Material::Unbind() const
