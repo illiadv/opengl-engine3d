@@ -144,6 +144,12 @@ void Model::LoadMaterial(aiMaterial *assimpMaterial)
 
 void Model::LoadMaterialKeys(Material &material, aiMaterial *assimpMaterial)
 {
+    printf("Property keys found:\n");
+    for (unsigned int i = 0; i < assimpMaterial->mNumProperties; i++)
+    {
+	aiMaterialProperty *property = assimpMaterial->mProperties[i];
+	printf("%d. %s\n", i, property->mKey.C_Str());
+    }
     aiString name;
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_NAME, name))
     {
