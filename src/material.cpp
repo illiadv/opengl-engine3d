@@ -4,6 +4,10 @@
 #include "engine3d/shader.hpp"
 #include "util.hpp"
 
+std::shared_ptr<Texture2D> Material::s_whiteTexture;
+std::shared_ptr<Texture2D> Material::s_blackTexture;
+std::shared_ptr<Texture2D> Material::s_normalTexture;
+
 Material::Material(std::shared_ptr<Shader> shader)
     : m_shader(shader)
 {
