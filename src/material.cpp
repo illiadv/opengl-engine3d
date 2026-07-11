@@ -17,6 +17,23 @@ Material::Material(std::shared_ptr<Shader> shader)
     glUniformBlockBinding(m_shader->GetID(), blockIndex, 1);
     glCheckError();
 
+    if (s_whiteTexture == nullptr)
+    {
+	uint32_t whitePixel = 0xFFFFFFFF;
+	s_whiteTexture = std::make_shared<Texture2D>(&whitePixel, 1, 1);
+    }
+
+    if (s_blackTexture == nullptr)
+    {
+	uint32_t blackPixel = 0x00000000;
+	s_blackTexture = std::make_shared<Texture2D>(&blackPixel, 1, 1);
+    }
+
+    if (s_blackTexture == nullptr)
+    {
+	uint32_t normalPixel = 0x8080FFFF;
+	s_normalTexture = std::make_shared<Texture2D>(&normalPixel, 1, 1);
+    }
 }
 void Material::SetFloat(std::string name, float f)
 {
@@ -61,12 +78,29 @@ void Material::Bind() const
 	}
 	else
 	{
+	    auto fallback = GetFallback(sampler);
 	    fallback->Bind(slot);
 	}
 	m_shader->SetInt(sampler.c_str(), slot);
 	slot++;
     }
 
+}
+
+std::shared_ptr<Texture2D> Material::GetFallback(const std::string samplerName) const
+{
+    if (samplerName.find("normal") != std::string::npos)
+    {
+	return s_normalTexture;
+    }
+
+    if (samplerName.find("emission") != std::string::npos ||
+	samplerName.find("displacement") != std::string::npos)
+    {
+	return s_blackTexture;
+    }
+
+    return s_whiteTexture;
 }
 
 std::shared_ptr<Shader> Material::GetShader() const

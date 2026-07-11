@@ -30,6 +30,12 @@ private:
     std::unordered_map<std::string, glm::vec3> m_vec3s;
 
     std::unordered_map<std::string, std::shared_ptr<Texture>> m_textures;
+
+    std::shared_ptr<Texture2D> GetFallback(const std::string samplerName) const;
+
+    static std::shared_ptr<Texture2D> s_whiteTexture;
+    static std::shared_ptr<Texture2D> s_blackTexture;
+    static std::shared_ptr<Texture2D> s_normalTexture;
 };
 
 #endif
