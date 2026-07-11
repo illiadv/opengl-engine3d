@@ -129,12 +129,12 @@ void Model::LoadMaterial(aiMaterial *assimpMaterial)
 
     if (assimpMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilename) == AI_SUCCESS) {
 	auto texture = LoadMaterialTexture(textureFilename);
-        material.SetTexture("material.diffuse", texture, 0);
+        material.SetTexture("material.diffuse", texture);
     }
 
     if (assimpMaterial->GetTexture(aiTextureType_SPECULAR, 0, &textureFilename) == AI_SUCCESS) {
 	auto texture = LoadMaterialTexture(textureFilename);
-        material.SetTexture("material.specular", texture, 1);
+        material.SetTexture("material.specular", texture);
     }
 
     LoadMaterialKeys(material, assimpMaterial);
