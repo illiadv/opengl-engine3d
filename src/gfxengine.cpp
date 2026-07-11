@@ -169,7 +169,5 @@ void GfxEngine::EndFrame()
 	r.material->GetShader()->SetMat3("normalMat", glm::value_ptr(normalMat));
 
 	r.mesh->Draw();
-	
-	r.material->Unbind();
     }
 }
