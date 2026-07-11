@@ -59,6 +59,25 @@ Texture2D::Texture2D(const char *path)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+Texture2D::Texture2D(void *data, unsigned int width, unsigned int height, unsigned int nChannels)
+{
+    unsigned int sourceFormat = GetSourceFormat(nChannels);
+
+    glGenTextures(1, &m_ID);
+
+    glBindTexture(GL_TEXTURE_2D, m_ID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, sourceFormat, width, height, 0, sourceFormat, GL_UNSIGNED_BYTE, data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void Texture2D::Bind(uint32_t slot)
 {
     glCall(glActiveTexture(GL_TEXTURE0 + slot));

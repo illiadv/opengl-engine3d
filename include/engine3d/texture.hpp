@@ -16,6 +16,7 @@ class Texture2D : public Texture
 {
 public:
     Texture2D(const char *path);
+    Texture2D(void *data, unsigned int width, unsigned int height, unsigned int nChannels = 4);
     void Bind(uint32_t slot = 0) override;
     void Unbind(uint32_t slot = 0) override;
 private:
