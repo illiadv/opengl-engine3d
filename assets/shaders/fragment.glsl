@@ -6,6 +6,9 @@ struct Material {
     sampler2D specular;
     sampler2D emission;
     float shininess;
+    vec3 colorAmbient;
+    vec3 colorDiffuse;
+    vec3 colorSpecular;
 };
 
 struct Light {
@@ -42,17 +45,17 @@ vec3 CalcDirLight(Light light, vec3 norm, vec3 viewDir)
 	discard;
 
     // Ambient
-    vec3 ambient = vec3(light.ambient) * vec3(tex);
+    vec3 ambient = vec3(light.ambient) * material.colorAmbient * vec3(tex);
 
     // Diffuse
     vec3 lightDir = normalize(vec3(-light.position));
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * vec3(light.diffuse) * vec3(texture(material.diffuse, texCoord));
+    vec3 diffuse = diff * vec3(light.diffuse) * material.colorDiffuse * vec3(texture(material.diffuse, texCoord));
 
     // Specular
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = spec * vec3(light.specular) * vec3(texture(material.specular, texCoord));
+    vec3 specular = spec * vec3(light.specular) * material.colorSpecular * vec3(texture(material.specular, texCoord));
 
     return ambient + diffuse + specular;
 }
@@ -64,17 +67,17 @@ vec3 CalcPointLight(Light light, vec3 norm, vec3 fragPos, vec3 viewDir)
 	discard;
 
     // Ambient
-    vec3 ambient = vec3(light.ambient) * vec3(tex);
+    vec3 ambient = vec3(light.ambient) * material.colorAmbient * vec3(tex);
 
     // Diffuse
     vec3 lightDir = normalize(vec3(light.position) - fragmentPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = diff * vec3(light.diffuse) * vec3(texture(material.diffuse, texCoord));
+    vec3 diffuse = diff * vec3(light.diffuse) * material.colorDiffuse * vec3(texture(material.diffuse, texCoord));
 
     // Specular
     vec3 reflectDir = reflect(-lightDir, norm);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-    vec3 specular = spec * vec3(light.specular) * vec3(texture(material.specular, texCoord));
+    vec3 specular = spec * vec3(light.specular) * material.colorSpecular * vec3(texture(material.specular, texCoord));
 
     // attenuation
     float d = length(vec3(light.position) - fragmentPos);
