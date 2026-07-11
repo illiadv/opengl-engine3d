@@ -69,14 +69,6 @@ void Material::Bind() const
 
 }
 
-void Material::Unbind() const
-{
-    for (auto& [name, textureData] : m_textures)
-    {
-	textureData.texture->Unbind(textureData.slot);
-    }
-}
-
 std::shared_ptr<Shader> Material::GetShader() const
 {
     return m_shader;
