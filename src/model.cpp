@@ -160,16 +160,25 @@ void Model::LoadMaterialKeys(Material &material, aiMaterial *assimpMaterial)
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, color))
     {
 	printf("COLOR_AMBIENT = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+	material.SetVec3("material.colorAmbient", {color.r, color.g, color.b});
     }
 
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color))
     {
 	printf("COLOR_DIFFUSE = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+	material.SetVec3("material.colorDiffuse", {color.r, color.g, color.b});
     }
 
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, color))
     {
 	printf("COLOR_SPECULAR = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+	material.SetVec3("material.colorSpecular", {color.r, color.g, color.b});
+    }
+
+    if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color))
+    {
+	printf("COLOR_EMISSIVE = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+	material.SetVec3("material.colorEmissive", {color.r, color.g, color.b});
     }
 
     float fl;
