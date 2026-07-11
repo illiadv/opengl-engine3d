@@ -85,12 +85,6 @@ void Texture2D::Bind(uint32_t slot)
     glCall(glBindTexture(GL_TEXTURE_2D, m_ID));
 }
 
-void Texture2D::Unbind(uint32_t slot)
-{
-    glCall(glActiveTexture(GL_TEXTURE0 + slot));
-    glCall(glBindTexture(GL_TEXTURE_2D, 0));
-}
-
 TextureArray2D::TextureArray2D(std::initializer_list<const char*> filenames, unsigned int nDesiredChannels)
 {
     unsigned char *texArray = nullptr;
@@ -147,10 +141,4 @@ void TextureArray2D::Bind(uint32_t slot)
     glCall(glActiveTexture(GL_TEXTURE0 + slot));
     // glCall(glUniform1i(glGetUniformLocation(shader, name.c_str()), i));
     glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, m_ID));
-}
-
-void TextureArray2D::Unbind(uint32_t slot)
-{
-    glCall(glActiveTexture(GL_TEXTURE0 + slot));
-    glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, 0));
 }
