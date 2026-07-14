@@ -13,13 +13,19 @@ Material::Material(std::shared_ptr<Shader> shader)
 {
     unsigned int blockIndex = glGetUniformBlockIndex(m_shader->GetID(), "Matricies");
     glCheckError();
-    glUniformBlockBinding(m_shader->GetID(), blockIndex, 0);
-    glCheckError();
+    if (blockIndex != GL_INVALID_INDEX)
+    {
+	glUniformBlockBinding(m_shader->GetID(), blockIndex, 0);
+	glCheckError();
+    }
 
     blockIndex = glGetUniformBlockIndex(m_shader->GetID(), "Lights");
     glCheckError();
-    glUniformBlockBinding(m_shader->GetID(), blockIndex, 1);
-    glCheckError();
+    if (blockIndex != GL_INVALID_INDEX)
+    {
+	glUniformBlockBinding(m_shader->GetID(), blockIndex, 1);
+	glCheckError();
+    }
 
     if (s_whiteTexture == nullptr)
     {
