@@ -1,6 +1,7 @@
 #include "glad/gl.h"
 #include "engine3d/mesh.hpp"
 #include "util.hpp"
+#include <cstdio>
 
 Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout)
 {
@@ -53,10 +54,15 @@ Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<un
 
 void Mesh::Draw() const
 {
-    // Bind arrays
-    glCall(glBindVertexArray(m_VAO));
-    // Draw
     glCall(glDrawElements(GL_TRIANGLES, m_indexCount, GL_UNSIGNED_INT, 0));
-    // Unbind arrays
-    glCall(glBindVertexArray(0));
+}
+
+void Mesh::Bind() const
+{
+    glCall(glBindVertexArray(m_VAO));
+}
+
+unsigned int Mesh::GetID() const
+{
+    return m_VAO;
 }

@@ -13,6 +13,8 @@
 class Mesh {
     public:
     Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout);
+    unsigned int GetID() const;
+    void Bind() const;
     void Draw() const;
 
     private:
