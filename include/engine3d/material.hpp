@@ -23,16 +23,18 @@ public:
     void Bind() const;
 
     std::shared_ptr<Shader> GetShader() const;
+    unsigned int GetID() const;
 
 private:
     std::shared_ptr<Shader> m_shader;
     std::unordered_map<std::string, float> m_floats;
     std::unordered_map<std::string, glm::vec3> m_vec3s;
-
     std::unordered_map<std::string, std::shared_ptr<Texture>> m_textures;
+    unsigned int m_id;
 
     std::shared_ptr<Texture2D> GetFallback(const std::string samplerName) const;
 
+    static unsigned int s_id;
     static std::shared_ptr<Texture2D> s_whiteTexture;
     static std::shared_ptr<Texture2D> s_blackTexture;
     static std::shared_ptr<Texture2D> s_normalTexture;

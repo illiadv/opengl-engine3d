@@ -8,9 +8,14 @@ std::shared_ptr<Texture2D> Material::s_whiteTexture;
 std::shared_ptr<Texture2D> Material::s_blackTexture;
 std::shared_ptr<Texture2D> Material::s_normalTexture;
 
+unsigned int Material::s_id = 0;
+
 Material::Material(std::shared_ptr<Shader> shader)
     : m_shader(shader)
 {
+    s_id++;
+    m_id = s_id;
+
     unsigned int blockIndex = glGetUniformBlockIndex(m_shader->GetID(), "Matricies");
     glCheckError();
     if (blockIndex != GL_INVALID_INDEX)
@@ -44,6 +49,7 @@ Material::Material(std::shared_ptr<Shader> shader)
 	uint32_t normalPixel = 0x8080FFFF;
 	s_normalTexture = std::make_shared<Texture2D>(&normalPixel, 1, 1);
     }
+
 }
 void Material::SetFloat(std::string name, float f)
 {
@@ -116,4 +122,10 @@ std::shared_ptr<Texture2D> Material::GetFallback(const std::string samplerName) 
 std::shared_ptr<Shader> Material::GetShader() const
 {
     return m_shader;
+}
+
+
+unsigned int Material::GetID() const
+{
+    return m_id;
 }
