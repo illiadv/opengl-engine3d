@@ -1,6 +1,13 @@
 #include "engine3d/model.hpp"
 #include <stdexcept>
 
+// #define DEBUG_PRINTS
+#ifdef DEBUG_PRINTS
+#define DBG_PRINT(...) printf(__VA_ARGS__)
+#else
+#define DBG_PRINT(...) (void)0
+#endif
+
 struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
@@ -37,9 +44,9 @@ Model::Model(std::string path, std::shared_ptr<Shader> shader, bool flipUVs)
     for (unsigned int i = 0; i < assimpScene->mNumMaterials; i++)
     {
 	aiMaterial *assimpMaterial = assimpScene->mMaterials[i];
-	printf("Loading material for %s\n", path.c_str());
+	DBG_PRINT("Loading material for %s\n", path.c_str());
 	LoadMaterial(assimpMaterial);
-	printf("\n");
+	DBG_PRINT("\n");
     }
 
 }
@@ -144,58 +151,62 @@ void Model::LoadMaterial(aiMaterial *assimpMaterial)
 
 void Model::LoadMaterialKeys(Material &material, aiMaterial *assimpMaterial)
 {
+
+#ifdef DEBUG_PRINTS
     printf("Property keys found:\n");
     for (unsigned int i = 0; i < assimpMaterial->mNumProperties; i++)
     {
 	aiMaterialProperty *property = assimpMaterial->mProperties[i];
 	printf("%d. %s\n", i, property->mKey.C_Str());
     }
+#endif
+
     aiString name;
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_NAME, name))
     {
-	printf("NAME = %s\n", name.C_Str());
+	DBG_PRINT("NAME = %s\n", name.C_Str());
     }
 
     aiColor3D color;
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_AMBIENT, color))
     {
-	printf("COLOR_AMBIENT = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+	DBG_PRINT("COLOR_AMBIENT = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
 	material.SetVec3("material.colorAmbient", {color.r, color.g, color.b});
     }
 
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, color))
     {
-	printf("COLOR_DIFFUSE = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+	DBG_PRINT("COLOR_DIFFUSE = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
 	material.SetVec3("material.colorDiffuse", {color.r, color.g, color.b});
     }
 
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_SPECULAR, color))
     {
-	printf("COLOR_SPECULAR = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+	DBG_PRINT("COLOR_SPECULAR = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
 	material.SetVec3("material.colorSpecular", {color.r, color.g, color.b});
     }
 
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color))
     {
-	printf("COLOR_EMISSIVE = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
+	DBG_PRINT("COLOR_EMISSIVE = %.3f, %.3f, %.3f\n", color.r, color.g, color.b);
 	material.SetVec3("material.colorEmissive", {color.r, color.g, color.b});
     }
 
     float fl;
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_REFLECTIVITY, fl))
     {
-	printf("REFLECTIVITY = %.3f\n", fl);
+	DBG_PRINT("REFLECTIVITY = %.3f\n", fl);
     }
 
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_SHININESS, fl))
     {
-	printf("SHININESS = %.3f\n", fl);
+	DBG_PRINT("SHININESS = %.3f\n", fl);
 	material.SetFloat("material.shininess", fl);
     }
 
     if (AI_SUCCESS == assimpMaterial->Get(AI_MATKEY_SHININESS_STRENGTH, fl))
     {
-	printf("SHININESS_STRENGTH = %.3f\n", fl);
+	DBG_PRINT("SHININESS_STRENGTH = %.3f\n", fl);
     }
 
 }
