@@ -68,8 +68,6 @@ void Material::SetTexture(std::string name, std::shared_ptr<Texture> texture)
 
 void Material::Bind() const
 {
-    m_shader->Bind();
-
     for (auto& [name, value] : m_floats)
     {
 	m_shader->SetFloat(name.c_str(), value);
