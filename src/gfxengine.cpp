@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <stdexcept>
 
 #include "glad/gl.h"
@@ -10,11 +11,20 @@
 #include "stb_image.h"
 
 
-struct Renderable
+struct RenderCommand
 {
+    uint32_t sortKey;
     const Mesh *mesh;
     const Material *material;
     glm::mat4 transform;
+
+    RenderCommand(const Mesh *mesh, const Material *material, glm::mat4 transform)
+	: mesh(mesh), material(material), transform(transform)
+    {
+	sortKey = material->GetShader()->GetID() << 24 |
+	    material->GetID() | 16;
+	    mesh->GetID();
+    }
 };
 
 
@@ -92,13 +102,13 @@ void GfxEngine::SubmitLight(const Light *light)
 
 void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform)
 {
-    Renderable r = {mesh, material, transform};
-    m_renderables.push_back(r);
+    RenderCommand r(mesh, material, transform);
+    m_renderQueue.push_back(r);
 }
 
 void GfxEngine::BeginFrame(const Camera &camera)
 {
-    m_renderables.clear();
+    m_renderQueue.clear();
     m_lights.clear();
 
     glCall(glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f));
@@ -158,16 +168,46 @@ void GfxEngine::EndFrame()
     glCall(glBufferSubData(GL_UNIFORM_BUFFER, m_lightsArraySize, sizeof(unsigned int), &numActiveLigths));
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
-    for (auto r : m_renderables)
+    auto queueSorter = [](const RenderCommand &a, const RenderCommand &b)
+    {
+	return a.sortKey < b.sortKey;
+    };
+
+    std::sort(m_renderQueue.begin(), m_renderQueue.end(), queueSorter);
+
+    unsigned int boundShader = 0;
+    unsigned int boundMaterial = 0;
+    unsigned int boundMesh = 0;
+
+    for (auto r : m_renderQueue)
     {
 	glm::mat3 normalMat;
 	normalMat = glm::transpose(glm::inverse(/* view * */ r.transform));
 
-	r.material->Bind();
+	unsigned int shaderID = r.material->GetShader()->GetID();
+	unsigned int materialID = r.material->GetID();
+	unsigned int meshID = r.mesh->GetID();
+
+	if (shaderID != boundShader)
+	{
+	    r.material->GetShader()->Bind();
+	    boundShader = shaderID;
+	}
+
+	if (materialID != boundMaterial)
+	{
+	    r.material->Bind();
+	    boundMaterial = materialID;
+	}
 
 	r.material->GetShader()->SetMat4("model", glm::value_ptr(r.transform));
 	r.material->GetShader()->SetMat3("normalMat", glm::value_ptr(normalMat));
 
+	if (meshID != boundMesh)
+	{
+	    r.mesh->Bind();
+	    boundMesh = meshID;
+	}
 	r.mesh->Draw();
     }
 }
