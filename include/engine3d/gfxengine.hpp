@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "light.hpp"
 
-struct Renderable;
+struct RenderCommand;
 struct Mesh;
 struct Camera;
 struct Material;
@@ -44,7 +44,7 @@ private:
 
 
     std::vector<const Light*> m_lights;
-    std::vector<Renderable> m_renderables;
+    std::vector<RenderCommand> m_renderQueue;
     static constexpr int m_maxLights = 100;
     static constexpr unsigned int m_lightsArraySize = m_maxLights * 4*sizeof(glm::vec4);
 
