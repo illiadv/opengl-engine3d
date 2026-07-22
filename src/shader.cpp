@@ -124,12 +124,6 @@ void Shader::Reflect()
 	}
     }
 
-    printf("Found %zu samplers:\n", m_samplers.size());
-    for (unsigned int i = 0; i < m_samplers.size(); i++)
-    {
-	printf("%d. %s\n", i, m_samplers[i].c_str());
-    }
-
     delete[] name;
 }
 
