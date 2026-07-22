@@ -1,13 +1,16 @@
-# OpenGL 3D engine
+# OpenGL 3D rendering engine
 
-A simple OpenGL-based 3D rendering engine. Work in progress.
+An OpenGL-based 3D rendering engine for my projects. Work in progress.
 
-Features include:
-- Phong shading with ambient, diffuse and specular components.
-- Multiple light types, dynamic lighting system powered by UBOs.
-- Model loading via [assimp](https://github.com/assimp/assimp) library.
-- Voxel model support with greedy meshing (WIP).
-- Debugging GUI built with [ImGui](https://github.com/ocornut/imgui).
+## Features:
+- Does not depend on any windowing libraries.
+- Supports meshes with arbitraty vertex data and custom attributes.
+- Flexible material system with multiple texture slots. Fallback textures
+- Dynamic lighting system powered by UBOs.
+- Optional model and material loading via [assimp](https://github.com/assimp/assimp) library.
 
-![screenshot](./misc/screenshot.jpg)
-![another screenshot](./misc/screenshot2.jpg)
+## Usage:
+
+Coming soon.
+
+`examples/main.cpp` provides an example application.
