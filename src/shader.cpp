@@ -118,7 +118,7 @@ void Shader::Reflect()
     for (int i = 0; i < count; i++)
     {
 	glGetActiveUniform(m_ID, i, nameLength, NULL, &size, &type, name);
-	if (type == GL_SAMPLER_2D)
+	if (type == GL_SAMPLER_2D || type == GL_SAMPLER_2D_ARRAY)
 	{
 	    m_samplers.push_back(name);
 	}
