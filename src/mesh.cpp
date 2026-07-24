@@ -1,10 +1,14 @@
+#include <stdexcept>
+
 #include "glad/gl.h"
 #include "engine3d/mesh.hpp"
 #include "util.hpp"
-#include <cstdio>
 
 Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout)
 {
+    if (!vertexData && vertexDataSize > 0) {
+	throw std::invalid_argument("Cannot construct mesh with NULL vertexData and non-zero size");
+    }
 
     // Create OpenGL objects
     glCall(glGenBuffers(1, &m_VBO));
@@ -21,7 +25,10 @@ Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<un
     // Sind EBO as ELEMENT_ARRAY_BUFFER
     glCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO));
     // Set EBO data
-    glCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW));
+    if (indices.size())
+    {
+	glCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW));
+    }
     m_indexCount = indices.size();
 
     // Set vertex attrib pointers based on the layout description
