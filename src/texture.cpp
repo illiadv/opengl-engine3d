@@ -69,11 +69,13 @@ Texture2D::Texture2D(void *data, unsigned int width, unsigned int height, unsign
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR ));
+    glCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
     glTexImage2D(GL_TEXTURE_2D, 0, sourceFormat, width, height, 0, sourceFormat, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    // glGenerateMipmap(GL_TEXTURE_2D);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -83,6 +85,11 @@ void Texture2D::Bind(uint32_t slot)
     glCall(glActiveTexture(GL_TEXTURE0 + slot));
     // glCall(glUniform1i(glGetUniformLocation(shader, name.c_str()), i));
     glCall(glBindTexture(GL_TEXTURE_2D, m_ID));
+}
+
+unsigned int Texture2D::GetID() const
+{
+    return m_ID;
 }
 
 TextureArray2D::TextureArray2D(std::initializer_list<const char*> filenames, unsigned int nDesiredChannels)
@@ -142,3 +149,9 @@ void TextureArray2D::Bind(uint32_t slot)
     // glCall(glUniform1i(glGetUniformLocation(shader, name.c_str()), i));
     glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, m_ID));
 }
+
+unsigned int TextureArray2D::GetID() const
+{
+    return m_ID;
+}
+
