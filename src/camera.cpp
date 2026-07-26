@@ -6,23 +6,29 @@ Camera::Camera(
 	    glm::vec3 up,
 	    float fov,
 	    float speed,
-	    float sensitivity
-	  ) {
-	this->position = position;
-	this->front = front;
-	this->up = up;
-	this->fov = fov;
-	this->speed = speed;
-	this->mouseSensitivity = sensitivity;
-	this->pitch = 0;
-	this->yaw = -90.0f;
-    }
+	    float sensitivity,
+	    float nearPlane,
+	    float farPlane
+	  )
+    : position(position), front(front), up(up), pitch(0), yaw(-90),
+    fov(fov), speed(speed), mouseSensitivity(sensitivity),
+    nearPlane(nearPlane), farPlane(farPlane)
+{
+}
 
 glm::mat4 Camera::GetViewMatrix() const
 {
-	return glm::lookAt(position,  // pos
+	return glm::lookAt(position,
 			   position + front,  // target
 			   up);
+}
+
+glm::mat4 Camera::GetProjectionMatrix(int screenWidth, int screenHeight) const
+{
+    float aspectRatio = (float)screenWidth / (float)screenHeight;
+    return glm::perspective(
+	glm::radians(fov),
+	aspectRatio, nearPlane, farPlane);
 }
 
 void Camera::ProcessMovement(CameraDirection direction, float deltaTime)
@@ -64,7 +70,6 @@ void Camera::ProcessLookAround(float xOffset, float yOffset)
     front = glm::normalize(direction);
 
 }
-
 
 void Camera::ProcessZoom(double amount)
 {
