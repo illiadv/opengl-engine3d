@@ -123,6 +123,8 @@ int main()
 
     DirectionalLight dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.5f));
     PointLight pointLight(glm::vec3(0.0f, 5.0f, 3.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.8f, 0.0f), glm::vec3(0.5f), 50);
+
+    camera.position = glm::vec3(1.5f, 0.5f, 4.0f);
     
     float deltaTime = 0.0f; // Time between current frame and last frame
     float lastFrame = 0.0f; // Time of last frame
