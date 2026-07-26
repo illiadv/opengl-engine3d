@@ -115,11 +115,7 @@ void GfxEngine::BeginFrame(const Camera &camera)
     glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
     glm::mat4 view = camera.GetViewMatrix();
-    float aspectRatio = (float)m_screenWidth / (float)m_screenHeight;
-    glm::mat4 projection = glm::perspective(
-	glm::radians(camera.fov),
-	aspectRatio, 0.1f, 100.0f);
-    
+    glm::mat4 projection = camera.GetProjectionMatrix(m_screenWidth, m_screenHeight);
 
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatricies));
     glCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view)));
