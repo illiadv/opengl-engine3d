@@ -26,6 +26,9 @@ public:
 
     glm::vec3 backgroundColor = glm::vec3(0.4f, 0.85f, 0.9f);
 
+    int GetScreenWidth() const;
+    int GetScreenHeight() const;
+
 private:
     struct LightGPU {
 	glm::vec4 position; // w is type (0 = DirLight, 1 = PointLight)

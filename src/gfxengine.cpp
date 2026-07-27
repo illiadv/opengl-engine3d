@@ -207,3 +207,13 @@ void GfxEngine::EndFrame()
 	r.mesh->Draw();
     }
 }
+
+int GfxEngine::GetScreenWidth() const
+{
+    return m_screenWidth;
+}
+
+int GfxEngine::GetScreenHeight() const
+{
+    return m_screenHeight;
+}
