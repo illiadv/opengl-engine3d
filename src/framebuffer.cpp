@@ -6,6 +6,7 @@
 
 Framebuffer::Framebuffer(int width, int height)
 {
+    printf("Creating viewport texture of %d x %d\n", width, height);
     glCall(glGenFramebuffers(1, &m_ID));
     glCall(glBindFramebuffer(GL_FRAMEBUFFER, m_ID));
 
@@ -19,7 +20,7 @@ Framebuffer::Framebuffer(int width, int height)
     unsigned int renderbuffer;
     glCall(glGenRenderbuffers(1, &renderbuffer));
     glCall(glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer));
-    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600));
+    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
     glCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 
     // Attach renderbuffer
