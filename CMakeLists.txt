@@ -29,6 +29,7 @@ set(SOURCES
     src/gl.c 
     src/stb_image.c
     src/camera.cpp
+    src/framebuffer.cpp
     src/gfxengine.cpp
     src/material.cpp
     src/mesh.cpp
