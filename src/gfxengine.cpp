@@ -83,6 +83,8 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const
 
 void GfxEngine::ResizeViewport(int width, int height)
 {
+    m_screenWidth = width;
+    m_screenHeight = height;
     glViewport(0, 0, width, height);
 }
 
