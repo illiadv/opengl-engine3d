@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "light.hpp"
+#include "framebuffer.hpp"
 
 struct RenderCommand;
 struct Mesh;
@@ -18,7 +19,7 @@ public:
     GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const char *))());
     ~GfxEngine();
     void ResizeViewport(int width, int height);
-    void BeginFrame(const Camera &camera);
+    void BeginFrame(const Camera &camera, const Framebuffer *framebuffer = nullptr);
     void EndFrame();
 
     void SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform);
@@ -58,6 +59,8 @@ private:
 
     int m_screenWidth{};
     int m_screenHeight{};
+
+    unsigned int m_boundFramebufferID = 0;
 };
 
 #endif

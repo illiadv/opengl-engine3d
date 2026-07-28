@@ -108,8 +108,24 @@ void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm
     m_renderQueue.push_back(r);
 }
 
-void GfxEngine::BeginFrame(const Camera &camera)
+void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
 {
+    unsigned int framebufferID;
+    if (framebuffer == nullptr)
+    {
+	framebufferID = 0;
+    }
+    else
+    {
+	framebufferID = framebuffer->GetID();
+    }
+
+    if (framebufferID != m_boundFramebufferID)
+    {
+	glCall(glBindFramebuffer(GL_FRAMEBUFFER, framebufferID));
+	m_boundFramebufferID = framebufferID;
+    }
+
     m_renderQueue.clear();
     m_lights.clear();
 
