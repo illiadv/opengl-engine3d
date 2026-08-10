@@ -48,7 +48,7 @@ private:
 
 
     std::vector<const Light*> m_lights;
-    std::vector<RenderCommand> m_renderQueue;
+    std::vector<RenderCommand> m_queueOpaque;
     static constexpr int m_maxLights = 100;
     static constexpr unsigned int m_lightsArraySize = m_maxLights * 4*sizeof(glm::vec4);
 

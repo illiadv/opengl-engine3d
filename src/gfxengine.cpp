@@ -105,7 +105,7 @@ void GfxEngine::SubmitLight(const Light *light)
 void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform)
 {
     RenderCommand r(mesh, material, transform);
-    m_renderQueue.push_back(r);
+    m_queueOpaque.push_back(r);
 }
 
 void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
@@ -126,7 +126,7 @@ void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
 	m_boundFramebufferID = framebufferID;
     }
 
-    m_renderQueue.clear();
+    m_queueOpaque.clear();
     m_lights.clear();
 
     glCall(glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f));
@@ -187,13 +187,13 @@ void GfxEngine::EndFrame()
 	return a.sortKey < b.sortKey;
     };
 
-    std::sort(m_renderQueue.begin(), m_renderQueue.end(), queueSorter);
+    std::sort(m_queueOpaque.begin(), m_queueOpaque.end(), queueSorter);
 
     unsigned int boundShader = 0;
     unsigned int boundMaterial = 0;
     unsigned int boundMesh = 0;
 
-    for (auto r : m_renderQueue)
+    for (auto r : m_queueOpaque)
     {
 	glm::mat3 normalMat;
 	normalMat = glm::transpose(glm::inverse(/* view * */ r.transform));
