@@ -170,6 +170,48 @@ void GfxEngine::LightConverter::ConsumePointLight(const PointLight* light)
     };
 }
 
+void GfxEngine::ApplyRenderState(const RenderState &state)
+{
+    if (state == m_currentRenderState)
+	return;
+
+    if (state.depthTesting != m_currentRenderState.depthTesting)
+    {
+	if (state.depthTesting)
+	    glEnable(GL_DEPTH_TEST);
+	else
+	    glDisable(GL_DEPTH_TEST);
+    }
+
+    if (state.culling != m_currentRenderState.culling)
+    {
+	if (state.culling == CullMode::None)
+	{
+	    glDisable(GL_CULL_FACE);
+	}
+	else if (state.culling == CullMode::Back)
+	{
+	    glEnable(GL_CULL_FACE);
+	    glCullFace(GL_BACK);
+	}
+    }
+
+    if (state.blending != m_currentRenderState.blending)
+    {
+	if (state.blending == BlendMode::None)
+	{
+	    glDisable(GL_BLEND);
+	}
+	else if (state.blending == BlendMode::Alpha)
+	{
+	    glEnable(GL_BLEND);
+	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+    }
+
+    m_currentRenderState = state;
+}
+
 void GfxEngine::EndFrame()
 {
     LightGPU ligtsGPU[m_maxLights]{};

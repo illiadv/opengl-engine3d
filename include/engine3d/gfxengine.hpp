@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "light.hpp"
 #include "framebuffer.hpp"
+#include "renderstate.hpp"
 
 struct RenderCommand;
 struct Mesh;
@@ -46,6 +47,7 @@ private:
 	void ConsumePointLight(const PointLight* light) override;
     };
 
+    void ApplyRenderState(const RenderState &state);
 
     std::vector<const Light*> m_lights;
     std::vector<RenderCommand> m_queueOpaque;
@@ -62,6 +64,7 @@ private:
     int m_screenHeight{};
 
     unsigned int m_boundFramebufferID = 0;
+    RenderState m_currentRenderState;
 };
 
 #endif
