@@ -121,6 +121,16 @@ int main()
 
     Model cubeballModel("assets/cube-ball/cube-ball.obj", shader);
 
+    constexpr int grassCount = 20;
+    glm::vec3 grassPositions[grassCount];
+
+    for (int i = 0; i < 20; i++)
+    {
+        float x = (float)(rand() % 100) / 10.0f - 5.0f;
+        float z = (float)(rand() % 100) / 10.0f - 5.0f;
+        grassPositions[i] = glm::vec3(x * 1.5, 0.0f, z * 1.5);
+    }
+
     DirectionalLight dirLight(glm::vec3(-0.2f, -0.5f, -1.0f), glm::vec3(0.2f), glm::vec3(0.7f), glm::vec3(0.5f));
     PointLight pointLight(glm::vec3(0.0f, 5.0f, 3.0f), glm::vec3(1.0f), glm::vec3(1.0f, 0.8f, 0.0f), glm::vec3(0.5f), 50);
 
@@ -151,17 +161,13 @@ int main()
 	engine.SubmitLight(&pointLight);
 
 
-	// for (int i = 0; i < 20; i++)
-	// {
-	//     float x = (float)(rand() % 100) / 10.0f - 5.0f;
-	//     float z = (float)(rand() % 100) / 10.0f - 5.0f;
-	//     glm::vec3 pos = glm::vec3(x * 1.5, 0.0f, z * 1.5);
-	//
-	//     Object* grass = engine.AddObject(&grassModel);
-	//     grass->SetPosition(pos);
-	//     grass->Rotate(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	//     grass->SetMaterial(&materialDefault);
-	// }
+	for (int i = 0; i < grassCount; i++)
+	{
+	    SubmitModel(engine, grassModel,
+		glm::rotate(
+		glm::translate(glm::mat4(1.0f), grassPositions[i]),
+		glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+	}
 	
 
 	engine.EndFrame();
