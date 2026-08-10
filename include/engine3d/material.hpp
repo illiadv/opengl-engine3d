@@ -9,7 +9,7 @@
 
 #include "engine3d/shader.hpp"
 #include "engine3d/texture.hpp"
-
+#include "engine3d/renderstate.hpp"
 
 class Material
 {
@@ -19,11 +19,13 @@ public:
     void SetTexture(std::string name, std::shared_ptr<Texture> texture);
     void SetFloat(std::string name, float f);
     void SetVec3(std::string name, glm::vec3 v);
+    void SetRenderState(const RenderState &state);
 
     void Bind() const;
 
     std::shared_ptr<Shader> GetShader() const;
     unsigned int GetID() const;
+    const RenderState &GetRenderState() const;
 
 private:
     std::shared_ptr<Shader> m_shader;
@@ -31,6 +33,8 @@ private:
     std::unordered_map<std::string, glm::vec3> m_vec3s;
     std::unordered_map<std::string, std::shared_ptr<Texture>> m_textures;
     unsigned int m_id;
+    RenderState m_renderState;
+    
 
     std::shared_ptr<Texture2D> GetFallback(const std::string samplerName) const;
 

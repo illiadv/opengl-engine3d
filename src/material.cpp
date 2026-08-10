@@ -122,8 +122,17 @@ std::shared_ptr<Shader> Material::GetShader() const
     return m_shader;
 }
 
-
 unsigned int Material::GetID() const
 {
     return m_id;
+}
+
+void Material::SetRenderState(const RenderState &state)
+{
+    m_renderState = state;
+}
+
+const RenderState &Material::GetRenderState() const
+{
+    return m_renderState;
 }
