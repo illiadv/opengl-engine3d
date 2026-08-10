@@ -78,7 +78,11 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
     glCall(glBindBufferRange(GL_UNIFORM_BUFFER, 1, m_uboLights, 0, uboLigthsSize));
 
-    // gui = new Gui(this);
+    // Apply default render state manually
+    glCall(glEnable(GL_DEPTH_TEST));
+    glCall(glEnable(GL_CULL_FACE));
+    glCall(glCullFace(GL_BACK));
+    glCall(glDisable(GL_BLEND));
 }
 
 void GfxEngine::ResizeViewport(int width, int height)
