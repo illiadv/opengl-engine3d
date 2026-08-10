@@ -48,6 +48,7 @@ private:
     };
 
     void ApplyRenderState(const RenderState &state);
+    void ExecuteRenderCommand(RenderCommand &command);
 
     std::vector<const Light*> m_lights;
     std::vector<RenderCommand> m_queueOpaque;
@@ -65,6 +66,10 @@ private:
 
     unsigned int m_boundFramebufferID = 0;
     RenderState m_currentRenderState;
+
+    unsigned int m_boundShaderID = 0;
+    unsigned int m_boundMaterialID = 0;
+    unsigned int m_boundMeshID = 0;
 };
 
 #endif

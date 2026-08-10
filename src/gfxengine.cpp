@@ -212,6 +212,38 @@ void GfxEngine::ApplyRenderState(const RenderState &state)
     m_currentRenderState = state;
 }
 
+void GfxEngine::ExecuteRenderCommand(RenderCommand &command)
+{
+    glm::mat3 normalMat;
+    normalMat = glm::transpose(glm::inverse(/* view * */ command.transform));
+
+    unsigned int shaderID = command.material->GetShader()->GetID();
+    unsigned int materialID = command.material->GetID();
+    unsigned int meshID = command.mesh->GetID();
+
+    if (shaderID != m_boundShaderID)
+    {
+	command.material->GetShader()->Bind();
+	m_boundShaderID = shaderID;
+    }
+
+    if (materialID != m_boundMaterialID)
+    {
+	command.material->Bind();
+	m_boundMaterialID = materialID;
+    }
+
+    command.material->GetShader()->SetMat4("model", glm::value_ptr(command.transform));
+    command.material->GetShader()->SetMat3("normalMat", glm::value_ptr(normalMat));
+
+    if (meshID != m_boundMeshID)
+    {
+	command.mesh->Bind();
+	m_boundMeshID = meshID;
+    }
+    command.mesh->Draw();
+}
+
 void GfxEngine::EndFrame()
 {
     LightGPU ligtsGPU[m_maxLights]{};
@@ -238,40 +270,17 @@ void GfxEngine::EndFrame()
 
     std::sort(m_queueOpaque.begin(), m_queueOpaque.end(), queueSorter);
 
-    unsigned int boundShader = 0;
-    unsigned int boundMaterial = 0;
-    unsigned int boundMesh = 0;
 
-    for (auto r : m_queueOpaque)
+    for (auto command : m_queueOpaque)
     {
-	glm::mat3 normalMat;
-	normalMat = glm::transpose(glm::inverse(/* view * */ r.transform));
+	ApplyRenderState(command.material->GetRenderState());
+	ExecuteRenderCommand(command);
+    }
 
-	unsigned int shaderID = r.material->GetShader()->GetID();
-	unsigned int materialID = r.material->GetID();
-	unsigned int meshID = r.mesh->GetID();
-
-	if (shaderID != boundShader)
-	{
-	    r.material->GetShader()->Bind();
-	    boundShader = shaderID;
-	}
-
-	if (materialID != boundMaterial)
-	{
-	    r.material->Bind();
-	    boundMaterial = materialID;
-	}
-
-	r.material->GetShader()->SetMat4("model", glm::value_ptr(r.transform));
-	r.material->GetShader()->SetMat3("normalMat", glm::value_ptr(normalMat));
-
-	if (meshID != boundMesh)
-	{
-	    r.mesh->Bind();
-	    boundMesh = meshID;
-	}
-	r.mesh->Draw();
+    for (auto command : m_queueTransparent)
+    {
+	ApplyRenderState(command.material->GetRenderState());
+	ExecuteRenderCommand(command);
     }
 }
 
