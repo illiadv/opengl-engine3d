@@ -104,8 +104,15 @@ void GfxEngine::SubmitLight(const Light *light)
 
 void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform)
 {
-    RenderCommand r(mesh, material, transform);
-    m_queueOpaque.push_back(r);
+    RenderCommand command(mesh, material, transform);
+    if (command.material->GetRenderState().blending == BlendMode::None)
+    {
+	m_queueOpaque.push_back(command);
+    }
+    else
+    {
+	m_queueTransparent.push_back(command);
+    }
 }
 
 void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
