@@ -38,14 +38,14 @@ layout (std140) uniform Lights {
     uint numActiveLights;
 };
 
-vec3 CalcDirLight(Light light, vec3 norm, vec3 viewDir)
+vec4 CalcDirLight(Light light, vec3 norm, vec3 viewDir)
 {
     vec4 tex = texture(material.diffuse, texCoord);
     if (tex.a < 0.1)
 	discard;
 
     // Ambient
-    vec3 ambient = vec3(light.ambient) * material.colorAmbient * vec3(tex);
+    vec3 ambient = vec3(light.ambient) * material.colorAmbient * tex.xyz;
 
     // Diffuse
     vec3 lightDir = normalize(vec3(-light.position));
@@ -57,10 +57,10 @@ vec3 CalcDirLight(Light light, vec3 norm, vec3 viewDir)
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = spec * vec3(light.specular) * material.colorSpecular * vec3(texture(material.specular, texCoord));
 
-    return ambient + diffuse + specular;
+    return vec4(vec3(ambient + diffuse + specular), tex.a);
 }
 
-vec3 CalcPointLight(Light light, vec3 norm, vec3 fragPos, vec3 viewDir)
+vec4 CalcPointLight(Light light, vec3 norm, vec3 fragPos, vec3 viewDir)
 {
     vec4 tex = texture(material.diffuse, texCoord);
     if (tex.a < 0.1)
@@ -90,7 +90,7 @@ vec3 CalcPointLight(Light light, vec3 norm, vec3 fragPos, vec3 viewDir)
     diffuse *= attenuation;
     specular *= attenuation;
 
-    return ambient + diffuse + specular;
+    return vec4(vec3(ambient + diffuse + specular), tex.a);
 }
 
 void main()
@@ -99,7 +99,7 @@ void main()
 
     vec3 viewDir = normalize(viewPos - fragmentPos);
 
-    vec3 result = vec3(0.0f);
+    vec4 result = vec4(0.0f);
 
     for (uint i = 0u; i < numActiveLights; i++)
     {
@@ -112,5 +112,5 @@ void main()
 	}
     }
 
-    FragColor = vec4(result, 1.0);
+    FragColor = result;
 }
