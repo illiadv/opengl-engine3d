@@ -83,6 +83,7 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const
     glCall(glEnable(GL_CULL_FACE));
     glCall(glCullFace(GL_BACK));
     glCall(glDisable(GL_BLEND));
+    glCall(glDepthMask(GL_TRUE));
 }
 
 void GfxEngine::ResizeViewport(int width, int height)
@@ -191,9 +192,13 @@ void GfxEngine::ApplyRenderState(const RenderState &state)
     if (state.depthWriting != m_currentRenderState.depthWriting)
     {
 	if (state.depthWriting)
-	    glDepthMask(GL_TRUE);
+	{
+	    glCall(glDepthMask(GL_TRUE));
+	}
 	else
-	    glDepthMask(GL_FALSE);
+	{
+	    glCall(glDepthMask(GL_FALSE));
+	}
     }
 
     if (state.culling != m_currentRenderState.culling)
