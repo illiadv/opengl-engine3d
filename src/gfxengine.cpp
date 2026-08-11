@@ -188,6 +188,14 @@ void GfxEngine::ApplyRenderState(const RenderState &state)
 	    glDisable(GL_DEPTH_TEST);
     }
 
+    if (state.depthWriting != m_currentRenderState.depthWriting)
+    {
+	if (state.depthWriting)
+	    glDepthMask(GL_TRUE);
+	else
+	    glDepthMask(GL_FALSE);
+    }
+
     if (state.culling != m_currentRenderState.culling)
     {
 	if (state.culling == CullMode::None)
