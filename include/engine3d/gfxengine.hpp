@@ -70,6 +70,8 @@ private:
     unsigned int m_boundShaderID = 0;
     unsigned int m_boundMaterialID = 0;
     unsigned int m_boundMeshID = 0;
+
+    glm::vec3 m_currentCameraPosition{};
 };
 
 #endif

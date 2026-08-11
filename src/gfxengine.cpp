@@ -121,6 +121,7 @@ void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm
 
 void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
 {
+    m_currentCameraPosition = camera.position;
     unsigned int framebufferID;
     if (framebuffer == nullptr)
     {
@@ -269,10 +270,20 @@ void GfxEngine::EndFrame()
 
     auto queueSorter = [](const RenderCommand &a, const RenderCommand &b)
     {
+	auto d = a.transform[3];
+	printf("- %f, %f, %f\n", d[0], d[1], d[2]);
 	return a.sortKey < b.sortKey;
     };
 
+    auto transparentQueueSorter = [&](const RenderCommand &a, const RenderCommand &b)
+    {
+	float distanceA = glm::length(glm::vec3(a.transform[3]) - m_currentCameraPosition);
+	float distanceB = glm::length(glm::vec3(b.transform[3]) - m_currentCameraPosition);
+	return distanceA > distanceB;
+    };
+
     std::sort(m_queueOpaque.begin(), m_queueOpaque.end(), queueSorter);
+    std::sort(m_queueTransparent.begin(), m_queueTransparent.end(), transparentQueueSorter);
 
 
     for (auto command : m_queueOpaque)
