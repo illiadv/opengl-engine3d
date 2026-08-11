@@ -118,6 +118,8 @@ int main()
     Model grassModel("assets/grass/grass.obj", shader);
     Model cylinderModel("assets/cylinder/cylinder.obj", shader);
     Model lightHandleModel("assets/light-handle/light-handle.obj", shader);
+    Model windowModel("assets/window/window.obj", shader);
+    windowModel.materials[1].SetRenderState({true, BlendMode::Alpha, CullMode::Back});
 
     Model cubeballModel("assets/cube-ball/cube-ball.obj", shader);
 
@@ -148,6 +150,12 @@ int main()
 
 	SubmitModel(engine, crateModel, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
 	SubmitModel(engine, catModel, glm::mat4(1.0f));
+
+	SubmitModel(engine, windowModel,
+		glm::rotate(
+		glm::translate(glm::mat4(1.0f), {3, 0, 3}),
+		glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+
 	SubmitModel(engine, cubeballModel, glm::translate(glm::mat4(1.0f), glm::vec3(-2, 0, -8)));
 	SubmitModel(engine, treeModel, glm::translate(glm::mat4(1.0f), glm::vec3(2, 0, 6)));
 	SubmitModel(engine, groundModel, glm::scale(glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)), glm::vec3(10.0f)));
