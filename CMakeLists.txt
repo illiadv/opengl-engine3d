@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.15)
 project(engine3d VERSION 1.0.0 LANGUAGES C CXX)
 
 option(ENABLE_ASAN "Enable Address Sanitizer" ON)
-option(BUILD_EXAMPLES "Build examples" ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -54,20 +53,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     OpenGL::GL
     assimp::assimp
 )
-
-if(BUILD_EXAMPLES)
-    add_executable(engine3d_example
-	examples/main.cpp
-    )
-
-    target_include_directories(engine3d_example
-	PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/external
-    )
-
-    target_link_libraries(engine3d_example
-	PRIVATE
-	glfw
-	${PROJECT_NAME}
-    )
-endif()
