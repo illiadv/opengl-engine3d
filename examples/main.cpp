@@ -119,14 +119,14 @@ int main()
     Model cylinderModel("assets/cylinder/cylinder.obj", shader);
     Model lightHandleModel("assets/light-handle/light-handle.obj", shader);
     Model windowModel("assets/window/window.obj", shader);
-    windowModel.materials[1].SetRenderState({true, BlendMode::Alpha, CullMode::Back});
+    windowModel.materials[1].SetRenderState({true, false, BlendMode::Alpha, CullMode::Back});
 
     Model cubeballModel("assets/cube-ball/cube-ball.obj", shader);
 
-    constexpr int grassCount = 20;
+    constexpr int grassCount = 5;
     glm::vec3 grassPositions[grassCount];
 
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < grassCount; i++)
     {
         float x = (float)(rand() % 100) / 10.0f - 5.0f;
         float z = (float)(rand() % 100) / 10.0f - 5.0f;
@@ -171,7 +171,7 @@ int main()
 
 	for (int i = 0; i < grassCount; i++)
 	{
-	    SubmitModel(engine, grassModel,
+	    SubmitModel(engine, windowModel,
 		glm::rotate(
 		glm::translate(glm::mat4(1.0f), grassPositions[i]),
 		glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
