@@ -4,6 +4,30 @@
 #include <stdint.h>
 #include <initializer_list>
 
+enum class TextureFormat
+{
+    RED,
+    RGB8,
+    RGBA8,
+    RGB16F,
+
+    DEPTH32F,
+    DEPTH24_STENCIL8,
+};
+
+struct TextureSpecification
+{
+    TextureSpecification();
+    TextureSpecification(TextureFormat format)
+	: textureFormat(format)
+    {
+    }
+    
+    TextureFormat textureFormat;
+};
+
+int GetTextureSourceFormat(TextureFormat format);
+
 class Texture
 {
 public:
@@ -16,6 +40,7 @@ class Texture2D : public Texture
 public:
     Texture2D(const char *path);
     Texture2D(void *data, unsigned int width, unsigned int height, unsigned int nChannels = 4);
+    Texture2D(void *data, unsigned int width, unsigned int height, TextureSpecification specification);
     void Bind(uint32_t slot = 0) override;
     unsigned int GetID() const;
 private:
