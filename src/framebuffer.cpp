@@ -4,27 +4,50 @@
 #include "glad/gl.h"
 #include <cstdio>
 
-Framebuffer::Framebuffer(int width, int height)
+
+Framebuffer::Framebuffer(FramebufferSpecification spec)
 {
-    printf("Creating viewport texture of %d x %d\n", width, height);
     glCall(glGenFramebuffers(1, &m_ID));
     glCall(glBindFramebuffer(GL_FRAMEBUFFER, m_ID));
 
-    // Create texture color attachment
-    m_texture = std::make_shared<Texture2D>(nullptr, width, height, 3);
+    for (unsigned int index = 0; index < spec.attachments.size(); index++)
+    {
+	const AttachmentSpecification &attachmentSpec = spec.attachments[index];
 
-    // Attach texture to framebuffer
-    glCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->GetID(), 0));
+	GLenum attachment;
+	switch (attachmentSpec.textureSpec.textureFormat) {
+	    case TextureFormat::DEPTH24_STENCIL8:
+		attachment = GL_DEPTH_STENCIL_ATTACHMENT;
+	    break;
+	    case TextureFormat::DEPTH32F:
+		attachment = GL_DEPTH_ATTACHMENT;
+	    break;
+	    default:
+		attachment = GL_COLOR_ATTACHMENT0 + index;
+	    break;
+	}
 
-    // Create renderbuffer depth and stencil attachment
-    unsigned int renderbuffer;
-    glCall(glGenRenderbuffers(1, &renderbuffer));
-    glCall(glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer));
-    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
-    glCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+	if (attachmentSpec.type == AttachmentType::Texture)
+	{
+	    auto texture = std::make_shared<Texture2D>(nullptr, spec.width, spec.height, attachmentSpec.textureSpec.textureFormat);
+
+	    glCall(glFramebufferTexture2D(GL_FRAMEBUFFER, attachment, GL_TEXTURE_2D, texture->GetID(), 0));
+	    m_textures.push_back(texture);
+	}
+	else
+	{
+	    unsigned int renderbuffer;
+	    glCall(glGenRenderbuffers(1, &renderbuffer));
+	    glCall(glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer));
+	    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GetTextureSourceFormat(attachmentSpec.textureSpec.textureFormat), spec.width, spec.height));
+	    glCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+
+	    glCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer));
+	}
+    }
+
 
     // Attach renderbuffer
-    glCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbuffer));
 
     if (!IsComplete())
     {
@@ -46,7 +69,7 @@ unsigned int Framebuffer::GetID() const
     return m_ID;
 }
 
-std::shared_ptr<Texture2D> Framebuffer::GetTexture() const
+std::shared_ptr<Texture2D> Framebuffer::GetTexture(int index) const
 {
-    return m_texture;
+    return m_textures[index];
 }

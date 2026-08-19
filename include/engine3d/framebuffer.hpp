@@ -2,19 +2,39 @@
 #define FRAMEBUFFER_HPP
 
 #include <memory>
+#include <vector>
 
 #include "engine3d/texture.hpp"
+
+enum class AttachmentType
+{
+    Texture,
+    RenderBuffer
+};
+
+struct AttachmentSpecification
+{
+    TextureSpecification textureSpec;
+    AttachmentType type;
+};
+
+struct FramebufferSpecification
+{
+    unsigned int width;
+    unsigned int height;
+    std::vector<AttachmentSpecification> attachments;
+};
 
 class Framebuffer
 {
 public:
-    Framebuffer(int width, int height);
+    Framebuffer(FramebufferSpecification specification);
     bool IsComplete();
     unsigned int GetID() const;
-    std::shared_ptr<Texture2D> GetTexture() const;
+    std::shared_ptr<Texture2D> GetTexture(int index) const;
 private:
     unsigned int m_ID;
-    std::shared_ptr<Texture2D> m_texture;
+    std::vector<std::shared_ptr<Texture2D>> m_textures;
 };
 
 #endif
