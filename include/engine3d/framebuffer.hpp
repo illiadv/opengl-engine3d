@@ -23,6 +23,8 @@ struct FramebufferSpecification
     unsigned int width;
     unsigned int height;
     std::vector<AttachmentSpecification> attachments;
+    bool enableDrawing = true;
+    bool enableReading = true;
 };
 
 class Framebuffer

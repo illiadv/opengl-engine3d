@@ -44,6 +44,15 @@ Framebuffer::Framebuffer(FramebufferSpecification spec)
 	    glCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer));
 	}
 
+	if (!spec.enableDrawing)
+	{
+	    glDrawBuffer(GL_NONE);
+	}
+	if (!spec.enableReading)
+	{
+	    glReadBuffer(GL_NONE);
+	}
+
 	glCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
     }
 
