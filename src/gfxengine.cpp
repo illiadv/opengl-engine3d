@@ -283,8 +283,6 @@ void GfxEngine::EndFrame()
 
     auto queueSorter = [](const RenderCommand &a, const RenderCommand &b)
     {
-	auto d = a.transform[3];
-	printf("- %f, %f, %f\n", d[0], d[1], d[2]);
 	return a.sortKey < b.sortKey;
     };
 
