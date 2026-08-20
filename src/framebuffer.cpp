@@ -40,10 +40,11 @@ Framebuffer::Framebuffer(FramebufferSpecification spec)
 	    glCall(glGenRenderbuffers(1, &renderbuffer));
 	    glCall(glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer));
 	    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GetTextureSourceFormat(attachmentSpec.textureSpec.textureFormat), spec.width, spec.height));
-	    glCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 
 	    glCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer));
 	}
+
+	glCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
     }
 
 
