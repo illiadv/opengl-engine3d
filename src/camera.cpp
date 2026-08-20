@@ -1,20 +1,6 @@
 #include "engine3d/camera.hpp"
 
-Camera::Camera(
-	    glm::vec3 position,
-	    glm::vec3 front,
-	    glm::vec3 up,
-	    float fov,
-	    float speed,
-	    float sensitivity,
-	    float nearPlane,
-	    float farPlane
-	  )
-    : position(position), front(front), up(up), pitch(0), yaw(-90),
-    fov(fov), speed(speed), mouseSensitivity(sensitivity),
-    nearPlane(nearPlane), farPlane(farPlane)
-{
-}
+Camera::Camera(){}
 
 glm::mat4 Camera::GetViewMatrix() const
 {
@@ -26,9 +12,17 @@ glm::mat4 Camera::GetViewMatrix() const
 glm::mat4 Camera::GetProjectionMatrix(int screenWidth, int screenHeight) const
 {
     float aspectRatio = (float)screenWidth / (float)screenHeight;
-    return glm::perspective(
-	glm::radians(fov),
-	aspectRatio, nearPlane, farPlane);
+    if (projection == CameraProjection::Perspective)
+    {
+	return glm::perspective(
+	    glm::radians(fov),
+	    aspectRatio, nearPlane, farPlane);
+    }
+    else
+    {
+	return glm::ortho(orthoSize.x, orthoSize.y, orthoSize.z, orthoSize.w,
+		nearPlane, farPlane);
+    }
 }
 
 void Camera::ProcessMovement(CameraDirection direction, float deltaTime)
