@@ -45,6 +45,10 @@ int GetTextureSourceFormat(TextureFormat format)
 	    return GL_RGB;
 	case TextureFormat::RGBA8:
 	    return GL_RGB;
+	case TextureFormat::DEPTH24_STENCIL8:
+	    return GL_DEPTH24_STENCIL8;
+	case TextureFormat::DEPTH32F:
+	    return GL_DEPTH_COMPONENT32F;
 	default:
 	    return GL_RGBA;
     }
