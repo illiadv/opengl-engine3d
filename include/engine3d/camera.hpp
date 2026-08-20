@@ -4,8 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-enum CameraDirection {
-    FORWARD, BACKWARD, LEFT, RIGHT, UP, DOWN
+enum class CameraDirection {
+    Forward, Backward, Left, Right, Up, Down
 };
 
 class Camera
@@ -25,6 +25,8 @@ public:
 
     float nearPlane;
     float farPlane;
+
+    glm::vec4 orthoSize;
 
     Camera(
 	    glm::vec3 position = glm::vec3(0.0f),

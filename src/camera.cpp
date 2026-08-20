@@ -35,17 +35,17 @@ void Camera::ProcessMovement(CameraDirection direction, float deltaTime)
 {
     float velocity = speed * deltaTime;
 
-    if (direction == FORWARD)
+    if (direction == CameraDirection::Forward)
 	position += velocity * front;
-    if (direction == BACKWARD)
+    if (direction == CameraDirection::Backward)
 	position -= velocity * front;
-    if (direction == RIGHT)
+    if (direction == CameraDirection::Right)
 	position += velocity * glm::normalize(glm::cross(front, up));
-    if (direction == LEFT)
+    if (direction == CameraDirection::Left)
 	position -= velocity * glm::normalize(glm::cross(front, up));
-    if (direction == UP)
+    if (direction == CameraDirection::Up)
 	position += velocity * glm::vec3(0.0f, 1.0f, 0.0f);
-    if (direction == DOWN)
+    if (direction == CameraDirection::Down)
 	position -= velocity * glm::vec3(0.0f, 1.0f, 0.0f);
 }
 
