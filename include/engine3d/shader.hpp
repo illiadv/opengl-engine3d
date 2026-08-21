@@ -8,8 +8,8 @@ class Shader
 {
 public:
     Shader(const char* vertexShaderPath, const char* fragmentShaderPath);
-    void SetMat4(const char* uniform, float* matrix);
-    void SetMat3(const char* uniform, float* matrix);
+    void SetMat4(const char* uniform, const float* matrix);
+    void SetMat3(const char* uniform, const float* matrix);
     void SetVec3(const char* uniform, const float* vec3);
     void SetVec3(const char* uniform, float x, float y, float z);
     void SetVec4(const char* uniform, const float* vec4);

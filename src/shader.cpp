@@ -5,7 +5,7 @@
 #include <string>
 
 
-void Shader::SetMat4(const char* uniform, float* matrix)
+void Shader::SetMat4(const char* uniform, const float* matrix)
 {
     int location = glGetUniformLocation(m_ID, uniform);
     if (location != -1)
@@ -14,7 +14,7 @@ void Shader::SetMat4(const char* uniform, float* matrix)
     }
 }
 
-void Shader::SetMat3(const char* uniform, float* matrix)
+void Shader::SetMat3(const char* uniform, const float* matrix)
 {
     int location = glGetUniformLocation(m_ID, uniform);
     if (location != -1)
