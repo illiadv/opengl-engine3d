@@ -43,21 +43,16 @@ Framebuffer::Framebuffer(FramebufferSpecification spec)
 
 	    glCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer));
 	}
-
-	if (!spec.enableDrawing)
-	{
-	    glDrawBuffer(GL_NONE);
-	}
-	if (!spec.enableReading)
-	{
-	    glReadBuffer(GL_NONE);
-	}
-
-	glCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
     }
 
-
-    // Attach renderbuffer
+    if (!spec.enableDrawing)
+    {
+	glDrawBuffer(GL_NONE);
+    }
+    if (!spec.enableReading)
+    {
+	glReadBuffer(GL_NONE);
+    }
 
     if (!IsComplete())
     {
@@ -70,8 +65,35 @@ Framebuffer::Framebuffer(FramebufferSpecification spec)
 bool Framebuffer::IsComplete()
 {
     // need to bind first
-    bool status = (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
-    return status;
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    switch (status) {
+	case GL_FRAMEBUFFER_UNDEFINED:
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_UNDEFINED");
+	break;
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+	break;
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+	break;
+	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
+	break;
+	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER");
+	break;
+	case GL_FRAMEBUFFER_UNSUPPORTED:
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_UNSUPPORTED");
+	break;
+	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
+	break;
+	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS");
+	break;
+    }
+    bool complete = (status == GL_FRAMEBUFFER_COMPLETE);
+    return complete;
 }
 
 unsigned int Framebuffer::GetID() const
