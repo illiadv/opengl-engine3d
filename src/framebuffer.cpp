@@ -39,7 +39,7 @@ Framebuffer::Framebuffer(FramebufferSpecification spec)
 	    unsigned int renderbuffer;
 	    glCall(glGenRenderbuffers(1, &renderbuffer));
 	    glCall(glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer));
-	    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GetTextureSourceFormat(attachmentSpec.textureSpec.textureFormat), spec.width, spec.height));
+	    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GetTextureFormat(attachmentSpec.textureSpec.textureFormat), spec.width, spec.height));
 
 	    glCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer));
 	}
@@ -68,28 +68,28 @@ bool Framebuffer::IsComplete()
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     switch (status) {
 	case GL_FRAMEBUFFER_UNDEFINED:
-	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_UNDEFINED");
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_UNDEFINED\n");
 	break;
 	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT\n");
 	break;
 	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT\n");
 	break;
 	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER\n");
 	break;
 	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER");
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER\n");
 	break;
 	case GL_FRAMEBUFFER_UNSUPPORTED:
-	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_UNSUPPORTED");
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_UNSUPPORTED\n");
 	break;
 	case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n");
 	break;
 	case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS");
+	    printf("Error: framebuffer not complete: GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS\n");
 	break;
     }
     bool complete = (status == GL_FRAMEBUFFER_COMPLETE);
