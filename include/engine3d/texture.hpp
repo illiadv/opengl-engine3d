@@ -26,7 +26,7 @@ struct TextureSpecification
     TextureFormat textureFormat;
 };
 
-int GetTextureSourceFormat(TextureFormat format);
+int GetTextureFormat(TextureFormat format);
 
 class Texture
 {

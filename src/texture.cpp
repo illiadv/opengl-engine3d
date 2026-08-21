@@ -24,7 +24,7 @@ unsigned char *LoadTextureFile(const char *path, int &width, int &height, int &n
     return textureData;
 }
 
-int GetTextureSourceFormat(int nChannels)
+int GetTextureFormat(int nChannels)
 {
     switch (nChannels) {
 	case 1:
@@ -36,7 +36,7 @@ int GetTextureSourceFormat(int nChannels)
     }
 }
 
-int GetTextureSourceFormat(TextureFormat format)
+int GetTextureFormat(TextureFormat format)
 {
     switch (format) {
 	case TextureFormat::RED:
@@ -50,8 +50,20 @@ int GetTextureSourceFormat(TextureFormat format)
 	case TextureFormat::DEPTH24_STENCIL8:
 	    return GL_DEPTH24_STENCIL8;
 	case TextureFormat::DEPTH32F:
-	    return GL_DEPTH_COMPONENT32F;
+	    return GL_DEPTH_COMPONENT;
     }
+}
+
+int GetDataType(TextureFormat format)
+{
+    switch (format) {
+	case TextureFormat::RGB16F:
+	case TextureFormat::DEPTH32F:
+	    return GL_FLOAT;
+	default:
+	    break;
+    }
+    return GL_UNSIGNED_BYTE;
 }
 
 Texture2D::Texture2D(const char *path)
@@ -59,7 +71,7 @@ Texture2D::Texture2D(const char *path)
     int width, height, nChannels;
     unsigned char *textureData = LoadTextureFile(path, width, height, nChannels);
 
-    unsigned int sourceFormat = GetTextureSourceFormat(nChannels);
+    unsigned int sourceFormat = GetTextureFormat(nChannels);
 
     glGenTextures(1, &m_ID);
 
@@ -79,7 +91,7 @@ Texture2D::Texture2D(const char *path)
 
 Texture2D::Texture2D(void *data, unsigned int width, unsigned int height, unsigned int nChannels)
 {
-    unsigned int sourceFormat = GetTextureSourceFormat(nChannels);
+    unsigned int sourceFormat = GetTextureFormat(nChannels);
 
     glGenTextures(1, &m_ID);
 
@@ -100,7 +112,8 @@ Texture2D::Texture2D(void *data, unsigned int width, unsigned int height, unsign
 
 Texture2D::Texture2D(void *data, unsigned int width, unsigned int height, TextureSpecification specification)
 {
-    unsigned int sourceFormat = GetTextureSourceFormat(specification.textureFormat);
+    int format = GetTextureFormat(specification.textureFormat);
+    int dataType = GetDataType(specification.textureFormat);
 
     glGenTextures(1, &m_ID);
 
@@ -111,7 +124,7 @@ Texture2D::Texture2D(void *data, unsigned int width, unsigned int height, Textur
     glCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ));
     glCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 
-    glTexImage2D(GL_TEXTURE_2D, 0, sourceFormat, width, height, 0, sourceFormat, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, dataType, data);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -148,7 +161,7 @@ TextureArray2D::TextureArray2D(std::initializer_list<const char*> filenames, uns
 	i++;
     }
 
-    unsigned int sourceFormat = GetTextureSourceFormat(nChannels);
+    unsigned int sourceFormat = GetTextureFormat(nChannels);
 
     glCall(glGenTextures(1, &m_ID));
 
