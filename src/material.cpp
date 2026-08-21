@@ -61,6 +61,11 @@ void Material::SetVec3(std::string name, glm::vec3 v)
     m_vec3s[name] = v;
 }
 
+void Material::SetMat4(std::string name, glm::mat4 m)
+{
+    m_mat4s[name] = m;
+}
+
 void Material::SetTexture(std::string name, std::shared_ptr<Texture> texture)
 {
     m_textures[name] = texture;
@@ -76,6 +81,11 @@ void Material::Bind() const
     for (auto& [name, value] : m_vec3s)
     {
 	m_shader->SetVec3(name.c_str(), glm::value_ptr(value));
+    }
+
+    for (auto& [name, value] : m_mat4s)
+    {
+	m_shader->SetMat4(name.c_str(), glm::value_ptr(value));
     }
 
     // Look through all the samplers the shader has and bind a texture to them
