@@ -8,6 +8,9 @@
 #define DBG_PRINT(...) (void)0
 #endif
 
+namespace e3d
+{
+
 struct Vertex {
     glm::vec3 position;
     glm::vec3 normal;
@@ -218,4 +221,6 @@ std::shared_ptr<Texture2D> Model::LoadMaterialTexture(aiString filename)
 
     // Create a new texture
     return std::make_shared<Texture2D>(path.c_str());
+}
+
 }

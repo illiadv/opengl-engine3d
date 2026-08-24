@@ -3,6 +3,9 @@
 #include <string>
 #include <stdio.h>
 
+namespace e3d
+{
+
 GLenum glCheckError_(const char *file, int line)
 {
     GLenum errorCode;
@@ -27,4 +30,6 @@ GLenum glCheckError_(const char *file, int line)
 	    printf("GL Error: %s (%s, %d\n", error.c_str(), file, line);
     }
     return errorCode;
+}
+
 }

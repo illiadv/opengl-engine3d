@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 
+namespace e3d
+{
 
 void Shader::SetMat4(const char* uniform, const float* matrix)
 {
@@ -183,4 +185,6 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
     glDeleteShader(fragmentShader);
 
     Reflect();
+}
+
 }

@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <initializer_list>
 
+namespace e3d
+{
+
 enum class TextureFormat
 {
     RED,
@@ -57,5 +60,7 @@ public:
 private:
     unsigned int m_ID;
 };
+
+} // End of namespace e3d
 
 #endif

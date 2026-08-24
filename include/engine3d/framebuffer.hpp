@@ -6,6 +6,8 @@
 
 #include "engine3d/texture.hpp"
 
+namespace e3d {
+
 enum class AttachmentType
 {
     Texture,
@@ -38,5 +40,7 @@ private:
     unsigned int m_ID;
     std::vector<std::shared_ptr<Texture2D>> m_textures;
 };
+
+} // End of namespace e3d
 
 #endif

@@ -4,6 +4,9 @@
 #include "engine3d/mesh.hpp"
 #include "util.hpp"
 
+namespace e3d
+{
+
 Mesh::Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout)
 {
     if (!vertexData && vertexDataSize > 0) {
@@ -72,4 +75,6 @@ void Mesh::Bind() const
 unsigned int Mesh::GetID() const
 {
     return m_VAO;
+}
+
 }

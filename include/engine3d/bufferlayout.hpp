@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include <vector>
 
+namespace e3d
+{
+
 enum class AttributeType {
     Byte, Int, Float
 };
@@ -25,3 +28,5 @@ private:
     std::vector<BufferElement> m_elements;
     uint32_t m_stride;
 };
+
+} // End namespace e3d

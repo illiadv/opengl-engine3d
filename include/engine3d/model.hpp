@@ -7,6 +7,9 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+namespace e3d
+{
+
 struct Model
 {
 public:
@@ -24,5 +27,7 @@ private:
     std::shared_ptr<Texture2D> LoadMaterialTexture(aiString fllename);
     void LoadMaterialKeys(Material &material, aiMaterial *assimpMaterial);
 };
+
+} // End of namespace e3d
 
 #endif

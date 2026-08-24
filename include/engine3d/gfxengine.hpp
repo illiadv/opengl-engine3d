@@ -8,6 +8,9 @@
 #include "framebuffer.hpp"
 #include "renderstate.hpp"
 
+namespace e3d
+{
+
 struct RenderCommand;
 struct Mesh;
 struct Camera;
@@ -73,5 +76,7 @@ private:
 
     glm::vec3 m_currentCameraPosition{};
 };
+
+} // End of namespace e3d
 
 #endif

@@ -6,6 +6,9 @@
 #include "util.hpp"
 #include "stb_image.h"
 
+namespace e3d
+{
+
 unsigned char *LoadTextureFile(const char *path, int &width, int &height, int &nChannels, int nDesiredChannels = 0)
 {
     unsigned char *textureData = stbi_load(path, &width, &height, &nChannels, nDesiredChannels);
@@ -204,3 +207,4 @@ unsigned int TextureArray2D::GetID() const
     return m_ID;
 }
 
+}

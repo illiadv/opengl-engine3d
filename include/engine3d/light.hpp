@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace e3d
+{
+
 class DirectionalLight;
 class PointLight;
 
@@ -79,5 +82,7 @@ public:
 	quadratic = 75.0f / (range * range) ;
     }
 };
+
+} // End of namespace e3d
 
 #endif

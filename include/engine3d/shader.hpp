@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+namespace e3d
+{
+
 class Shader
 {
 public:
@@ -23,5 +26,7 @@ private:
     unsigned int m_ID;
     std::vector<std::string> m_samplers;
 };
+
+} // End of namespace e3d
 
 #endif

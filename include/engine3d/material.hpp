@@ -12,6 +12,9 @@
 #include "engine3d/texture.hpp"
 #include "engine3d/renderstate.hpp"
 
+namespace e3d
+{
+
 class Material
 {
 public:
@@ -46,5 +49,7 @@ private:
     static std::shared_ptr<Texture2D> s_blackTexture;
     static std::shared_ptr<Texture2D> s_normalTexture;
 };
+
+} // End of namespace e3d
 
 #endif

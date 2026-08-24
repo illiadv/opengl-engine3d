@@ -1,5 +1,8 @@
 #include "engine3d/camera.hpp"
 
+namespace e3d
+{
+
 Camera::Camera(){}
 
 glm::mat4 Camera::GetViewMatrix() const
@@ -73,4 +76,6 @@ void Camera::ProcessZoom(double amount)
 	fov = 1.0f;
     if (fov > 90.0f)
 	fov = 90.0f;
+}
+
 }

@@ -10,6 +10,9 @@
 
 #include "engine3d/bufferlayout.hpp"
 
+namespace e3d
+{
+
 class Mesh {
     public:
     Mesh(const void* vertexData, uint32_t vertexDataSize, const std::vector<unsigned int> &indices, const BufferLayout &layout);
@@ -22,5 +25,6 @@ class Mesh {
     unsigned int m_indexCount;
 };
 
+} // End of namespace e3d
 
 #endif

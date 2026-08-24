@@ -4,6 +4,8 @@
 #include "glad/gl.h"
 #include <cstdio>
 
+namespace e3d
+{
 
 Framebuffer::Framebuffer(FramebufferSpecification spec)
 {
@@ -104,4 +106,6 @@ unsigned int Framebuffer::GetID() const
 std::shared_ptr<Texture2D> Framebuffer::GetTexture(int index) const
 {
     return m_textures[index];
+}
+
 }

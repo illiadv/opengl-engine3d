@@ -10,6 +10,8 @@
 #include "util.hpp"
 #include "stb_image.h"
 
+namespace e3d
+{
 
 struct RenderCommand
 {
@@ -318,4 +320,6 @@ int GfxEngine::GetScreenWidth() const
 int GfxEngine::GetScreenHeight() const
 {
     return m_screenHeight;
+}
+
 }

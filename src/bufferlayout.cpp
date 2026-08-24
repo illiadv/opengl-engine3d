@@ -1,6 +1,9 @@
 #include "glad/gl.h"
 #include "engine3d/bufferlayout.hpp"
 
+namespace e3d
+{
+
 BufferElement::BufferElement(AttributeType type, uint8_t count, bool normalized)
     : type(type), normalized(normalized)
 {
@@ -55,4 +58,6 @@ BufferLayout::BufferLayout(std::initializer_list<BufferElement> elements)
 	offset += typeSizeBytes * element.count;
     }
     m_stride = offset;
+}
+
 }

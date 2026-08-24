@@ -4,6 +4,9 @@
 #include "engine3d/shader.hpp"
 #include "util.hpp"
 
+namespace e3d
+{
+
 std::shared_ptr<Texture2D> Material::s_whiteTexture;
 std::shared_ptr<Texture2D> Material::s_blackTexture;
 std::shared_ptr<Texture2D> Material::s_normalTexture;
@@ -145,4 +148,6 @@ void Material::SetRenderState(const RenderState &state)
 const RenderState &Material::GetRenderState() const
 {
     return m_renderState;
+}
+
 }

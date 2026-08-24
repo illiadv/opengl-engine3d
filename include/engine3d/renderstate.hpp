@@ -1,6 +1,9 @@
 #ifndef RENDERSTATE_HPP
 #define RENDERSTATE_HPP
 
+namespace e3d
+{
+
 enum class BlendMode { None, Alpha };
 enum class CullMode { None, Back };
 
@@ -19,5 +22,7 @@ struct RenderState
 	    (culling == other.culling);
     }
 };
+
+} // End of namespace e3d
 
 #endif
