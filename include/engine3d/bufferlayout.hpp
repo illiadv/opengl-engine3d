@@ -1,3 +1,6 @@
+#ifndef BUFFERLAYOUT_HPP
+#define BUFFERLAYOUT_HPP
+
 #include <stdint.h>
 #include <vector>
 
@@ -30,3 +33,5 @@ private:
 };
 
 } // End namespace e3d
+
+#endif
