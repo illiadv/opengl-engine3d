@@ -15,7 +15,7 @@ unsigned char *LoadTextureFile(const char *path, int &width, int &height, int &n
 
     if (!textureData)
     {
-	throw (std::runtime_error(std::string("Failed to load texture") + path + "\n"));
+	throw (std::runtime_error(std::string("Failed to load texture ") + path + "\n"));
     }
 
     if (nDesiredChannels > 0)
