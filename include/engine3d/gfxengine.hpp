@@ -67,8 +67,6 @@ private:
     unsigned int m_uboMatricies;
     unsigned int m_uboLights;
 
-    static GfxEngine *s_instance;
-
     int m_screenWidth{};
     int m_screenHeight{};
 

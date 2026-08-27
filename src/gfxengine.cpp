@@ -32,15 +32,8 @@ struct RenderCommand
 };
 
 
-GfxEngine* GfxEngine::s_instance = nullptr;
-
 GfxEngine::GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const char *))())
 {
-    if (s_instance != nullptr) {
-	throw std::runtime_error("No more than one instance of GfxEngine is allowed");
-    }
-    s_instance = this;
-
     // Load OpenGL function definitions
     int version = gladLoadGL(loadFunc);
     if (version == 0)
@@ -106,11 +99,7 @@ void GfxEngine::ResizeViewport(int width, int height)
 
 GfxEngine::~GfxEngine()
 {
-    if (s_instance == this) {
-	s_instance = nullptr;
-    }
 }
-
 
 void GfxEngine::SubmitLight(const Light *light)
 {
