@@ -43,6 +43,7 @@ private:
     };
 
     // Converts C++ light classes to universal LightGPU struct
+    // Each light class has an Accept method that calls corresponding Consume
     class LightConverter : public LightConsumer
     {
     public:

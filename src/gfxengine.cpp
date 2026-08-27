@@ -147,6 +147,7 @@ void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
 	framebufferID = framebuffer->GetID();
     }
 
+    // Bind the framebuffer
     if (framebufferID != m_boundFramebufferID)
     {
 	glCall(glBindFramebuffer(GL_FRAMEBUFFER, framebufferID));
@@ -156,9 +157,11 @@ void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
     m_queueOpaque.clear();
     m_lights.clear();
 
+    // Clear the framebuffer
     glCall(glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f));
     glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
+    // Pass data to the Matrices UBO
     glm::mat4 view = camera.GetViewMatrix();
     glm::mat4 projection = camera.GetProjectionMatrix(m_screenWidth, m_screenHeight);
 
@@ -195,6 +198,7 @@ void GfxEngine::ApplyRenderState(const RenderState &state)
     if (state == m_currentRenderState)
 	return;
 
+    // Depth testing
     if (state.depthTesting != m_currentRenderState.depthTesting)
     {
 	if (state.depthTesting)
@@ -203,6 +207,7 @@ void GfxEngine::ApplyRenderState(const RenderState &state)
 	    glDisable(GL_DEPTH_TEST);
     }
 
+    // Depth writing
     if (state.depthWriting != m_currentRenderState.depthWriting)
     {
 	if (state.depthWriting)
@@ -215,6 +220,7 @@ void GfxEngine::ApplyRenderState(const RenderState &state)
 	}
     }
 
+    // Face culling
     if (state.culling != m_currentRenderState.culling)
     {
 	if (state.culling == CullMode::None)
@@ -228,6 +234,7 @@ void GfxEngine::ApplyRenderState(const RenderState &state)
 	}
     }
 
+    // Blending
     if (state.blending != m_currentRenderState.blending)
     {
 	if (state.blending == BlendMode::None)
@@ -290,11 +297,13 @@ void GfxEngine::EndFrame()
 
     unsigned int numActiveLigths = m_lights.size();
 
+    // Pass data to the Lights UBO
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboLights));
     glCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, m_lightsArraySize, ligtsGPU));
     glCall(glBufferSubData(GL_UNIFORM_BUFFER, m_lightsArraySize, sizeof(unsigned int), &numActiveLigths));
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
+    // Sort render queues
     auto queueSorter = [](const RenderCommand &a, const RenderCommand &b)
     {
 	return a.sortKey < b.sortKey;
@@ -311,6 +320,7 @@ void GfxEngine::EndFrame()
     std::sort(m_queueTransparent.begin(), m_queueTransparent.end(), transparentQueueSorter);
 
 
+    // Draw
     for (auto command : m_queueOpaque)
     {
 	ApplyRenderState(command.material->GetRenderState());
