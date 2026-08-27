@@ -29,7 +29,7 @@ public:
     void SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform);
     void SubmitLight(const Light *light);
 
-    glm::vec3 backgroundColor = glm::vec3(0.4f, 0.85f, 0.9f);
+    glm::vec3 clearColor = glm::vec3(0.4f, 0.85f, 0.9f);
 
     int GetScreenWidth() const;
     int GetScreenHeight() const;

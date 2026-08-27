@@ -147,7 +147,7 @@ void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
     m_lights.clear();
 
     // Clear the framebuffer
-    glCall(glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1.0f));
+    glCall(glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f));
     glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
     // Pass data to the Matrices UBO
