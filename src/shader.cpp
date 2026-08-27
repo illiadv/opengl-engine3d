@@ -1,8 +1,10 @@
 #include "glad/gl.h"
-#include "engine3d/shader.hpp"
 #include <stdio.h>
 #include <fstream>
 #include <string>
+
+#include "engine3d/shader.hpp"
+#include "util.hpp"
 
 namespace e3d
 {
@@ -183,6 +185,24 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    // Bind shader uniform block to binding point 0
+    unsigned int blockIndex = glGetUniformBlockIndex(m_ID, "Matricies");
+    glCheckError();
+    if (blockIndex != GL_INVALID_INDEX)
+    {
+	glUniformBlockBinding(m_ID, blockIndex, 0);
+	glCheckError();
+    }
+
+    // Bind shader uniform block to binding point 1
+    blockIndex = glGetUniformBlockIndex(m_ID, "Lights");
+    glCheckError();
+    if (blockIndex != GL_INVALID_INDEX)
+    {
+	glUniformBlockBinding(m_ID, blockIndex, 1);
+	glCheckError();
+    }
 
     Reflect();
 }
