@@ -5,7 +5,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "glm/ext/matrix_float4x4.hpp" bЖц:
+#include "glm/ext/matrix_float4x4.hpp"
 #include "glm/ext/vector_float3.hpp"
 
 #include "engine3d/shader.hpp"
