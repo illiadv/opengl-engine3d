@@ -42,6 +42,7 @@ private:
     	glm::vec4 specular;
     };
 
+    // Converts C++ light classes to universal LightGPU struct
     class LightConverter : public LightConsumer
     {
     public:
@@ -50,7 +51,10 @@ private:
 	void ConsumePointLight(const PointLight* light) override;
     };
 
+    // Applies per-material state (blending, depth testing etc)
     void ApplyRenderState(const RenderState &state);
+    // Binds shaders and materials (textures and per-material uniforms),
+    // Sets models matricies and issues draw calls.
     void ExecuteRenderCommand(RenderCommand &command);
 
     std::vector<const Light*> m_lights;

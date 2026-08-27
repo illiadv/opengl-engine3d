@@ -15,6 +15,7 @@ namespace e3d
 
 struct RenderCommand
 {
+    // To minimize state changes, commands are sorted by shader, then by material and then by mesh.
     uint32_t sortKey;
     const Mesh *mesh;
     const Material *material;
@@ -23,6 +24,7 @@ struct RenderCommand
     RenderCommand(const Mesh *mesh, const Material *material, glm::mat4 transform)
 	: mesh(mesh), material(material), transform(transform)
     {
+	// 255 different shaders, 255 materials and 65536 meshes are supported
 	sortKey = material->GetShader()->GetID() << 24 |
 	    material->GetID() | 16;
 	    mesh->GetID();
@@ -39,45 +41,52 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const
     }
     s_instance = this;
 
+    // Load OpenGL function definitions
     int version = gladLoadGL(loadFunc);
     if (version == 0)
     {
 	throw std::runtime_error("Failed to initialize OpenGL context");
     }
     printf("Loaded OpenGL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
+    // The engine depends on OpenGL context version 3.3 (or higher) which is provided by the host
     if (GLAD_VERSION_MAJOR(version) < 3 || (GLAD_VERSION_MAJOR(version) == 3 && GLAD_VERSION_MINOR(version) < 3))
     {
 	throw std::runtime_error("Engine Error: The Host Application did not create an OpenGL 3.3+ context!");
     }
-
 
     m_screenWidth = screenWidth;
     m_screenHeight = screenHeight;
     glViewport(0, 0, screenWidth, screenHeight);
 
     stbi_set_flip_vertically_on_load(1);
-    glEnable(GL_DEPTH_TEST);
 
+    // Create a UBO for view and projection matricies. Also viewPos vec3 lives there.
     glCall(glGenBuffers(1, &m_uboMatricies));
 
+    // Allocate space for it
     constexpr unsigned int uboMatriciesSize =
 	2 * sizeof(glm::mat4)
 	+ sizeof (glm::vec3);
-
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatricies));
     glCall(glBufferData(GL_UNIFORM_BUFFER, uboMatriciesSize, NULL, GL_STATIC_DRAW));
+
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+
+    // Bind UBO to binding point 0
     glCall(glBindBufferRange(GL_UNIFORM_BUFFER, 0, m_uboMatricies, 0, uboMatriciesSize));
 
+    // Create a UBO light data
     glCall(glGenBuffers(1, &m_uboLights));
 
     constexpr unsigned int uboLigthsSize =
 	m_lightsArraySize
 	+ sizeof(unsigned int);
-
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboLights));
     glCall(glBufferData(GL_UNIFORM_BUFFER, uboLigthsSize, NULL, GL_STATIC_DRAW));
+
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+
+    // Bind UBO to binding point 1
     glCall(glBindBufferRange(GL_UNIFORM_BUFFER, 1, m_uboLights, 0, uboLigthsSize));
 
     // Apply default render state manually
@@ -124,7 +133,10 @@ void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm
 
 void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
 {
+    // Remember camera position. Needed to sort transparent queue by distance to the
+    // camera in EndFrame.
     m_currentCameraPosition = camera.position;
+
     unsigned int framebufferID;
     if (framebuffer == nullptr)
     {

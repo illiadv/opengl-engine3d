@@ -19,6 +19,7 @@ Material::Material(std::shared_ptr<Shader> shader)
     s_id++;
     m_id = s_id;
 
+    // Bind shader uniform block to binding point 0
     unsigned int blockIndex = glGetUniformBlockIndex(m_shader->GetID(), "Matricies");
     glCheckError();
     if (blockIndex != GL_INVALID_INDEX)
@@ -27,6 +28,7 @@ Material::Material(std::shared_ptr<Shader> shader)
 	glCheckError();
     }
 
+    // Bind shader uniform block to binding point 1
     blockIndex = glGetUniformBlockIndex(m_shader->GetID(), "Lights");
     glCheckError();
     if (blockIndex != GL_INVALID_INDEX)
