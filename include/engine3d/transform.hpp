@@ -13,6 +13,7 @@ class Transform
 public:
     Transform &SetTranslation(const glm::vec3 &translation);
     Transform &Rotate(float radians, const glm::vec3 &axis);
+    Transform &SetScale(float scale);
     Transform &SetScale(glm::vec3 const &scale);
     glm::mat4 GetModelMatrix() const;
 private:

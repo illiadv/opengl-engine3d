@@ -3,22 +3,28 @@
 namespace e3d
 {
 
-e3d::Transform& Transform::SetTranslation(const glm::vec3& translation)
+Transform &Transform::SetTranslation(const glm::vec3& translation)
 {
     m_translation = translation;
     return *this;
 };
 
-e3d::Transform& Transform::Rotate(float angle, const glm::vec3 &axis)
+Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
 {
     glm::vec3 axisNorm = glm::normalize(axis);
     m_rotation = glm::rotate(m_rotation, angle, axisNorm);
     return *this;
 };
 
-e3d::Transform& Transform::SetScale(const glm::vec3 &scale)
+Transform &Transform::SetScale(float scale)
 {
-    m_translation = scale;
+    m_scale = glm::vec3(scale);
+    return *this;
+};
+
+Transform &Transform::SetScale(const glm::vec3 &scale)
+{
+    m_scale = scale;
     return *this;
 };
 
