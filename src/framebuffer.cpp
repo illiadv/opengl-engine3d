@@ -38,12 +38,17 @@ Framebuffer::Framebuffer(FramebufferSpecification spec)
 	}
 	else
 	{
-	    unsigned int renderbuffer;
-	    glCall(glGenRenderbuffers(1, &renderbuffer));
-	    glCall(glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer));
-	    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GetTextureFormat(attachmentSpec.textureSpec.textureFormat), spec.width, spec.height));
+	    Renderbuffer renderbuffer;
+	    renderbuffer.format = attachmentSpec.textureSpec.textureFormat;
 
-	    glCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer));
+	    glCall(glGenRenderbuffers(1, &renderbuffer.m_ID));
+	    glCall(glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer.m_ID));
+	    glCall(glRenderbufferStorage(GL_RENDERBUFFER, GetTextureFormat(renderbuffer.format), spec.width, spec.height));
+
+	    glCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, renderbuffer.m_ID));
+
+
+	    m_renderbuffers.push_back(renderbuffer);
 	}
     }
 
@@ -98,9 +103,33 @@ bool Framebuffer::IsComplete()
     return complete;
 }
 
+void Framebuffer::Resize(unsigned int width, unsigned int height)
+{
+    for (auto texture : m_textures)
+    {
+	texture->Bind();
+	texture->Resize(width, height);
+    }
+
+    for (auto renderbuffer: m_renderbuffers)
+    {
+	glCall(glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer.m_ID));
+	glCall(glRenderbufferStorage(GL_RENDERBUFFER, GetTextureFormat(renderbuffer.format), width, height));
+	glCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+    }
+
+    m_spec.width = width;
+    m_spec.height = height;
+}
+
 unsigned int Framebuffer::GetID() const
 {
     return m_ID;
+}
+
+const FramebufferSpecification& Framebuffer::GetSpec() const
+{
+    return m_spec;
 }
 
 std::shared_ptr<Texture2D> Framebuffer::GetTexture(int index) const
