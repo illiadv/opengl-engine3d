@@ -23,7 +23,7 @@ public:
     GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const char *))());
     ~GfxEngine();
     void ResizeViewport(int width, int height);
-    void BeginFrame(const Camera &camera, const Framebuffer *framebuffer = nullptr);
+    void BeginFrame(const Camera &camera, Framebuffer *framebuffer = nullptr);
     void EndFrame();
 
     void SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform);
@@ -31,8 +31,8 @@ public:
 
     glm::vec3 clearColor = glm::vec3(0.4f, 0.85f, 0.9f);
 
-    int GetScreenWidth() const;
-    int GetScreenHeight() const;
+    unsigned int GetScreenWidth() const;
+    unsigned int GetScreenHeight() const;
 
 private:
     struct LightGPU {
@@ -67,8 +67,8 @@ private:
     unsigned int m_uboMatricies;
     unsigned int m_uboLights;
 
-    int m_screenWidth{};
-    int m_screenHeight{};
+    unsigned int m_screenWidth{};
+    unsigned int m_screenHeight{};
 
     unsigned int m_boundFramebufferID = 0;
     RenderState m_currentRenderState;
