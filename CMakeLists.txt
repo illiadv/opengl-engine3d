@@ -35,6 +35,7 @@ set(SOURCES
     src/model.cpp
     src/shader.cpp
     src/texture.cpp
+    src/transform.cpp
     src/util.cpp
 )
 
