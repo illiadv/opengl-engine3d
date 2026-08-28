@@ -120,7 +120,7 @@ void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm
     }
 }
 
-void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
+void GfxEngine::BeginFrame(const Camera &camera, Framebuffer *framebuffer)
 {
     // Remember camera position. Needed to sort transparent queue by distance to the
     // camera in EndFrame.
@@ -134,6 +134,14 @@ void GfxEngine::BeginFrame(const Camera &camera, const Framebuffer *framebuffer)
     else
     {
 	framebufferID = framebuffer->GetID();
+
+	if (framebuffer->GetSpec().inheritScreenSize) {
+	    if (framebuffer->GetSpec().width != m_screenWidth
+		    || framebuffer->GetSpec().height != m_screenHeight)
+	    {
+		framebuffer->Resize(m_screenWidth, m_screenHeight);
+	    }
+	}
     }
 
     // Bind the framebuffer
@@ -323,12 +331,12 @@ void GfxEngine::EndFrame()
     }
 }
 
-int GfxEngine::GetScreenWidth() const
+unsigned int GfxEngine::GetScreenWidth() const
 {
     return m_screenWidth;
 }
 
-int GfxEngine::GetScreenHeight() const
+unsigned int GfxEngine::GetScreenHeight() const
 {
     return m_screenHeight;
 }
