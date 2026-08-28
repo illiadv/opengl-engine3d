@@ -20,7 +20,9 @@ enum class TextureFormat
 
 struct TextureSpecification
 {
-    TextureSpecification();
+    TextureSpecification()
+    {
+    }
     TextureSpecification(TextureFormat format)
 	: textureFormat(format)
     {
@@ -45,9 +47,11 @@ public:
     Texture2D(void *data, unsigned int width, unsigned int height, unsigned int nChannels = 4);
     Texture2D(void *data, unsigned int width, unsigned int height, TextureSpecification specification);
     void Bind(uint32_t slot = 0) override;
+    void Resize(unsigned int width, unsigned int height);
     unsigned int GetID() const;
 private:
     unsigned int m_ID;
+    TextureSpecification m_spec;
 };
 
 class TextureArray2D : public Texture

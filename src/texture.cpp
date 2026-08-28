@@ -115,8 +115,9 @@ Texture2D::Texture2D(void *data, unsigned int width, unsigned int height, unsign
 
 Texture2D::Texture2D(void *data, unsigned int width, unsigned int height, TextureSpecification specification)
 {
-    int format = GetTextureFormat(specification.textureFormat);
-    int dataType = GetDataType(specification.textureFormat);
+    m_spec = specification;
+    int format = GetTextureFormat(m_spec.textureFormat);
+    int dataType = GetDataType(m_spec.textureFormat);
 
     glGenTextures(1, &m_ID);
 
@@ -137,6 +138,15 @@ void Texture2D::Bind(uint32_t slot)
     glCall(glActiveTexture(GL_TEXTURE0 + slot));
     // glCall(glUniform1i(glGetUniformLocation(shader, name.c_str()), i));
     glCall(glBindTexture(GL_TEXTURE_2D, m_ID));
+}
+
+void Texture2D::Resize(unsigned int width, unsigned int height)
+{
+    glCall(glBindTexture(GL_TEXTURE_2D, m_ID));
+    int format = GetTextureFormat(m_spec.textureFormat);
+    int dataType = GetDataType(m_spec.textureFormat);
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, dataType, nullptr);
+    glCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
 
 unsigned int Texture2D::GetID() const
