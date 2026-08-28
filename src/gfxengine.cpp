@@ -120,6 +120,11 @@ void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const glm
     }
 }
 
+void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const e3d::Transform &transform)
+{
+    SubmitMesh(mesh, material, transform.GetModelMatrix());
+}
+
 void GfxEngine::BeginFrame(const Camera &camera, Framebuffer *framebuffer)
 {
     // Remember camera position. Needed to sort transparent queue by distance to the

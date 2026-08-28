@@ -7,6 +7,7 @@
 #include "light.hpp"
 #include "framebuffer.hpp"
 #include "renderstate.hpp"
+#include "transform.hpp"
 
 namespace e3d
 {
@@ -26,7 +27,8 @@ public:
     void BeginFrame(const Camera &camera, Framebuffer *framebuffer = nullptr);
     void EndFrame();
 
-    void SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform);
+    void SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform = glm::mat4(1.0f));
+    void SubmitMesh(const Mesh *mesh, const Material *material, const e3d::Transform &transform);
     void SubmitLight(const Light *light);
 
     glm::vec3 clearColor = glm::vec3(0.4f, 0.85f, 0.9f);
