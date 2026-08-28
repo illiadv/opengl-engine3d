@@ -3,16 +3,15 @@
 namespace e3d
 {
 
-Transform &Transform::SetTranslation(const glm::vec3& translation)
+Transform &Transform::SetTranslation(const glm::vec3 &translation)
 {
     m_translation = translation;
     return *this;
 };
 
-Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
+Transform &Transform::SetRotation(const glm::vec3 &eulerAngles)
 {
-    glm::vec3 axisNorm = glm::normalize(axis);
-    m_rotation = glm::rotate(m_rotation, angle, axisNorm);
+    m_rotation = glm::quat(eulerAngles);
     return *this;
 };
 
@@ -27,6 +26,14 @@ Transform &Transform::SetScale(const glm::vec3 &scale)
     m_scale = scale;
     return *this;
 };
+
+Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
+{
+    glm::vec3 axisNorm = glm::normalize(axis);
+    m_rotation = glm::rotate(m_rotation, angle, axisNorm);
+    return *this;
+};
+
 
 glm::mat4 Transform::GetModelMatrix() const
 {

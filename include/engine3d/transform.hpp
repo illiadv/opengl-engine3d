@@ -12,9 +12,10 @@ class Transform
 {
 public:
     Transform &SetTranslation(const glm::vec3 &translation);
-    Transform &Rotate(float radians, const glm::vec3 &axis);
+    Transform &SetRotation(const glm::vec3 &eulerAngles);
     Transform &SetScale(float scale);
     Transform &SetScale(glm::vec3 const &scale);
+    Transform &Rotate(float radians, const glm::vec3 &axis);
     glm::mat4 GetModelMatrix() const;
 private:
     glm::vec3 m_translation = glm::vec3(0.0f);
