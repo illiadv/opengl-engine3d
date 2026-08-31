@@ -21,6 +21,9 @@ private:
     glm::vec3 m_translation = glm::vec3(0.0f);
     glm::quat m_rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
     glm::vec3 m_scale = glm::vec3(1.0f);
+    
+    mutable glm::mat4 m_modelMatrix = glm::mat4(1.0f);
+    mutable bool m_dirty = false;
 };
 
 }
