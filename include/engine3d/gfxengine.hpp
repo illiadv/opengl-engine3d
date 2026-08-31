@@ -31,7 +31,7 @@ public:
     void SubmitMesh(const Mesh *mesh, const Material *material, const e3d::Transform &transform);
     void SubmitLight(const Light *light);
 
-    glm::vec3 clearColor = glm::vec3(0.4f, 0.85f, 0.9f);
+    glm::vec4 clearColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 
     unsigned int GetScreenWidth() const;
     unsigned int GetScreenHeight() const;
