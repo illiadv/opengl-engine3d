@@ -65,6 +65,15 @@ private:
     unsigned int m_ID;
 };
 
+class TextureCubemap : public Texture
+{
+    TextureCubemap(std::initializer_list<const char *> pathList, unsigned int nDesiredChannels = 0);
+    void Bind(unsigned int slot = 0) override;
+    unsigned int GetID() const;
+private:
+    unsigned int m_ID;
+};
+
 } // End of namespace e3d
 
 #endif

@@ -217,4 +217,48 @@ unsigned int TextureArray2D::GetID() const
     return m_ID;
 }
 
+TextureCubemap::TextureCubemap(std::initializer_list<const char*> faces, unsigned int nDesiredChannels)
+{
+    glCall(glGenTextures(1, &m_ID));
+
+    glCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID));
+
+    glCall(glGenerateMipmap(GL_TEXTURE_2D_ARRAY));
+
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width, height, nChannels;
+
+    int i = 0;
+    for (auto filename : faces)
+    {
+	unsigned char *textureData = LoadTextureFile(filename, width, height, nChannels, nDesiredChannels);
+
+	unsigned int sourceFormat = GetTextureFormat(nChannels);
+
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+	    0, sourceFormat, width, height, 0, sourceFormat, GL_UNSIGNED_BYTE, textureData
+	);
+
+	i++;
+    }
+
+    glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, 0));
+}
+
+void TextureCubemap::Bind(unsigned int slot)
+{
+    glCall(glActiveTexture(GL_TEXTURE0 + slot));
+    glCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID));
+}
+
+unsigned int TextureCubemap::GetID() const
+{
+    return m_ID;
+}
+
 }
