@@ -231,6 +231,8 @@ TextureCubemap::TextureCubemap(std::initializer_list<const char*> faces, unsigne
 
     int width, height, nChannels;
 
+    stbi_set_flip_vertically_on_load_thread(0);
+
     int i = 0;
     for (auto filename : faces)
     {
@@ -246,6 +248,8 @@ TextureCubemap::TextureCubemap(std::initializer_list<const char*> faces, unsigne
 
 	i++;
     }
+
+    stbi_set_flip_vertically_on_load_thread(1);
 
     glCall(glBindTexture(GL_TEXTURE_2D_ARRAY, 0));
 }
