@@ -244,6 +244,8 @@ TextureCubemap::TextureCubemap(std::initializer_list<const char*> faces, unsigne
 	    0, sourceFormat, width, height, 0, sourceFormat, GL_UNSIGNED_BYTE, textureData
 	);
 
+	stbi_image_free(textureData);
+
 	i++;
     }
 
