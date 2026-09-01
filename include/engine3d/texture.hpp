@@ -67,6 +67,7 @@ private:
 
 class TextureCubemap : public Texture
 {
+public:
     TextureCubemap(std::initializer_list<const char *> pathList, unsigned int nDesiredChannels = 0);
     void Bind(unsigned int slot = 0) override;
     unsigned int GetID() const;
