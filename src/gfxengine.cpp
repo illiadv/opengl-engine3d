@@ -160,6 +160,11 @@ void GfxEngine::BeginFrame(const Camera &camera, Framebuffer *framebuffer)
     m_lights.clear();
 
     // Clear the framebuffer
+    if (m_currentRenderState.depthWriting == false)
+    {
+	glCall(glDepthMask(GL_TRUE));
+	m_currentRenderState.depthWriting = true;
+    }
     glCall(glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a));
     glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
