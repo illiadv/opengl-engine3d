@@ -32,10 +32,11 @@ public:
     void SubmitMesh(const Mesh *mesh, const Material *material, const e3d::Transform &transform);
     void SubmitLight(const Light *light);
 
-    glm::vec4 clearColor = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
-
     unsigned int GetScreenWidth() const;
     unsigned int GetScreenHeight() const;
+
+    void SetClearColor(const glm::vec4 &color);
+    const glm::vec4 &GetClearColor() const;
 
 private:
     struct LightGPU {
@@ -66,6 +67,8 @@ private:
     std::vector<RenderCommand> m_queueTransparent;
     static constexpr int m_maxLights = 100;
     static constexpr unsigned int m_lightsArraySize = m_maxLights * 4*sizeof(glm::vec4);
+
+    glm::vec4 m_clearColor{};
 
     unsigned int m_uboMatricies;
     unsigned int m_uboLights;

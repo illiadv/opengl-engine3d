@@ -82,6 +82,9 @@ GfxEngine::GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const
     // Bind UBO to binding point 1
     glCall(glBindBufferRange(GL_UNIFORM_BUFFER, 1, m_uboLights, 0, uboLigthsSize));
 
+    // Set default clear color
+    SetClearColor({0.5f, 0.5f, 0.5f, 1.0f});
+
     // Apply default render state manually
     glCall(glEnable(GL_DEPTH_TEST));
     glCall(glEnable(GL_CULL_FACE));
@@ -133,7 +136,6 @@ void GfxEngine::Clear(bool color, bool depth)
 	glCall(glDepthMask(GL_TRUE));
 	m_currentRenderState.depthWriting = true;
     }
-    glCall(glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a));
 
     GLbitfield mask = 0;
 
@@ -364,6 +366,17 @@ unsigned int GfxEngine::GetScreenWidth() const
 unsigned int GfxEngine::GetScreenHeight() const
 {
     return m_screenHeight;
+}
+
+void GfxEngine::SetClearColor(const glm::vec4 &color)
+{
+    m_clearColor = color;
+    glCall(glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a));
+}
+
+const glm::vec4 &GfxEngine::GetClearColor() const
+{
+    return m_clearColor;
 }
 
 }
