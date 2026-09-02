@@ -24,8 +24,8 @@ public:
     GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const char *))());
     ~GfxEngine();
     void ResizeViewport(int width, int height);
-    void BeginFrame(const Camera &camera, Framebuffer *framebuffer = nullptr);
-    void EndFrame();
+    void BeginScene(const Camera &camera, Framebuffer *framebuffer = nullptr);
+    void EndScene();
 
     void SubmitMesh(const Mesh *mesh, const Material *material, const glm::mat4 &transform = glm::mat4(1.0f));
     void SubmitMesh(const Mesh *mesh, const Material *material, const e3d::Transform &transform);

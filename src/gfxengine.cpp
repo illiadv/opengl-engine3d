@@ -125,7 +125,7 @@ void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const e3d
     SubmitMesh(mesh, material, transform.GetModelMatrix());
 }
 
-void GfxEngine::BeginFrame(const Camera &camera, Framebuffer *framebuffer)
+void GfxEngine::BeginScene(const Camera &camera, Framebuffer *framebuffer)
 {
     // Remember camera position. Needed to sort transparent queue by distance to the
     // camera in EndFrame.
@@ -290,7 +290,7 @@ void GfxEngine::ExecuteRenderCommand(RenderCommand &command)
     command.mesh->Draw();
 }
 
-void GfxEngine::EndFrame()
+void GfxEngine::EndScene()
 {
     LightGPU ligtsGPU[m_maxLights]{};
 
