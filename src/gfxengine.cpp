@@ -244,6 +244,19 @@ void GfxEngine::ApplyRenderState(const RenderState &state)
 	}
     }
 
+    // Depth function
+    if (state.depthFunc != m_currentRenderState.depthFunc)
+    {
+	if (state.depthFunc == DepthFunc::Less)
+	{
+	    glCall(glDepthFunc(GL_LESS));
+	}
+	else if (state.depthFunc == DepthFunc::LessEqual)
+	{
+	    glCall(glDepthFunc(GL_LEQUAL));
+	}
+    }
+
     // Face culling
     if (state.culling != m_currentRenderState.culling)
     {
