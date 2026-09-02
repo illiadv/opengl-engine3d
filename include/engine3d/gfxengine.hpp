@@ -24,6 +24,7 @@ public:
     GfxEngine(int screenWidth, int screenHeight, void (*(*loadFunc)(const char *))());
     ~GfxEngine();
     void ResizeViewport(int width, int height);
+    void Clear(bool color = true, bool depth = true);
     void BeginScene(const Camera &camera, Framebuffer *framebuffer = nullptr);
     void EndScene();
 

@@ -125,6 +125,30 @@ void GfxEngine::SubmitMesh(const Mesh *mesh, const Material *material, const e3d
     SubmitMesh(mesh, material, transform.GetModelMatrix());
 }
 
+void GfxEngine::Clear(bool color, bool depth)
+{
+    // Clear the framebuffer
+    if (m_currentRenderState.depthWriting == false)
+    {
+	glCall(glDepthMask(GL_TRUE));
+	m_currentRenderState.depthWriting = true;
+    }
+    glCall(glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a));
+
+    GLbitfield mask = 0;
+
+    if (color)
+    {
+	mask |= GL_COLOR_BUFFER_BIT;
+    }
+    if (depth)
+    {
+	mask |= GL_DEPTH_BUFFER_BIT;
+    }
+
+    glCall(glClear(mask));
+}
+
 void GfxEngine::BeginScene(const Camera &camera, Framebuffer *framebuffer)
 {
     // Remember camera position. Needed to sort transparent queue by distance to the
@@ -158,15 +182,6 @@ void GfxEngine::BeginScene(const Camera &camera, Framebuffer *framebuffer)
 
     m_queueOpaque.clear();
     m_lights.clear();
-
-    // Clear the framebuffer
-    if (m_currentRenderState.depthWriting == false)
-    {
-	glCall(glDepthMask(GL_TRUE));
-	m_currentRenderState.depthWriting = true;
-    }
-    glCall(glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a));
-    glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
     // Pass data to the Matrices UBO
     glm::mat4 view = camera.GetViewMatrix();
