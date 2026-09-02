@@ -6,6 +6,7 @@ namespace e3d
 
 enum class BlendMode { None, Alpha };
 enum class CullMode { None, Back };
+enum class DepthFunc { Less, LessEqual };
 
 struct RenderState
 {
@@ -13,13 +14,15 @@ struct RenderState
     bool depthWriting = true;
     BlendMode blending = BlendMode::None;
     CullMode culling = CullMode::Back;
+    DepthFunc depthFunc = DepthFunc::Less;
 
     bool operator==(const RenderState &other) const
     {
 	return (depthTesting == other.depthTesting) &&
 	    (depthWriting == other.depthWriting) &&
 	    (blending == other.blending) &&
-	    (culling == other.culling);
+	    (culling == other.culling) &&
+	    (depthFunc == other.depthFunc);
     }
 };
 
