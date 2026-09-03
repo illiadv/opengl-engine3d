@@ -4,6 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "engine3d/transform.hpp"
+
 namespace e3d
 {
 
@@ -18,9 +20,8 @@ enum class CameraProjection {
 class Camera
 {
 public:
-    glm::vec3 position = glm::vec3(0.0f);
-    glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+    Transform transform;
 
     float pitch = 0;
     float yaw = -90;

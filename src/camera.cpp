@@ -7,9 +7,12 @@ Camera::Camera(){}
 
 glm::mat4 Camera::GetViewMatrix() const
 {
-	return glm::lookAt(position,
-			   position + front,  // target
-			   up);
+    glm::mat4 rotation = glm::toMat4(transform.GetRotation());
+    glm::vec3 forward = -glm::vec3(rotation[2]);
+    glm::vec3 up = glm::vec3(rotation[1]);
+    return glm::lookAt(transform.GetTranslation(),
+		       transform.GetTranslation() + forward, // target
+		       up);
 }
 
 glm::mat4 Camera::GetProjectionMatrix(int screenWidth, int screenHeight) const
