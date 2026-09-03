@@ -39,8 +39,22 @@ Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
     return *this;
 };
 
+const glm::vec3 &Transform::GetTranslation()
+{
+    return m_translation;
+}
 
-glm::mat4 Transform::GetModelMatrix() const
+const glm::quat &Transform::GetRotation()
+{
+    return m_rotation;
+}
+
+const glm::vec3 &Transform::GetScale()
+{
+    return m_scale;
+}
+
+const glm::mat4 &Transform::GetModelMatrix() const
 {
     if (m_dirty) {
 	glm::mat4 transform(1.0f);
