@@ -39,17 +39,17 @@ Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
     return *this;
 };
 
-const glm::vec3 &Transform::GetTranslation()
+const glm::vec3 &Transform::GetTranslation() const
 {
     return m_translation;
 }
 
-const glm::quat &Transform::GetRotation()
+const glm::quat &Transform::GetRotation() const
 {
     return m_rotation;
 }
 
-const glm::vec3 &Transform::GetScale()
+const glm::vec3 &Transform::GetScale() const
 {
     return m_scale;
 }
