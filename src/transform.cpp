@@ -39,6 +39,13 @@ Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
     return *this;
 };
 
+Transform &Transform::Translate(const glm::vec3 &translation)
+{
+    m_translation += translation;
+    m_dirty = true;
+    return *this;
+};
+
 const glm::vec3 &Transform::GetTranslation() const
 {
     return m_translation;

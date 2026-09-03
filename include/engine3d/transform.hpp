@@ -16,7 +16,7 @@ public:
     Transform &SetScale(float scale);
     Transform &SetScale(glm::vec3 const &scale);
     Transform &Rotate(float radians, const glm::vec3 &axis);
-    Transform &Translate(float radians, const glm::vec3 &axis);
+    Transform &Translate(const glm::vec3 &translation);
     const glm::vec3 &GetTranslation() const;
     const glm::quat &GetRotation() const;
     const glm::vec3 &GetScale() const;
