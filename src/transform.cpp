@@ -31,6 +31,13 @@ Transform &Transform::SetScale(const glm::vec3 &scale)
     return *this;
 };
 
+Transform &Transform::Rotate(const glm::vec3 &eulerAngles)
+{
+    m_rotation = glm::rotate(m_rotation, eulerAngles);
+    m_dirty = true;
+    return *this;
+};
+
 Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
 {
     glm::vec3 axisNorm = glm::normalize(axis);
