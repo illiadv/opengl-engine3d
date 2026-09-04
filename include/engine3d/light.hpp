@@ -11,9 +11,17 @@ namespace e3d
 
 struct LightSpec
 {
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
+    glm::vec3 ambient = glm::vec3(0.2f);
+    glm::vec3 diffuse = glm::vec3(1.0f);
+    glm::vec3 specular = glm::vec3(1.0f);
+
+    LightSpec(){};
+    LightSpec(glm::vec3 color, float ambient = 0.2f, float diffuse = 1.0f, float specular = 1.0f)
+	: ambient(color * ambient),
+	diffuse(color * diffuse),
+	specular(glm::vec3(1.0f) * specular)
+    {
+    };
 };
 
 class LightConsumer;
@@ -28,10 +36,11 @@ public:
 class DirectionalLight : public Light
 {
 public:
-    Transform transform;
-    LightSpec spec;
+    Transform transform{};
+    LightSpec spec{};
 
     DirectionalLight();
+    DirectionalLight(Transform transform, LightSpec spec);
     
     void Accept(LightConsumer& consumer) const override;
 };
@@ -39,14 +48,15 @@ public:
 class PointLight : public Light
 {
 public:
-    Transform transform;
-    LightSpec spec;
+    Transform transform{};
+    LightSpec spec{};
 
-    float constant;
-    float linear;
-    float quadratic;
+    float constant{};
+    float linear{};
+    float quadratic{};
 
     PointLight();
+    PointLight(Transform transform, LightSpec spec, float range = 10.0f);
 
     void Accept(LightConsumer& consumer) const override;
 

@@ -3,6 +3,21 @@
 namespace e3d
 {
 
+DirectionalLight::DirectionalLight()
+{
+}
+
+DirectionalLight::DirectionalLight(Transform transform, LightSpec spec)
+    : transform(transform), spec(spec)
+{
+}
+
+PointLight::PointLight(Transform transform, LightSpec spec, float range)
+    : transform(transform), spec(spec)
+{
+    SetRange(range);
+}
+
 void DirectionalLight::Accept(LightConsumer& consumer) const
 {
     consumer.ConsumeDirectionalLight(this);
