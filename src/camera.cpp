@@ -34,19 +34,24 @@ glm::mat4 Camera::GetProjectionMatrix(int screenWidth, int screenHeight) const
 void Camera::ProcessMovement(CameraDirection direction, float deltaTime)
 {
     float velocity = speed * deltaTime;
+    glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
+
+    glm::mat4 rotation = glm::toMat4(transform.GetRotation());
+    glm::vec3 forward = -glm::vec3(rotation[2]);
+    glm::vec3 right = glm::vec3(rotation[0]);
 
     if (direction == CameraDirection::Forward)
-	position += velocity * front;
+	transform.Translate(velocity * forward);
     if (direction == CameraDirection::Backward)
-	position -= velocity * front;
+	transform.Translate(-velocity * forward);
     if (direction == CameraDirection::Right)
-	position += velocity * glm::normalize(glm::cross(front, up));
+	transform.Translate(velocity * right);
     if (direction == CameraDirection::Left)
-	position -= velocity * glm::normalize(glm::cross(front, up));
+	transform.Translate(-velocity * right);
     if (direction == CameraDirection::Up)
-	position += velocity * glm::vec3(0.0f, 1.0f, 0.0f);
+	transform.Translate(velocity * worldUp);
     if (direction == CameraDirection::Down)
-	position -= velocity * glm::vec3(0.0f, 1.0f, 0.0f);
+	transform.Translate(velocity * -worldUp);
 }
 
 void Camera::ProcessLookAround(float xOffset, float yOffset)
@@ -62,12 +67,8 @@ void Camera::ProcessLookAround(float xOffset, float yOffset)
     if (pitch < -89.0f)
 	pitch = -89.0f;
 
-    glm::vec3 direction;
-
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front = glm::normalize(direction);
+    glm::vec3 eulerAngles(glm::radians(pitch), glm::radians(-yaw), 0.0f);
+    transform.SetRotation(eulerAngles);
 
 }
 
