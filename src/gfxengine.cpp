@@ -155,7 +155,7 @@ void GfxEngine::BeginScene(const Camera &camera, Framebuffer *framebuffer)
 {
     // Remember camera position. Needed to sort transparent queue by distance to the
     // camera in EndFrame.
-    m_currentCameraPosition = camera.position;
+    m_currentCameraPosition = camera.transform.GetTranslation();
 
     unsigned int framebufferID;
     if (framebuffer == nullptr)
@@ -192,7 +192,7 @@ void GfxEngine::BeginScene(const Camera &camera, Framebuffer *framebuffer)
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, m_uboMatricies));
     glCall(glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view)));
     glCall(glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection)));
-    glCall(glBufferSubData(GL_UNIFORM_BUFFER, 2*sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera.position)));
+    glCall(glBufferSubData(GL_UNIFORM_BUFFER, 2*sizeof(glm::mat4), sizeof(glm::vec3), glm::value_ptr(camera.transform.GetTranslation())));
     glCall(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 
 }
