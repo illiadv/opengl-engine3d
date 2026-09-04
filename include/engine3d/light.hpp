@@ -1,22 +1,22 @@
-#ifndef LIGHT_H
-#define LIGHT_H
+#ifndef E3D_LIGHT_HPP
+#define E3D_LIGHT_HPP
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "engine3d/transform.hpp"
+
 namespace e3d
 {
 
-class DirectionalLight;
-class PointLight;
-
-class LightConsumer
+struct LightSpec
 {
-public:
-    virtual ~LightConsumer() = default;
-    virtual void ConsumeDirectionalLight(const DirectionalLight* light) = 0;
-    virtual void ConsumePointLight(const PointLight* light) = 0;
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
 };
+
+class LightConsumer;
 
 class Light
 {
@@ -28,59 +28,37 @@ public:
 class DirectionalLight : public Light
 {
 public:
-    glm::vec3 direction;
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
+    Transform transform;
+    LightSpec spec;
 
-    DirectionalLight(glm::vec3 direction = glm::vec3(0.0f, -1.0f, 0.0f),
-		     glm::vec3 ambient = glm::vec3(0.2f),
-		     glm::vec3 diffuse = glm::vec3(1.0f),
-		     glm::vec3 specular = glm::vec3(1.0f))
-	: direction(direction), ambient(ambient), diffuse(diffuse), specular(specular)
-    {
-    }
+    DirectionalLight();
     
-    void Accept(LightConsumer& consumer) const override
-    {
-	consumer.ConsumeDirectionalLight(this);
-    }
+    void Accept(LightConsumer& consumer) const override;
 };
 
 class PointLight : public Light
 {
 public:
-    glm::vec3 position;
-    glm::vec3 ambient;
-    glm::vec3 diffuse;
-    glm::vec3 specular;
+    Transform transform;
+    LightSpec spec;
 
     float constant;
     float linear;
     float quadratic;
 
-    PointLight(glm::vec3 position = glm::vec3(0.0f),
-		     glm::vec3 ambient = glm::vec3(0.2f),
-		     glm::vec3 diffuse = glm::vec3(1.0f),
-		     glm::vec3 specular = glm::vec3(1.0f),
-		     float range = 10.0f)
-	: position(position), ambient(ambient), diffuse(diffuse), specular(specular)
-    {
-	SetRange(range);
-    }
+    PointLight();
 
-    void Accept(LightConsumer& consumer) const override
-    {
-	consumer.ConsumePointLight(this);
-    }
+    void Accept(LightConsumer& consumer) const override;
 
-    // Taken from https://wiki.ogre3d.org/Light+Attenuation+Shortcut
-    void SetRange(float range)
-    {
-	constant = 1.0f;
-	linear = 4.5 / range;
-	quadratic = 75.0f / (range * range) ;
-    }
+    void SetRange(float range);
+};
+
+class LightConsumer
+{
+public:
+    virtual ~LightConsumer() = default;
+    virtual void ConsumeDirectionalLight(const DirectionalLight* light) = 0;
+    virtual void ConsumePointLight(const PointLight* light) = 0;
 };
 
 } // End of namespace e3d
