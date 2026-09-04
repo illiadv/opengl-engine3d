@@ -12,6 +12,10 @@ DirectionalLight::DirectionalLight(Transform transform, LightSpec spec)
 {
 }
 
+PointLight::PointLight()
+{
+}
+
 PointLight::PointLight(Transform transform, LightSpec spec, float range)
     : transform(transform), spec(spec)
 {
