@@ -18,7 +18,7 @@ An OpenGL-based 3D rendering engine for my projects. The engine is work in progr
 
 ## Usage example:
 
-```cpp
+```c
 // Assuming a GLFW window and OpenGL 3.3+ context are already created
 e3d::GfxEngine engine(1280, 720, glfwGetProcAddress);
 
@@ -48,11 +48,12 @@ camera.position = glm::vec3(0.0f, 0.0f, -2.0f);
 
 while(!glfwWindowShouldClose(window))
 {
-	engine.BeginFrame(camera);
+	engine.BeginScene(camera);
+    engine.Clear();
 
 	engine.SubmitMesh(&mesh, &material, glm::mat4(1.0f));
 
-	engine.EndFrame();
+	engine.EndScene();
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();
