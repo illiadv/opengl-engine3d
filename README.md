@@ -44,7 +44,7 @@ e3d::Material quadMaterial(quadShader);
 quadMaterial.SetTexture("material.diffuse", texture);
 
 e3d::Camera camera;
-camera.position = glm::vec3(0.0f, 0.0f, -2.0f);
+camera.transform.SetTranslation(glm::vec3(0.0f, 0.0f, -2.0f));
 
 while(!glfwWindowShouldClose(window))
 {
