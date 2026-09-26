@@ -199,21 +199,22 @@ void GfxEngine::BeginScene(const Camera &camera, Framebuffer *framebuffer)
 
 void GfxEngine::LightConverter::ConsumeDirectionalLight(const DirectionalLight* light)
 {
+    glm::vec3 direction = light->transform.GetRotation() * glm::vec3(0.0f, 0.0f, -1.0f);
     result = LightGPU {
-	.position = glm::vec4(light->direction.x, light->direction.y, light->direction.z, 0.0f),
-	.ambient = glm::vec4(light->ambient.x, light->ambient.y, light->ambient.z, 0.0f),
-	.diffuse = glm::vec4(light->diffuse.x, light->diffuse.y, light->diffuse.z, 0.0f),
-	.specular = glm::vec4(light->specular.x, light->specular.y, light->specular.z, 0.0f),
+	.position = glm::vec4(direction, 0.0f),
+	.ambient = glm::vec4(light->spec.ambient, 0.0f),
+	.diffuse = glm::vec4(light->spec.diffuse, 0.0f),
+	.specular = glm::vec4(light->spec.specular, 0.0f),
     };
 }
 
 void GfxEngine::LightConverter::ConsumePointLight(const PointLight* light)
 {
     result = LightGPU {
-	.position = glm::vec4(light->position.x, light->position.y, light->position.z, 1.0f),
-	.ambient = glm::vec4(light->ambient.x, light->ambient.y, light->ambient.z, light->constant),
-	.diffuse = glm::vec4(light->diffuse.x, light->diffuse.y, light->diffuse.z, light->linear),
-	.specular = glm::vec4(light->specular.x, light->specular.y, light->specular.z, light->quadratic),
+	.position = glm::vec4(light->transform.GetTranslation(), 1.0f),
+	.ambient = glm::vec4(light->spec.ambient, light->constant),
+	.diffuse = glm::vec4(light->spec.diffuse, light->linear),
+	.specular = glm::vec4(light->spec.specular, light->quadratic),
     };
 }
 

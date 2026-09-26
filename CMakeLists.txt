@@ -30,6 +30,7 @@ set(SOURCES
     src/camera.cpp
     src/framebuffer.cpp
     src/gfxengine.cpp
+    src/light.cpp
     src/material.cpp
     src/mesh.cpp
     src/model.cpp
