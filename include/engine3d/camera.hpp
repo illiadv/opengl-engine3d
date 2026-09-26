@@ -4,6 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "engine3d/transform.hpp"
+
 namespace e3d
 {
 
@@ -18,22 +20,16 @@ enum class CameraProjection {
 class Camera
 {
 public:
-    glm::vec3 position = glm::vec3(0.0f);
-    glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-    float pitch = 0;
-    float yaw = -90;
-
-    float speed = 4.0f;
-    float mouseSensitivity = 0.05f;
+    Transform transform;
 
     float nearPlane = 0.1f;
     float farPlane = 100.0f;
-
-    CameraProjection projection = CameraProjection::Perspective;
     float fov = 60.0f;
     glm::vec4 orthoSize = {-1.0f, 1.0f, -1.0f, 1.0f};
+    CameraProjection projection = CameraProjection::Perspective;
+
+    float speed = 4.0f;
+    float mouseSensitivity = 0.05f;
 
     Camera();
 
@@ -45,6 +41,11 @@ public:
     void ProcessLookAround(float xOffset, float yOffset);
 
     void ProcessZoom(double amount);
+
+private:
+    float pitch = 0;
+    float yaw = -90;
+
 
 };
 
