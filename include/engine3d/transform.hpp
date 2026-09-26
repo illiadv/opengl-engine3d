@@ -16,7 +16,12 @@ public:
     Transform &SetScale(float scale);
     Transform &SetScale(glm::vec3 const &scale);
     Transform &Rotate(float radians, const glm::vec3 &axis);
-    glm::mat4 GetModelMatrix() const;
+    Transform &Rotate(const glm::vec3 &eulerAngles);
+    Transform &Translate(const glm::vec3 &translation);
+    const glm::vec3 &GetTranslation() const;
+    const glm::quat &GetRotation() const;
+    const glm::vec3 &GetScale() const;
+    const glm::mat4 &GetModelMatrix() const;
 private:
     glm::vec3 m_translation = glm::vec3(0.0f);
     glm::quat m_rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);

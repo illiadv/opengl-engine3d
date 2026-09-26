@@ -31,6 +31,13 @@ Transform &Transform::SetScale(const glm::vec3 &scale)
     return *this;
 };
 
+Transform &Transform::Rotate(const glm::vec3 &eulerAngles)
+{
+    m_rotation = glm::rotate(m_rotation, eulerAngles);
+    m_dirty = true;
+    return *this;
+};
+
 Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
 {
     glm::vec3 axisNorm = glm::normalize(axis);
@@ -39,8 +46,29 @@ Transform &Transform::Rotate(float angle, const glm::vec3 &axis)
     return *this;
 };
 
+Transform &Transform::Translate(const glm::vec3 &translation)
+{
+    m_translation += translation;
+    m_dirty = true;
+    return *this;
+};
 
-glm::mat4 Transform::GetModelMatrix() const
+const glm::vec3 &Transform::GetTranslation() const
+{
+    return m_translation;
+}
+
+const glm::quat &Transform::GetRotation() const
+{
+    return m_rotation;
+}
+
+const glm::vec3 &Transform::GetScale() const
+{
+    return m_scale;
+}
+
+const glm::mat4 &Transform::GetModelMatrix() const
 {
     if (m_dirty) {
 	glm::mat4 transform(1.0f);
